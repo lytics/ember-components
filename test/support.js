@@ -12,10 +12,6 @@ setResolver(Ember.DefaultResolver.extend({
   }
 }).create());
 
-function lookupComponent(id) {
-  return Ember.View.views[id];
-}
-
 function buildComponent(test, props) {
   var component = test.subject(props);
 
@@ -30,4 +26,8 @@ function compileTemplate(fn) {
 
 function heredoc (f) {
   return f.toString().match(/\/\*\s*([\s\S]*?)\s*\*\//m)[1];
+}
+
+function tagNameFor(view, selector) {
+  return view.$(selector).get(0).tagName.toLowerCase();
 }
