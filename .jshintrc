@@ -1,0 +1,7 @@
+{
+  "esnext": true,
+  "laxbreak": true,
+  "boss": true,
+  "expr": true,
+  "eqnull": true
+}
