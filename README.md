@@ -16,3 +16,18 @@ Build to the `dist/` directory:
 $ npm install
 $ broccoli build dist
 ```
+
+## Testing
+
+Install [Test'em](https://github.com/airportyh/testem) globally if needed:
+
+```sh
+$ npm install -g testem
+```
+
+Build and watch, then test:
+
+```sh
+$ broccoli serve --host localhost --port 4200 &
+$ testem
+```
