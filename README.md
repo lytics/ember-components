@@ -14,6 +14,7 @@ Build to the `dist/` directory:
 
 ```sh
 $ npm install
+$ rm -rf dist
 $ broccoli build dist
 ```
 
