@@ -5,8 +5,10 @@
   "ignore": [
     "bower_components",
     "node_modules",
+    "packages",
     "test",
     "tmp",
+    ".gitignore",
     "Brocfile.js",
     "package.json",
     "testem.json"
