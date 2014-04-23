@@ -42,17 +42,26 @@ test("clicking or pressing enter does nothing when disabled attribute is true", 
 });
 
 test("clicking or pressing enter triggers the component's default action", function() {
-  expect(1);
+  expect(2);
 
-  var component = buildComponent(this);
+  var contextObject = Ember.Object.create({
+    value: false
+  });
+
   var targetObject = {
     action: function(value) {
       equal(value, true, "default action was triggered with the new value");
+      equal(contextObject.get('value'), true, "the value was toggled in its in its own run loop");
     }
   };
 
-  component.set('targetObject', targetObject);
-  component.set('action', 'action');
+  var component = buildComponent(this, {
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value',
+    action: 'action',
+    targetObject: targetObject
+  });
+
   component.$().simulate('click');
 });
 
