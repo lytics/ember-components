@@ -16,7 +16,7 @@ define(
       actions: {
         toggle: function() {
           if (!this.get('disabled')) {
-            this.toggleProperty('value');
+            Ember.run(this, 'toggleProperty', 'value');
             this.sendAction('action', this.get('value'));
           }
         }
