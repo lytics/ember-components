@@ -13,6 +13,6 @@
     "broccoli": "~0.9.0",
     "broccoli-merge-trees": "~0.1.0",
     "broccoli-static-compiler": "~0.1.4",
-    "broccoli-dist-es6-module": "~0.1.8"
+    "broccoli-dist-es6-module": "~0.2.0"
   }
 }
