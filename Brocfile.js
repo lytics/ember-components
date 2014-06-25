@@ -46,4 +46,4 @@ var moduleTree = compileModules(srcTree, {
   }
 });
 
-module.exports = mergeTrees(moduleTree);
+module.exports = mergeTrees([ moduleTree ]);
