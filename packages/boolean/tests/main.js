@@ -10,6 +10,19 @@ var template1 = compileTemplate(function() {/*
   {{#boolean-input-false class="false"}}Awwwwww{{/boolean-input-false}}
 */});
 
+test("component value is false by default", function() {
+  var defaultComponent = buildComponent(this);
+  strictEqual(defaultComponent.get('value'), false, "value is false when no value is provided");
+})
+
+test("component always has a boolean value", function() {
+  var component = buildComponent(this, { value: null });
+  strictEqual(component.get('value'), false, "value is false even though it was set as `null`");
+
+  Ember.run(component, 'set', 'value', 'truthy');
+  strictEqual(component.get('value'), true, "value is true even though it was set as `'truthy'`");
+});
+
 test("clicking the component toggles the value attribute", function() {
   var component = buildComponent(this);
 
