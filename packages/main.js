@@ -1,11 +1,16 @@
-import {
-  BooleanInputComponent,
-  BooleanInputTrueComponent,
-  BooleanInputFalseComponent
-} from './boolean/main';
+import OptionComponent from './common/option';
+import ToggleComponent from './input/toggle';
+import { Application } from 'ember';
+
+Application.initializer({
+  name: 'lyticsComponents',
+  initialize: function(container, application) {
+    application.register('component:lio-option', OptionComponent);
+    application.register('component:lio-toggle', ToggleComponent);
+  }
+});
 
 export {
-  BooleanInputComponent,
-  BooleanInputTrueComponent,
-  BooleanInputFalseComponent
+  OptionComponent,
+  ToggleComponent
 };

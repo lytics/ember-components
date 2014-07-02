@@ -2,7 +2,7 @@ emq.globalize();
 
 setResolver(Ember.DefaultResolver.extend({
   testSubjects: Object.keys(Lytics.Components).reduce(function(result, key) {
-    var containerKey = 'component:' + key.replace('Component', '').dasherize();
+    var containerKey = 'component:lio-' + key.replace('Component', '').dasherize();
     result[containerKey] = Lytics.Components[key];
     return result;
   }, {}),

@@ -1,13 +1,12 @@
-moduleForComponent('boolean-input', 'BooleanInputComponent', {
+moduleForComponent('lio-toggle', 'ToggleComponent', {
   needs: [
-    'component:boolean-input-true',
-    'component:boolean-input-false',
+    'component:lio-option',
   ]
 });
 
 var template1 = compileTemplate(function() {/*
-  {{#boolean-input-true class="true"}}Aaaaaay{{/boolean-input-true}}
-  {{#boolean-input-false class="false"}}Awwwwww{{/boolean-input-false}}
+  {{#lio-option value=true}}Aaaaaay{{/lio-option}}
+  {{#lio-option value=false}}Awwwwww{{/lio-option}}
 */});
 
 test("clicking the component toggles the value attribute", function() {
@@ -88,20 +87,20 @@ test("components have correct tag names", function() {
     template: template1
   });
 
-  equal(tagNameFor(component), 'boolean-input', "true component has 'boolean-input-true' class");
-  equal(tagNameFor(component, '.true'), 'boolean-input-true', "true component has 'boolean-input-true' class");
-  equal(tagNameFor(component, '.false'), 'boolean-input-false', "false component has 'boolean-input-false' class");
+  equal(tagNameFor(component), 'lio-toggle', "component has 'lio-toggle' tag");
+  equal(tagNameFor(component, '.true'), 'lio-option', "true component has 'lio-option' tag");
+  equal(tagNameFor(component, '.false'), 'lio-option', "false component has 'lio-option' tag");
 });
 
-test("true/false sub-components are hidden/shown properly, have correct classes", function() {
+test("true/false sub-components have correct classes", function() {
   var component = buildComponent(this, {
     template: template1
   });
 
   Ember.run(component, 'set', 'value', false);
-  ok(component.$('.true').is(':hidden'), "true component is hidden when value is false");
-  ok(component.$('.false').is(':visible'), "false component is visible when value is false");
+  ok(!component.$('.true').hasClass('active'), "true component does not have 'active' class when value is false");
+  ok(component.$('.false').hasClass('active'), "false component has 'active' class when value is false");
   Ember.run(component, 'set', 'value', true);
-  ok(component.$('.true').is(':visible'), "true component is visible when value is false");
-  ok(component.$('.false').is(':hidden'), "false component is hidden when value is false");
+  ok(component.$('.true').hasClass('active'), "true component has 'active' class when value is false");
+  ok(!component.$('.false').hasClass('active'), "false component does not have 'active' class when value is false");
 });

@@ -1,7 +1,7 @@
 import { Component } from 'ember';
 
 export default Component.extend({
-  tagName: 'boolean-input',
+  tagName: 'lio-toggle',
 
   classNameBindings: [ 'value:true:false', 'disabled' ],
 
