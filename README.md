@@ -20,15 +20,15 @@ $ broccoli build dist
 
 ## Testing
 
-Install [Test'em](https://github.com/airportyh/testem) globally if needed:
+Install [Test'em](https://github.com/airportyh/testem) and [Broccoli Timepiece](https://github.com/rjackson/broccoli-timepiece) globally if needed:
 
 ```sh
-$ npm install -g testem
+$ npm install -g testem broccoli-timepiece
 ```
 
 Build and watch, then test:
 
 ```sh
-$ broccoli serve --host localhost --port 4200 &
+$ broccoli-timepiece dist
 $ testem
 ```
