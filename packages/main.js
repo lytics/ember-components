@@ -1,3 +1,5 @@
+import ParentComponentMixin from './mixin/parent';
+import ChildComponentMixin from './mixin/child';
 import OptionComponent from './common/option';
 import ToggleComponent from './input/toggle';
 import { Application } from 'ember';
@@ -11,6 +13,8 @@ Application.initializer({
 });
 
 export {
+  ParentComponentMixin,
+  ChildComponentMixin,
   OptionComponent,
   ToggleComponent
 };

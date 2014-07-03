@@ -2,8 +2,16 @@ emq.globalize();
 
 setResolver(Ember.DefaultResolver.extend({
   testSubjects: Object.keys(Lytics.Components).reduce(function(result, key) {
-    var containerKey = 'component:lio-' + key.replace('Component', '').dasherize();
-    result[containerKey] = Lytics.Components[key];
+    var containerKey;
+
+    [ 'component', 'mixin' ].forEach(function(type) {
+      if (key.indexOf(type.capitalize()) !== -1) {
+        containerKey = type + ':lio-' + key.replace(type.capitalize(), '').dasherize();
+      }
+
+      result[containerKey] = Lytics.Components[key];
+    });
+
     return result;
   }, {}),
 
