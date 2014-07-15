@@ -15,5 +15,9 @@ export default Mixin.create({
     assert("The '" + get(this, 'tagName') + "' component must be nested underneath another component'", parent && parent.registerComponent);
 
     parent.registerComponent(this);
+  }.on('willInsertElement'),
+
+  notifyParent: function() {
+    get(this, 'parent').didInsertComponent(this);
   }.on('didInsertElement')
 });

@@ -70,6 +70,17 @@ test("it provides a method for finding all registered components by type key", f
   deepEqual(object.componentsForType('foo'), [ component1, component2 ], "returns all components of the given type");
 });
 
+test("it triggers the `didRegisterComponents` event when the first component is inserted into the DOM", function() {
+  var component = {};
+  var object = this.subject({
+    didRegisterComponents: function() {
+      ok(true, "`didRegisterComponents` event was triggered");
+    }
+  });
+
+  object.didInsertComponent();
+});
+
 test("whitelisted component types are inherited", function() {
   var class1 = Ember.Component.extend(this.factory(), {
     allowedComponents: [ 'foo' ]

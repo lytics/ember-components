@@ -108,3 +108,17 @@ test("true/false sub-components have correct classes", function() {
   ok(component.$('.true').hasClass('active'), "true component has 'active' class when value is false");
   ok(!component.$('.false').hasClass('active'), "false component does not have 'active' class when value is false");
 });
+
+test("there must be exactly two option components", function() {
+  var context = this;
+
+  this.subject({
+    template: compileTemplate(function() {/*
+      {{#lio-option value=true}}Womp womp{{/lio-option}}
+    */})
+  });
+
+  throws(function() {
+    context.append();
+  }, /The 'lio-toggle' component must contain at exactly two 'lio-option' components./);
+});

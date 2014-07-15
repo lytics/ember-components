@@ -13,6 +13,8 @@ export default Mixin.create({
 
   allowedComponents: [],
 
+  _finishedRegistering: false,
+
   initComponents: function() {
     set(this, 'components', EmberArray());
   }.on('init'),
@@ -25,6 +27,14 @@ export default Mixin.create({
     assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", EmberArray(allowed).contains(type));
 
     get(this, 'components').pushObject(component);
+  },
+
+  didInsertComponent: function() {
+    // Once a component is actually in the DOM, we know that all components have been registered
+    if (!get(this, '_finishedRegistering')) {
+      set(this, '_finishedRegistering', true);
+      this.trigger('didRegisterComponents');
+    }
   },
 
   componentsForType: function(type) {

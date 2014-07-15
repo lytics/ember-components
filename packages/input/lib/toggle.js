@@ -33,8 +33,6 @@ export default Component.extend(ParentComponentMixin, {
   actions: {
     toggle: function() {
       if (!get(this, 'disabled')) {
-        assert("The '" + get(this, 'tagName') + "' component must contain at least two '" + namespace + '-' + get(this, 'allowedComponents')[0] + "' component in order to toggle", get(this.componentsForType(get(this, 'allowedComponents')[0]), 'length'));
-
         run(this, function() {
           var current = get(this, 'value');
           var possible = get(this, 'possibleValues');
@@ -65,5 +63,9 @@ export default Component.extend(ParentComponentMixin, {
     if (event.which === 13) {
       this.send('toggle');
     }
-  }
+  },
+
+  verifyDependencies: function() {
+    assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
+  }.on('didRegisterComponents')
 });
