@@ -11,6 +11,22 @@ import {
 
 var typeKey = 'toggle';
 
+/**
+  Toggle Component
+
+  This component switches its value between two options. The possible values
+  are taken from the `value` attribute of each option. When the component is
+  'toggled', its value is changed to that of the next option.  At any given
+  time the option with the value that matches the component's is marked as
+  active.
+
+  ```handlebars
+  {{#lio-toggle defaultValue=false}}
+    {{#lio-option value=true}}Yes{{/lio-option}}
+    {{#lio-option value=false}}No{{/lio-option}}
+  {{/lio-toggle}}
+  ```
+*/
 export default Component.extend(ParentComponentMixin, {
   typeKey: typeKey,
 

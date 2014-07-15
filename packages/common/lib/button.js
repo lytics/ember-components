@@ -9,6 +9,13 @@ import {
 
 var typeKey = 'button';
 
+/**
+  Button Component
+
+  This component creates a clickable element that sends an action to its parent
+  component. The action name is specified by the `action` attribute, which is
+  required.
+  */
 export default Component.extend(ChildComponentMixin, {
   typeKey: typeKey,
 

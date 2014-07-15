@@ -7,6 +7,11 @@ import {
 
 var typeKey = 'content';
 
+/**
+  Content Component
+
+  This component simply wraps a unit of content.
+*/
 export default Component.extend(ChildComponentMixin, {
   typeKey: typeKey,
 

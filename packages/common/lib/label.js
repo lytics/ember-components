@@ -7,6 +7,12 @@ import {
 
 var typeKey = 'label';
 
+/**
+  Label Component
+
+  This component acts as a symbol or short description usually for another
+  content component.
+*/
 export default Component.extend(ChildComponentMixin, {
   typeKey: typeKey,
 

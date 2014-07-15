@@ -10,6 +10,29 @@ import {
 
 var typeKey = 'carousel';
 
+/**
+  Carousel Component
+
+  This component presents a list of content where one item is active at a time,
+  with corresponding labels. Giving labels focus activates the content at the
+  same index, and buttons with actions of 'forward' and 'backward' can also
+  activate next/previous content items.
+
+  ```handlebars
+  {{#lio-carousel}}
+    {{#lio-content active=true}}foo{{/lio-content}}
+    {{#lio-content}}bar{{/lio-content}}
+    {{#lio-content}}baz{{/lio-content}}
+
+    {{lio-label}}
+    {{lio-label}}
+    {{lio-label}}
+
+    {{#lio-button action="forward"}}›{{/lio-button}}
+    {{#lio-button action="backward"}}‹{{/lio-button}}
+  {{/lio-carousel}}
+  ```
+*/
 export default Component.extend(ParentComponentMixin, {
   typeKey: typeKey,
 
