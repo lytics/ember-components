@@ -1,17 +1,22 @@
-moduleForComponent('boolean-input', 'BooleanInputComponent', {
+moduleForComponent('lio-toggle', 'ToggleComponent', {
   needs: [
-    'component:boolean-input-true',
-    'component:boolean-input-false',
+    'component:lio-option',
   ]
 });
 
 var template1 = compileTemplate(function() {/*
-  {{#boolean-input-true class="true"}}Aaaaaay{{/boolean-input-true}}
-  {{#boolean-input-false class="false"}}Awwwwww{{/boolean-input-false}}
+  {{#lio-option value=true}}Aaaaaay{{/lio-option}}
+  {{#lio-option value=false}}Awwwwww{{/lio-option}}
 */});
 
+test("component has correct tag name", function() {
+  var component = buildComponent(this, { template: template1 });
+
+  equal(tagNameFor(component), 'lio-toggle', "component has 'lio-toggle' tag");
+});
+
 test("clicking the component toggles the value attribute", function() {
-  var component = buildComponent(this);
+  var component = buildComponent(this, { template: template1 });
 
   Ember.run(component, 'set', 'value', false);
   equal(component.get('value'), false, "value is false before click");
@@ -20,7 +25,7 @@ test("clicking the component toggles the value attribute", function() {
 });
 
 test("pressing enter when the component is focused toggles the value attribute", function() {
-  var component = buildComponent(this);
+  var component = buildComponent(this, { template: template1 });
 
   Ember.run(component, 'set', 'value', false);
   equal(component.get('value'), false, "value is false before keypress");
@@ -31,7 +36,7 @@ test("pressing enter when the component is focused toggles the value attribute",
 });
 
 test("clicking or pressing enter does nothing when disabled attribute is true", function() {
-  var component = buildComponent(this);
+  var component = buildComponent(this, { template: template1 });
 
   Ember.run(component, 'set', 'value', false);
   Ember.run(component, 'set', 'disabled', true);
@@ -56,6 +61,7 @@ test("clicking or pressing enter triggers the component's default action", funct
   };
 
   var component = buildComponent(this, {
+    template: template1,
     contextObject: contextObject,
     valueBinding: 'contextObject.value',
     action: 'action',
@@ -65,8 +71,17 @@ test("clicking or pressing enter triggers the component's default action", funct
   component.$().simulate('click');
 });
 
+test("the value defaults to the `defaultValue` attribute", function() {
+  var component = buildComponent(this, {
+    defaultValue: true,
+    template: template1
+  });
+
+  equal(component.get('value'), true, "value is initially set to default");
+});
+
 test("component has the correct class based on disabled value", function() {
-  var component = buildComponent(this);
+  var component = buildComponent(this, { template: template1 });
 
   Ember.run(component, 'set', 'disabled', false);
   ok(!component.$().hasClass('disabled'), "does not have 'disabled' class when disabled is false");
@@ -75,7 +90,7 @@ test("component has the correct class based on disabled value", function() {
 });
 
 test("component has the correct class based on the value", function() {
-  var component = buildComponent(this);
+  var component = buildComponent(this, { template: template1 });
 
   Ember.run(component, 'set', 'value', false);
   ok(component.$().hasClass('false'), "has 'false' class when value is false");
@@ -83,25 +98,27 @@ test("component has the correct class based on the value", function() {
   ok(component.$().hasClass('true'), "has 'true' class when value is true");
 });
 
-test("components have correct tag names", function() {
-  var component = buildComponent(this, {
-    template: template1
-  });
-
-  equal(tagNameFor(component), 'boolean-input', "true component has 'boolean-input-true' class");
-  equal(tagNameFor(component, '.true'), 'boolean-input-true', "true component has 'boolean-input-true' class");
-  equal(tagNameFor(component, '.false'), 'boolean-input-false', "false component has 'boolean-input-false' class");
-});
-
-test("true/false sub-components are hidden/shown properly, have correct classes", function() {
-  var component = buildComponent(this, {
-    template: template1
-  });
+test("true/false sub-components have correct classes", function() {
+  var component = buildComponent(this, { template: template1 });
 
   Ember.run(component, 'set', 'value', false);
-  ok(component.$('.true').is(':hidden'), "true component is hidden when value is false");
-  ok(component.$('.false').is(':visible'), "false component is visible when value is false");
+  ok(!component.$('.true').hasClass('active'), "true component does not have 'active' class when value is false");
+  ok(component.$('.false').hasClass('active'), "false component has 'active' class when value is false");
   Ember.run(component, 'set', 'value', true);
-  ok(component.$('.true').is(':visible'), "true component is visible when value is false");
-  ok(component.$('.false').is(':hidden'), "false component is hidden when value is false");
+  ok(component.$('.true').hasClass('active'), "true component has 'active' class when value is false");
+  ok(!component.$('.false').hasClass('active'), "false component does not have 'active' class when value is false");
+});
+
+test("there must be exactly two option components", function() {
+  var context = this;
+
+  this.subject({
+    template: compileTemplate(function() {/*
+      {{#lio-option value=true}}Womp womp{{/lio-option}}
+    */})
+  });
+
+  throws(function() {
+    context.append();
+  }, /The 'lio-toggle' component must contain at exactly two 'lio-option' components./);
 });

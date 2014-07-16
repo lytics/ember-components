@@ -20,10 +20,15 @@ packages = packages.map(function(name) {
   });
 });
 
-// Pick out the 'main.js' entry point file
+// Find all files at the root directory
+var files = fs.readdirSync(srcTree).filter(function(name) {
+  return fs.statSync(srcTree + '/' + name).isFile();
+});
+
+// Pick out source files at the root
 srcTree = pickFiles(srcTree, {
   srcDir: '/',
-  files: [ 'main.js' ],
+  files: files,
   destDir: '/',
 });
 
