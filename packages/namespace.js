@@ -1,1 +1,7 @@
-export default 'lio';
+var namespace = 'lio';
+
+export function tagForType(type) {
+  return namespace + '-' + type;
+}
+
+export default namespace;

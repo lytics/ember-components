@@ -1,4 +1,4 @@
-import namespace from '../namespace';
+import { tagForType } from '../namespace';
 import ChildComponentMixin from '../mixin/child';
 import {
   Component,
@@ -18,7 +18,7 @@ var typeKey = 'option';
 export default Component.extend(ChildComponentMixin, {
   typeKey: typeKey,
 
-  tagName: namespace + '-' + typeKey,
+  tagName: tagForType(typeKey),
 
   classNameBindings: [ 'valueClass', 'isActive:active' ],
 

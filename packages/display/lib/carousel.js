@@ -1,4 +1,4 @@
-import namespace from '../namespace';
+import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
 import {
   Component,
@@ -38,7 +38,7 @@ export default Component.extend(ParentComponentMixin, {
 
   allowedComponents: [ 'content', 'label', 'button' ],
 
-  tagName: namespace + '-' + typeKey,
+  tagName: tagForType(typeKey),
 
   classNameBindings: [ 'isEmpty:empty',  'isSingle:single' ],
 

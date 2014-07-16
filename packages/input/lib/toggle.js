@@ -1,4 +1,4 @@
-import namespace from '../namespace';
+import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
 import {
   Component,
@@ -30,7 +30,7 @@ var typeKey = 'toggle';
 export default Component.extend(ParentComponentMixin, {
   typeKey: typeKey,
 
-  tagName: namespace + '-' + typeKey,
+  tagName: tagForType(typeKey),
 
   allowedComponents: [ 'option' ],
 
