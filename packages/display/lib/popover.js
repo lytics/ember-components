@@ -1,5 +1,6 @@
 import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
+import ChildComponentMixin from '../mixin/child';
 import {
   A,
   Component,
@@ -27,7 +28,7 @@ var positions = A([ 'top', 'right', 'bottom', 'left' ]);
   {{/lio-popover}}
   ```
 */
-export default Component.extend(ParentComponentMixin, {
+export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
   typeKey: typeKey,
 
   tagName: tagForType(typeKey),
