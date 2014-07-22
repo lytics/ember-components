@@ -1,8 +1,8 @@
 var fs = require('fs');
 var mergeTrees = require('broccoli-merge-trees');
 var pickFiles = require('broccoli-static-compiler');
-// var compileTemplates = require('broccoli-template');
 var compileModules = require('broccoli-dist-es6-module');
+var compileTemplates = require('broccoli-template-compiler');
 
 // Source files are located in the 'package' directory
 var srcTree = 'packages';
@@ -36,10 +36,9 @@ srcTree = pickFiles(srcTree, {
 srcTree = mergeTrees(packages.concat(srcTree));
 
 // Compile templates
-// srcTree = compileTemplates(srcTree, {
-//   extensions: [ 'hbs' ],
-//   compileFunction: 'Ember.Handlebars.compile',
-// });
+srcTree = compileTemplates(srcTree, {
+  module: true
+});
 
 // Compile modules into different formats
 var moduleTree = compileModules(srcTree, {

@@ -4,13 +4,20 @@ setResolver(Ember.DefaultResolver.extend({
   testSubjects: Object.keys(Lytics.Components).reduce(function(result, key) {
     var containerKey;
 
-    [ 'component', 'mixin' ].forEach(function(type) {
+    [ 'component', 'mixin', 'template' ].forEach(function(type) {
       if (key.indexOf(type.capitalize()) !== -1) {
-        containerKey = type + ':lio-' + key.replace(type.capitalize(), '').dasherize();
+        containerKey = prefix(type) + 'lio-' + key.replace(type.capitalize(), '').dasherize();
       }
 
       result[containerKey] = Lytics.Components[key];
     });
+
+    function prefix(type) {
+      var prefixes = {
+        template  : 'components/'
+      };
+      return type + ':' + (prefixes[type] || '');
+    }
 
     return result;
   }, {}),
