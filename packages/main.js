@@ -7,6 +7,7 @@ import LabelComponent from './common/label';
 import CarouselComponent from './display/carousel';
 import PopoverComponent from './display/popover';
 import PopoverTemplate from './display/templates/popover';
+import TipComponent from './display/tip';
 import ToggleComponent from './input/toggle';
 import { Application } from 'ember';
 
@@ -16,10 +17,11 @@ Application.initializer({
     application.register('component:lio-option', OptionComponent);
     application.register('component:lio-button', ButtonComponent);
     application.register('component:lio-content', ContentComponent);
-    application.register('component:lio-label', ContentComponent);
+    application.register('component:lio-label', LabelComponent);
     application.register('component:lio-carousel', CarouselComponent);
     application.register('component:lio-popover', PopoverComponent);
     application.register('template:components/lio-popover', PopoverTemplate);
+    application.register('component:lio-tip', TipComponent);
     application.register('component:lio-toggle', ToggleComponent);
   }
 });
@@ -34,5 +36,6 @@ export {
   CarouselComponent,
   ToggleComponent,
   PopoverComponent,
-  PopoverTemplate
+  PopoverTemplate,
+  TipComponent
 };

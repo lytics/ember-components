@@ -1,0 +1,95 @@
+<style>
+  body {
+    margin:auto;
+    width:1000px;
+    font-size:16px;
+    color: #999;
+  }
+  p {
+    margin: 3em;
+  }
+  lio-popover {
+    position: absolute;
+    padding: 15px;
+    border: 1px solid #000;
+    background: white;
+    display: none;
+    margin: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    color: #000;
+  }
+  lio-popover.open {
+    display: block;
+  }
+  lio-tip.active cite {
+    background: #FF6;
+  }
+  cite {
+    border-bottom: 1px dotted #999;
+    cursor: pointer;
+    color: #000;
+  }
+  lio-popover .arrow {
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent;
+    width: 0;
+    height: 0;
+    position:absolute;
+    top: 0;
+    left: 0;
+  }
+  lio-popover.left .arrow {
+    margin-left: -1px;
+    border-left-color: #000;
+  }
+  lio-popover.right .arrow {
+    border-right-color: #000;
+  }
+  lio-popover.top .arrow {
+    margin-top: -1px;
+    border-top-color: #000;
+  }
+  lio-popover.bottom .arrow {
+    border-bottom-color: #000;
+  }
+  .box {
+    background: rgba(255, 50, 200, 0.3);
+    padding: 10px;
+  }
+</style>
+
+<script type="text/x-handlebars">
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mollis tincidunt erat. Duis placerat sed urna ut bibendum. Nulla purus massa, faucibus sit amet erat vel, cursus blandit nunc. Praesent aliquam massa eget lectus lobortis convallis.
+    {{#lio-tip}}
+      {{#lio-label}}
+        <cite tabindex=0>Nulla sit amet nunc ultrices</cite>
+      {{/lio-label}}
+      {{#lio-popover}}
+        I am not sure what that means. Sorry.
+      {{/lio-popover}}
+    {{/lio-tip}}
+  nisl fringilla semper. Donec et tincidunt urna. Quisque scelerisque lacinia ipsum. Quisque accumsan vestibulum lorem non imperdiet. In sollicitudin porta mauris a pretium. Nulla nec aliquet neque. Donec at augue consectetur, volutpat sem sed, fringilla eros. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+
+<p>In et lacus augue.
+    {{#lio-tip}}
+      {{#lio-label}}
+        <cite tabindex=1>Fusce et tempus nunc, ac feugiat leo. Curabitur dignissim</cite>
+      {{/lio-label}}
+      {{#lio-popover position="right"}}
+        I am not sure what that means. Sorry.
+      {{/lio-popover}}
+    {{/lio-tip}}
+  odio tortor, ac fringilla odio dictum a. Pellentesque molestie lobortis nisi a faucibus. Donec at sapien sed dui malesuada aliquet. Donec neque felis, faucibus vitae lorem sit amet, aliquet vulputate diam. Fusce ut auctor ipsum. Proin porttitor dapibus eros vel placerat. Duis id dui euismod, euismod ante ut, mattis urna. Quisque semper eros nec turpis adipiscing tempus vel sit amet quam. Fusce vestibulum urna ac eros commodo, vitae tristique metus luctus. Etiam sit amet sollicitudin purus. Maecenas nec rhoncus metus. Cras sit amet tempor eros, at cursus est. Nullam pellentesque orci et tellus luctus cursus. Nullam pulvinar fermentum ante, a feugiat mauris fringilla quis.</p>
+
+<p>Cras id congue purus, sed porttitor augue. Aenean in tortor nulla. Pellentesque aliquet suscipit lectus, consequat fringilla urna tempus non. Duis sit amet velit eget nisl imperdiet porttitor. Nunc ut sodales ante. Cras porttitor mauris in leo congue malesuada. In hac habitasse platea dictumst. Praesent aliquet, est non euismod aliquet, velit neque aliquet nisi, in varius ipsum quam sit amet lacus. Cras non interdum metus, at feugiat elit. Morbi fringilla vehicula neque vitae tristique. Vestibulum eu nulla tincidunt, convallis leo a, sollicitudin ipsum. Aliquam arcu nisl, mattis nec mi in, porta ullamcorper sapien. Mauris nulla arcu, condimentum non velit a, varius condimentum libero.</p>
+</script>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/handlebars/handlebars.js"></script>
+<script src="../bower_components/ember/ember.js"></script>
+<script src="../dist/globals/main.js"></script>
+
+<script>
+  var App = Ember.Application.create();
+</script>
