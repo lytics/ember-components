@@ -1,5 +1,7 @@
 # Lytics Ember Components
 
+![TravisCI](https://travis-ci.org/lytics/ember-components.svg?branch=travis-support)
+
 This is a collection of generic input components used by Lytics Inc.
 
 ## Building
