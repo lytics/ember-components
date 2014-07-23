@@ -1,3 +1,5 @@
+(function() {
+
 moduleFor('mixin:lio-parent-component', 'ParentComponentMixin', {
   subject: function(factory, options) {
     return Ember.Component.createWithMixins(factory, options);
@@ -92,3 +94,5 @@ test("whitelisted component types are inherited", function() {
 
   deepEqual(object.get('allowedComponents'), [ 'foo',  'bar' ], "`allowedComponets` property is concatenated when inheriting");
 });
+
+})();

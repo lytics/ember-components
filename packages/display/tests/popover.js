@@ -1,3 +1,5 @@
+(function() {
+
 moduleForComponent('lio-popover', 'PopoverComponent', {
   needs: [
     'template:components/lio-popover',
@@ -222,3 +224,5 @@ function giveBounds(component, overrides) {
     arrowOffsetLeft: 100 / 2 - 10 / 2
   }, overrides));
 }
+
+})();

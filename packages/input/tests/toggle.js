@@ -1,3 +1,5 @@
+(function() {
+
 moduleForComponent('lio-toggle', 'ToggleComponent', {
   needs: [
     'component:lio-option',
@@ -122,3 +124,5 @@ test("there must be exactly two option components", function() {
     context.append();
   }, /The 'lio-toggle' component must contain at exactly two 'lio-option' components./);
 });
+
+})();
