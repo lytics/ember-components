@@ -38,6 +38,8 @@ export default Component.extend(ParentComponentMixin, {
 
   active: false,
 
+  activator: 'click',
+
   togglePopover: function() {
     set(get(this, 'popover'), 'open', get(this, 'active'));
   }.observes('active'),
@@ -75,9 +77,6 @@ export default Component.extend(ParentComponentMixin, {
   },
 
   actions: {
-    labelFocus: function() {
-      this.send('toggle');
-    },
     activate: function() {
       set(this, 'active', true);
     },

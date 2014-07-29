@@ -25,6 +25,19 @@ test("component is active when the label is clicked", function() {
   ok(component.get('active'), "component is active when the label is clicked");
 });
 
+test("component is active when the label is hovered and the activator is set to hover", function() {
+  var component = buildComponent(this, {
+    layout: compileTemplate(defaultTemplate),
+    activator: 'hover'
+  });
+
+  ok(!component.get('active'), "component is inactive by default");
+  component.$('lio-label').trigger('mouseenter');
+  ok(component.get('active'), "component is active when the label is 'mouse entered'");
+  component.$('lio-label').trigger('mouseleave');
+  ok(!component.get('active'), "component is no longer active once the label has 'mouse left'");
+});
+
 test("component has the active class when it is active", function() {
   var component = buildComponent(this, {
     layout: compileTemplate(defaultTemplate),
