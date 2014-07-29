@@ -1,10 +1,6 @@
 (function() {
 
-moduleForComponent('lio-popover', 'PopoverComponent', {
-  needs: [
-    'template:components/lio-popover',
-  ]
-});
+moduleForComponent('lio-popover', 'PopoverComponent');
 
 test("component has correct tag name", function() {
   var component = buildComponent(this, {

@@ -36,6 +36,5 @@ export {
   CarouselComponent,
   ToggleComponent,
   PopoverComponent,
-  PopoverTemplate,
   TipComponent
 };
