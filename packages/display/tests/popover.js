@@ -49,26 +49,26 @@ test("the rendered position is different than position when the tooltip needs to
   });
 });
 
-test("it has the 'open' class when open", function() {
+test("it has the 'active' class when active", function() {
   var component = buildComponent(this, {
     layout: compileTemplate(defaultTemplate),
-    open: true
+    active: true
   });
 
   $('<div id="anchor">').appendTo('#ember-testing');
-  ok(component.$().hasClass('open'));
-  ok(!component.$().hasClass('closed'));
+  ok(component.$().hasClass('active'));
+  ok(!component.$().hasClass('inactive'));
 });
 
-test("it has the 'closed' class when closed", function() {
+test("it has the 'inactive' class when inactive", function() {
   var component = buildComponent(this, {
     layout: compileTemplate(defaultTemplate),
-    open: false
+    active: false
   });
 
   $('<div id="anchor">').appendTo('#ember-testing');
-  ok(component.$().hasClass('closed'));
-  ok(!component.$().hasClass('open'));
+  ok(component.$().hasClass('inactive'));
+  ok(!component.$().hasClass('active'));
 });
 
 test("className is based off the rendered position", function() {

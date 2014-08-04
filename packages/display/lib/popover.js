@@ -33,7 +33,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'renderedPosition', 'open', 'closed' ],
+  classNameBindings: [ 'renderedPosition', 'active', 'inactive' ],
 
   allowedComponents: [ 'button' ],
 
@@ -41,18 +41,18 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
 
   anchor: null,
 
-  open: false,
+  active: false,
 
-  closed: Ember.computed.not('open').readOnly(),
+  inactive: Ember.computed.not('active').readOnly(),
 
   canBeTopLevel: true,
 
   actions: {
     open: function() {
-      set(this, 'open', true);
+      set(this, 'active', true);
     },
     close: function() {
-      set(this, 'open', false);
+      set(this, 'active', false);
     }
   },
 
@@ -98,7 +98,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
   },
 
   reposition: function() {
-    if (get(this, 'open')) {
+    if (get(this, 'active')) {
       var $el = this.$();
       var $arrow = $el.find('.arrow');
       var $anchor = $(get(this, 'anchor'));
@@ -135,7 +135,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
       $el.css(get(this, 'offset'));
       $arrow.css(get(this, 'arrowOffset'));
     }
-  }.observes('position', 'open'),
+  }.observes('position', 'active'),
 
   positioners: {
     top: function(popover) {

@@ -13,7 +13,7 @@
     margin: 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   }
-  lio-popover.open {
+  lio-popover.active {
     display: block;
   }
   cite {
@@ -122,68 +122,68 @@
     </div>
   </div>
 
-  {{#lio-popover anchor="#cite1" open=open1 position="top"}}
+  {{#lio-popover anchor="#cite1" active=active1 position="top"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite2" open=open2 position="right"}}
+  {{#lio-popover anchor="#cite2" active=active2 position="right"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite3" open=open3 position="bottom"}}
+  {{#lio-popover anchor="#cite3" active=active3 position="bottom"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite4" open=open4 position="left"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-
-  {{#lio-popover anchor="#cite5" open=open5 position="top"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-  {{#lio-popover anchor="#cite6" open=open6 position="right"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-  {{#lio-popover anchor="#cite7" open=open7 position="bottom"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-  {{#lio-popover anchor="#cite8" open=open8 position="left"}}
+  {{#lio-popover anchor="#cite4" active=active4 position="left"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
 
-  {{#lio-popover anchor="#cite9" open=open9 position="top"}}
+  {{#lio-popover anchor="#cite5" active=active5 position="top"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite10" open=open10 position="right"}}
+  {{#lio-popover anchor="#cite6" active=active6 position="right"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite11" open=open11 position="bottom"}}
+  {{#lio-popover anchor="#cite7" active=active7 position="bottom"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite12" open=open12 position="left"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-
-  {{#lio-popover anchor="#cite13" open=open13 position="top"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-  {{#lio-popover anchor="#cite14" open=open14 position="right"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-  {{#lio-popover anchor="#cite15" open=open15 position="bottom"}}
-    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
-  {{/lio-popover}}
-  {{#lio-popover anchor="#cite16" open=open16 position="left"}}
+  {{#lio-popover anchor="#cite8" active=active8 position="left"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
 
-  {{#lio-popover anchor="#cite17" open=open17 position="top"}}
+  {{#lio-popover anchor="#cite9" active=active9 position="top"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite18" open=open18 position="right"}}
+  {{#lio-popover anchor="#cite10" active=active10 position="right"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite19" open=open19 position="bottom"}}
+  {{#lio-popover anchor="#cite11" active=active11 position="bottom"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
-  {{#lio-popover anchor="#cite20" open=open20 position="left"}}
+  {{#lio-popover anchor="#cite12" active=active12 position="left"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+
+  {{#lio-popover anchor="#cite13" active=active13 position="top"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite14" active=active14 position="right"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite15" active=active15 position="bottom"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite16" active=active16 position="left"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+
+  {{#lio-popover anchor="#cite17" active=active17 position="top"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite18" active=active18 position="right"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite19" active=active19 position="bottom"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite20" active=active20 position="left"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
 
@@ -199,7 +199,7 @@
   App.ApplicationController = Ember.Controller.extend({
     actions: {
       togglePopover: function(num) {
-        this.toggleProperty('open' + num);
+        this.toggleProperty('active' + num);
       }
     }
   });

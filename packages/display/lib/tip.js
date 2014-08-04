@@ -34,16 +34,18 @@ export default Component.extend(ParentComponentMixin, {
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'active' ],
+  classNameBindings: [ 'active', 'inactive' ],
 
   active: false,
+
+  inactive: Ember.computed.not('active').readOnly(),
 
   activator: 'click',
 
   fromFocus: false,
 
   togglePopover: function() {
-    set(get(this, 'popover'), 'open', get(this, 'active'));
+    set(get(this, 'popover'), 'active', get(this, 'active'));
   }.observes('active'),
 
   label: function() {
