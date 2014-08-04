@@ -40,6 +40,8 @@ export default Component.extend(ParentComponentMixin, {
 
   activator: 'click',
 
+  fromFocus: false,
+
   togglePopover: function() {
     set(get(this, 'popover'), 'open', get(this, 'active'));
   }.observes('active'),
@@ -53,6 +55,10 @@ export default Component.extend(ParentComponentMixin, {
   }.property(),
 
   click: function(event) {
+    if (get(this, 'fromFocus')) {
+      this.send('deactivate');
+      set(this, 'fromFocus', false);
+    }
     if (get(this, 'activator') === 'click') {
       this.send('toggle');
     }
@@ -69,10 +75,12 @@ export default Component.extend(ParentComponentMixin, {
   },
 
   focusIn: function() {
+    set(this, 'fromFocus', true);
     this.send('activate');
   },
 
   focusOut: function() {
+    set(this, 'fromFocus', false);
     this.send('deactivate');
   },
 
