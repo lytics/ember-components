@@ -1,3 +1,5 @@
+(function() {
+
 moduleFor('mixin:lio-child-component', 'ChildComponentMixin', {
   subject: function(factory, options) {
     return Ember.Component.createWithMixins(factory, options);
@@ -36,3 +38,5 @@ test("it has a `parent` property that is a reference to its parent component", f
 
   equal(component.get('parent'), parent, '`parent` property is alias for `parentView`');
 });
+
+})();

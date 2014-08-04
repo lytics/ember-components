@@ -12,12 +12,15 @@ export default Mixin.create({
   registerWithParent: function() {
     var parent = get(this, 'parent');
 
-    assert("The '" + get(this, 'tagName') + "' component must be nested underneath another component'", parent && parent.registerComponent);
+    if (!get(this, 'canBeTopLevel')) {
+      assert("The '" + get(this, 'tagName') + "' component must be nested underneath another component'", parent && parent.registerComponent);
+    }
 
-    parent.registerComponent(this);
+    parent && parent.registerComponent && parent.registerComponent(this);
   }.on('willInsertElement'),
 
   notifyParent: function() {
-    get(this, 'parent').didInsertComponent(this);
+    var parent = get(this, 'parent');
+    parent && parent.didInsertComponent && parent.didInsertComponent(this);
   }.on('didInsertElement')
 });

@@ -1,3 +1,5 @@
+(function() {
+
 moduleForComponent('lio-carousel', 'CarouselComponent', {
   needs: [
     'component:lio-content',
@@ -193,3 +195,5 @@ test("the component has the correct class when it contains one content item", fu
 
   ok(component.$().hasClass('single'), "has the 'single' class");
 });
+
+})();
