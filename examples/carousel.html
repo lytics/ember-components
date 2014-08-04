@@ -1,0 +1,119 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body {
+    width: 300px;
+    margin: auto;
+    margin-top: 100px;
+    color: #999;
+  }
+  lio-carousel {
+    display: block;
+    position: relative;
+  }
+  .slides img {
+    display: block;
+  }
+  .slides {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  .slides > lio-content {
+    display: none;
+    position: relative;
+  }
+  .slides > .active {
+    display: block;
+  }
+  .slides > .active {
+    left: 0;
+  }
+  .indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    width: 60%;
+    margin-left: -30%;
+    padding-left: 0;
+    list-style: none;
+    text-align: center;
+  }
+  .indicators lio-label {
+    display: inline-block;
+    width:  10px;
+    height: 10px;
+    margin: 0 2px;
+    background-color: white;
+    opacity: 0.5;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .indicators lio-label.active,
+  .indicators lio-label:hover {
+    background-color: black;
+    opacity: 0.3;
+  }
+  lio-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 30%;
+    color: white;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  lio-button:hover,
+  lio-button:focus {
+    color: black;
+    opacity: 0.3;
+  }
+  lio-button:before {
+    position: absolute;
+    display: inline-block;
+    top: 50%;
+    margin-top: -30px;
+    font-size: 60px;
+  }
+  lio-button[action="forward"] {
+    left: auto;
+    right: 0;
+  }
+  lio-button[action="forward"]:before {
+    left: 50%;
+    content: "›";
+  }
+  lio-button[action="backward"]:before {
+    right: 50%;
+    content: "‹";
+  }
+</style>
+
+<script type="text/x-handlebars">
+  {{#lio-carousel}}
+    <div class="slides">
+      {{#lio-content active=true}}<img src="http://placehold.it/300x300" />{{/lio-content}}
+      {{#lio-content}}<img src="http://placekitten.com/300/300" />{{/lio-content}}
+      {{#lio-content}}<img src="http://placedoge.net/300/300" />{{/lio-content}}
+    </div>
+
+    <div class="indicators">
+      {{lio-label}}
+      {{lio-label}}
+      {{lio-label}}
+    </div>
+
+    {{lio-button action="forward"}}
+    {{lio-button action="backward"}}
+  {{/lio-carousel}}
+</script>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/handlebars/handlebars.js"></script>
+<script src="../bower_components/ember/ember.js"></script>
+<script src="../dist/globals/main.js"></script>
+
+<script>
+  var App = Ember.Application.create();
+</script>
