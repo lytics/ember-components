@@ -1,5 +1,6 @@
 import ParentComponentMixin from './mixin/parent';
 import ChildComponentMixin from './mixin/child';
+import TransitionMixin from './mixin/transition';
 import OptionComponent from './common/option';
 import ButtonComponent from './common/button';
 import ContentComponent from './common/content';
@@ -29,6 +30,7 @@ Application.initializer({
 export {
   ParentComponentMixin,
   ChildComponentMixin,
+  TransitionMixin,
   OptionComponent,
   ButtonComponent,
   ContentComponent,
