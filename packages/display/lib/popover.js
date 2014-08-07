@@ -1,6 +1,8 @@
 import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
 import ChildComponentMixin from '../mixin/child';
+import ActiveStateMixin from '../mixin/active-state';
+import TransitionMixin from '../mixin/transition';
 import {
   A,
   Component,
@@ -12,7 +14,7 @@ import {
   assert
 } from 'ember';
 
-var typeKey = 'popover'
+var typeKey = 'popover';
 var positions = A([ 'top', 'right', 'bottom', 'left' ]);
 
 /**
@@ -28,12 +30,12 @@ var positions = A([ 'top', 'right', 'bottom', 'left' ]);
   {{/lio-popover}}
   ```
 */
-export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
+export default Component.extend(ParentComponentMixin, ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
   typeKey: typeKey,
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'renderedPosition', 'active', 'inactive' ],
+  classNameBindings: [ 'renderedPosition' ],
 
   allowedComponents: [ 'button' ],
 
@@ -41,20 +43,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
 
   anchor: null,
 
-  active: false,
-
-  inactive: Ember.computed.not('active').readOnly(),
-
   canBeTopLevel: true,
-
-  actions: {
-    open: function() {
-      set(this, 'active', true);
-    },
-    close: function() {
-      set(this, 'active', false);
-    }
-  },
 
   position: function(key, value) {
     if (arguments.length === 1) {

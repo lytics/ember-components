@@ -58,8 +58,8 @@ export default Component.extend(ParentComponentMixin, {
 
   click: function(event) {
     if (get(this, 'fromFocus')) {
-      this.send('deactivate');
       set(this, 'fromFocus', false);
+      return;
     }
     if (get(this, 'activator') === 'click') {
       this.send('toggle');

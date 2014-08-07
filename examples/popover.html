@@ -6,15 +6,25 @@
   }
   lio-popover {
     position: absolute;
+    pointer-events: none;
     padding: 15px;
     border: 1px solid #000;
     background: white;
     display: none;
     margin: 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: .15s opacity linear;
   }
-  lio-popover.active {
+  lio-popover.active,
+  lio-popover.activating {
     display: block;
+  }
+  lio-popover.activating,
+  lio-popover.trigger.deactivating {
+    opacity: 0;
+  }
+  lio-popover.trigger.activating {
+    opacity: 1;
   }
   cite {
     border-bottom: 1px dotted #999;
