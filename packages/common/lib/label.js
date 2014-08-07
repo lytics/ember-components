@@ -1,5 +1,6 @@
 import { tagForType } from '../namespace';
 import ChildComponentMixin from '../mixin/child';
+import ActiveStateMixin from '../mixin/active-state';
 import {
   Component,
   get
@@ -13,14 +14,10 @@ var typeKey = 'label';
   This component acts as a symbol or short description usually for another
   content component.
 */
-export default Component.extend(ChildComponentMixin, {
+export default Component.extend(ChildComponentMixin, ActiveStateMixin, {
   typeKey: typeKey,
 
   tagName: tagForType(typeKey),
-
-  classNameBindings: [ 'active:active' ],
-
-  active: false,
 
   click: function() {
     get(this, 'parent').send('labelFocus', this);

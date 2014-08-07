@@ -49,7 +49,7 @@ export default Component.extend(ParentComponentMixin, {
       var contentLength = get(this, 'contentLength');
       var nextIndex = activeIndex - 1;
 
-      this.send('activate', nextIndex < 0 ? contentLength - 1 : nextIndex);
+      this.send('activate', nextIndex < 0 ? contentLength - 1 : nextIndex, 'backward');
     },
 
     // Activate the content at the next index
@@ -58,11 +58,11 @@ export default Component.extend(ParentComponentMixin, {
       var contentLength = get(this, 'contentLength');
       var nextIndex = activeIndex + 1;
 
-      this.send('activate', nextIndex >= contentLength ? 0 : nextIndex);
+      this.send('activate', nextIndex >= contentLength ? 0 : nextIndex, 'forward');
     },
 
     // Activate the content at the given index
-    activate: function(nextIndex) {
+    activate: function(nextIndex, direction) {
       var activeIndex = get(this, 'activeIndex');
 
       // Nothing to do if the given index is already active
@@ -72,25 +72,29 @@ export default Component.extend(ParentComponentMixin, {
       if (nextIndex < 0 || nextIndex > get(this, 'contentLength')) { return; }
 
       var contents = this.componentsForType('content');
-      var lastContent = contents.objectAt(activeIndex);
-      var nextContent = contents.objectAt(nextIndex);
-
       var labels = this.componentsForType('label');
-      var lastLabel = labels.objectAt(activeIndex);
-      var nextLabel = labels.objectAt(nextIndex);
+      var activeContent = contents.objectAt(activeIndex);
 
-      if (lastContent) {
-        set(lastContent, 'active', false);
+      // Abort if in the middle of a transition
+      if (activeContent && get(activeContent, 'isTransitioning')) { return; }
 
-        if (lastLabel) {
-          set(lastLabel, 'active', false);
+      // Choose a direction based on the last/next index if none is given
+      direction || (direction = nextIndex > activeIndex ? 'forward' : 'backward');
+
+      activateNext(activeContent, contents.objectAt(nextIndex));
+      activateNext(labels.objectAt(activeIndex), labels.objectAt(nextIndex));
+
+      // Deactivate the current component and activate the next
+      function activateNext(current, next) {
+        if (current) {
+          set(current, 'transitionClass', direction);
+          current.send('deactivate');
         }
-      }
 
-      set(nextContent, 'active', true);
-
-      if (nextLabel) {
-        set(nextLabel, 'active', true);
+        if (next) {
+          set(next, 'transitionClass', direction);
+          next.send('activate');
+        }
       }
     },
 
@@ -127,12 +131,15 @@ export default Component.extend(ParentComponentMixin, {
   // Set the initially active content if none is specified
   setActiveContent: function() {
     var contents = this.componentsForType('content');
+    var firstContent = contents.objectAt(0);
 
     assert("The '" + get(this, 'tagName') + "' component can only have one active 'lio-content' component.", contents.filterBy('isActive').length <= 1);
 
     if (!get(this, 'isEmpty') && get(this, 'activeIndex') === -1) {
-      this.send('activate', 0);
+      firstContent.send('activate');
     }
+
+    this.trigger('didSetActiveContent');
   }.on('didRegisterComponents'),
 
   // Ensure there are the same number of labels as content items and that the
@@ -145,7 +152,7 @@ export default Component.extend(ParentComponentMixin, {
     assert("The '" + get(this, 'tagName') + "' component must have the same number of 'lio-label' components as 'lio-content' components.", !labelLength || labelLength === get(this.componentsForType('content'), 'length'));
 
     if (labelLength) {
-      set(labels.objectAt(activeIndex), 'active', true);
+      labels.objectAt(activeIndex).send('activate');
     }
-  }.on('didRegisterComponents')
+  }.on('didSetActiveContent')
 });
