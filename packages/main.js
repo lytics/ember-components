@@ -1,5 +1,6 @@
 import ParentComponentMixin from './mixin/parent';
 import ChildComponentMixin from './mixin/child';
+import ActiveStateMixin from './mixin/active-state';
 import TransitionMixin from './mixin/transition';
 import OptionComponent from './common/option';
 import ButtonComponent from './common/button';
@@ -30,6 +31,7 @@ Application.initializer({
 export {
   ParentComponentMixin,
   ChildComponentMixin,
+  ActiveStateMixin,
   TransitionMixin,
   OptionComponent,
   ButtonComponent,
