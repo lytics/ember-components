@@ -2,21 +2,27 @@ emq.globalize();
 
 setResolver(Ember.DefaultResolver.extend({
   testSubjects: Object.keys(Lytics.Components).reduce(function(result, key) {
-    var containerKey;
+    var shortName, factory;
 
     [ 'component', 'mixin', 'template' ].forEach(function(type) {
       if (key.indexOf(type.capitalize()) !== -1) {
-        containerKey = prefix(type) + 'lio-' + key.replace(type.capitalize(), '').dasherize();
-      }
+        shortName = key.replace(type.capitalize(), '').dasherize();
 
-      result[containerKey] = Lytics.Components[key];
+        factory = result[prefix(type) + shortName] = Lytics.Components[key];
+
+        // Create an additional component factory with the mixins included so that
+        // they can be tested with `moduleForComponent`
+        if (type === 'mixin') {
+          result[prefix('component') + 'mixin-' + shortName] = Ember.Component.extend(factory);
+        }
+      }
     });
 
     function prefix(type) {
       var prefixes = {
         template  : 'components/'
       };
-      return type + ':' + (prefixes[type] || '');
+      return type + ':' + (prefixes[type] || '') + 'lio-';
     }
 
     return result;
