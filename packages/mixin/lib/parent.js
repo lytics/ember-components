@@ -7,7 +7,9 @@ import {
 } from 'ember';
 
 export default Mixin.create({
-  components: null,
+  //
+  // Internal Properties
+  //
 
   concatenatedProperties: [ 'allowedComponents' ],
 
@@ -15,9 +17,19 @@ export default Mixin.create({
 
   isInitializing: true,
 
+  components: null,
+
+  //
+  // Hooks / Observers
+  //
+
   initComponents: function() {
     set(this, 'components', EmberArray());
   }.on('init'),
+
+  //
+  // Internal Methods
+  //
 
   registerComponent: function(component) {
     var type = get(component, 'typeKey');

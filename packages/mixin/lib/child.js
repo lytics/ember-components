@@ -7,7 +7,15 @@ import {
 } from 'ember';
 
 export default Mixin.create({
+  //
+  // Internal Properties
+  //
+
   parent: computed.alias('parentView'),
+
+  //
+  // Hooks / Observers
+  //
 
   registerWithParent: function() {
     var parent = get(this, 'parent');

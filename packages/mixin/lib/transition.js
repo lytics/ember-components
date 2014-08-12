@@ -13,11 +13,19 @@ import {
 testTrasitionSupport();
 
 export default Mixin.create({
+  //
+  // Handlebars Attributes
+  //
+
   // Any component can override this property to never use transitions,
   // otherwise it defaults to the parent component's value
   disableTransitions: function() {
     return get(this, 'parent.disableTransitions') === true;
   }.property(),
+
+  //
+  // Internal Properties
+  //
 
   // Whether the component is in the middle of a transition
   isTransitioning: false,
@@ -27,6 +35,10 @@ export default Mixin.create({
 
   // An optional class that gets added to prime a transition, used internally
   transitionClass: null,
+
+  //
+  // Hooks / Observers
+  //
 
   // Normalize the 'transitionend' event by setting up an Ember event to fire
   // when the DOM event fires; this is primarily for testing purposes
@@ -45,6 +57,10 @@ export default Mixin.create({
       });
     }
   }.on('didInsertElement'),
+
+  //
+  // Internal Methods
+  //
 
   // Encapsulate a transition; the callback gets run regardless of support
   withTransition: function(transitionClass, callback) {

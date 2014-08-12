@@ -29,13 +29,25 @@ var typeKey = 'tip';
 // TODO debt: currently, a div in the popover of a tip that is in a paragraph will
 // break the universe. The popover component needs to be moved elsewhere in the DOM
 export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
-  typeKey: typeKey,
-
-  allowedComponents: [ 'content', 'popover', 'label' ],
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
+  //
+  // Handlebars Attributes
+  //
+
   activator: 'click',
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
+  allowedComponents: [ 'content', 'popover', 'label' ],
 
   fromFocus: false,
 
@@ -51,6 +63,10 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
     return get(this.componentsForType('popover'), 'firstObject');
   }.property(),
 
+  //
+  // Event Handlers
+  //
+
   click: function(event) {
     if (get(this, 'fromFocus')) {
       set(this, 'fromFocus', false);
@@ -60,11 +76,13 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
       this.send('toggleActive');
     }
   },
+
   mouseEnter: function() {
     if (get(this, 'activator') === 'hover') {
       this.send('activate');
     }
   },
+
   mouseLeave: function() {
     if (get(this, 'activator') === 'hover') {
       this.send('deactivate');
@@ -88,6 +106,10 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
       this.send('deactivate');
     }
   },
+
+  //
+  // Hooks / Observers
+  //
 
   verifyContents: function() {
     var labelsLength = get(this.componentsForType('label'), 'length');

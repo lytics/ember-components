@@ -18,11 +18,19 @@ var typeKey = 'option';
   representation of is set as a class.
 */
 export default Component.extend(ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
-  typeKey: typeKey,
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
   classNameBindings: [ 'valueClass' ],
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
 
   valueClass: function() {
     return '' + get(this, 'value');

@@ -14,7 +14,15 @@ var typeKey = 'content';
   This component simply wraps a unit of content.
 */
 export default Component.extend(ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
-  typeKey: typeKey,
+  //
+  // HTML Properties
+  //
 
-  tagName: tagForType(typeKey)
+  tagName: tagForType(typeKey),
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey
 });

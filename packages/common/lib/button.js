@@ -17,17 +17,33 @@ var typeKey = 'button';
   required.
   */
 export default Component.extend(ChildComponentMixin, {
-  typeKey: typeKey,
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
   attributeBindings: [ 'action', 'disabled' ],
 
+  //
+  // Handlebars Attributes
+  //
+
   action: null,
 
   disabled: false,
 
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
   isDisabled: computed.readOnly('disabled'),
+
+  //
+  // Event Handlers
+  //
 
   click: function() {
     // Do not perform the action if the component is disabled

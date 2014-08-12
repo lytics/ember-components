@@ -15,9 +15,21 @@ var typeKey = 'label';
   content component.
 */
 export default Component.extend(ChildComponentMixin, ActiveStateMixin, {
-  typeKey: typeKey,
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
+  //
+  // Event Handlers
+  //
 
   click: function() {
     get(this, 'parent').send('labelFocus', this);

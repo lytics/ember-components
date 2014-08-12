@@ -6,14 +6,30 @@ import {
 } from 'ember';
 
 export default Mixin.create({
+  //
+  // HTML Properties
+  //
+
   classNameBindings: [ 'isVisuallyActive:active:inactive' ],
 
+  //
+  // Handlebars Attributes
+  //
+
   active: false,
+
+  //
+  // Internal Properties
+  //
 
   isActive: computed.readOnly('active'),
 
   // Boolean indicating whether the component should appear as active
   isVisuallyActive: null,
+
+  //
+  // Internal Actions
+  //
 
   actions: {
     activate: function() {
@@ -28,6 +44,10 @@ export default Mixin.create({
       this.send(get(this, 'active') ? 'deactivate' : 'activate');
     }
   },
+
+  //
+  // Hooks / Observers
+  //
 
   // Initialize the `isVisuallyActive` flag to the initial value of `active`; it
   // can't use `computed.oneWay` because the value must always act independently

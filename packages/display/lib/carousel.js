@@ -34,13 +34,44 @@ var typeKey = 'carousel';
   ```
 */
 export default Component.extend(ParentComponentMixin, {
-  typeKey: typeKey,
-
-  allowedComponents: [ 'content', 'label', 'button' ],
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
   classNameBindings: [ 'isEmpty:empty',  'isSingle:single' ],
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
+  allowedComponents: [ 'content', 'label', 'button' ],
+
+  // The index of the content item currently active
+  activeIndex: function() {
+    var contents = this.componentsForType('content');
+    var active = contents.findBy('isActive');
+
+    return contents.indexOf(active);
+  }.property('components.@each.isActive').readOnly(),
+
+  // The number of content items in the carousel
+  contentLength: function() {
+    return get(this.componentsForType('content'), 'length');
+  }.property('components.[]').readOnly(),
+
+  // Whether or not the carousel has no content items
+  isEmpty: computed.equal('contentLength', 0),
+
+  // Whether or not there is only one content item
+  isSingle: computed.equal('contentLength', 1),
+
+  //
+  // Internal Actions
+  //
 
   actions: {
     // Activate the content at the previous index
@@ -109,24 +140,9 @@ export default Component.extend(ParentComponentMixin, {
     }
   },
 
-  // The index of the content item currently active
-  activeIndex: function() {
-    var contents = this.componentsForType('content');
-    var active = contents.findBy('isActive');
-
-    return contents.indexOf(active);
-  }.property('components.@each.isActive').readOnly(),
-
-  // The number of content items in the carousel
-  contentLength: function() {
-    return get(this.componentsForType('content'), 'length');
-  }.property('components.[]').readOnly(),
-
-  // Whether or not the carousel has no content items
-  isEmpty: computed.equal('contentLength', 0),
-
-  // Whether or not there is only one content item
-  isSingle: computed.equal('contentLength', 1),
+  //
+  // Hooks / Observers
+  //
 
   // Set the initially active content if none is specified
   setActiveContent: function() {
