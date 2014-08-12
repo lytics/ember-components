@@ -1,5 +1,6 @@
 import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
+import ActiveStateMixin from '../mixin/active-state';
 import {
   Component,
   Object,
@@ -27,18 +28,12 @@ var typeKey = 'tip';
 */
 // TODO debt: currently, a div in the popover of a tip that is in a paragraph will
 // break the universe. The popover component needs to be moved elsewhere in the DOM
-export default Component.extend(ParentComponentMixin, {
+export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
   typeKey: typeKey,
 
   allowedComponents: [ 'content', 'popover', 'label' ],
 
   tagName: tagForType(typeKey),
-
-  classNameBindings: [ 'active', 'inactive' ],
-
-  active: false,
-
-  inactive: Ember.computed.not('active').readOnly(),
 
   activator: 'click',
 
@@ -62,7 +57,7 @@ export default Component.extend(ParentComponentMixin, {
       return;
     }
     if (get(this, 'activator') === 'click') {
-      this.send('toggle');
+      this.send('toggleActive');
     }
   },
   mouseEnter: function() {
@@ -86,21 +81,9 @@ export default Component.extend(ParentComponentMixin, {
     this.send('deactivate');
   },
 
-  actions: {
-    activate: function() {
-      set(this, 'active', true);
-    },
-    deactivate: function() {
-      set(this, 'active', false);
-    },
-    toggle: function() {
-      this.toggleProperty('active');
-    }
-  },
-
   keyPress: function(event) {
     if (event.which === 13) {
-      this.send('toggle');
+      this.send('toggleActive');
     } else if (event.which === 27) {
       this.send('deactivate');
     }

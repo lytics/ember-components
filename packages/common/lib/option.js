@@ -20,7 +20,7 @@ export default Component.extend(ChildComponentMixin, {
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'valueClass', 'isActive:active' ],
+  classNameBindings: [ 'valueClass', 'isActive:active:inactive' ],
 
   valueClass: function() {
     return '' + get(this, 'value');
