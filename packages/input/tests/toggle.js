@@ -73,7 +73,35 @@ test("clicking or pressing enter triggers the component's default action", funct
   component.$().simulate('click');
 });
 
-test("the value defaults to the `defaultValue` attribute", function() {
+test("the value is set to the default to the `defaultValue` attribute", function() {
+  var contextObject = Ember.Object.create();
+
+  var component = buildComponent(this, {
+    template: template1,
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value',
+    defaultValue: true,
+  });
+
+  equal(contextObject.get('value'), true, "value is initially set to the default");
+});
+
+test("the value is not set to the default to the `defaultValue` attribute when it already has a value", function() {
+  var contextObject = Ember.Object.create({
+    value: false
+  });
+
+  var component = buildComponent(this, {
+    template: template1,
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value',
+    defaultValue: true,
+  });
+
+  equal(contextObject.get('value'), false, "value is not set to the default");
+});
+
+test("the value defaults to the `defaultValue` attribute when there is not value binding", function() {
   var component = buildComponent(this, {
     defaultValue: true,
     template: template1

@@ -83,5 +83,15 @@ export default Component.extend(ParentComponentMixin, {
 
   verifyDependencies: function() {
     assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
+  }.on('didRegisterComponents'),
+
+  populateDefault: function() {
+    var value = get(this, 'value');
+    var defaultValue = get(this, 'defaultValue');
+
+    // Only set the default if there's currently no value
+    if (value === undefined && defaultValue !== undefined) {
+      set(this, 'value', defaultValue);
+    }
   }.on('didRegisterComponents')
 });
