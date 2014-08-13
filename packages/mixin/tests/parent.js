@@ -73,7 +73,6 @@ test("it provides a method for finding all registered components by type key", f
 });
 
 test("it triggers the `didRegisterComponents` event when the first component is inserted into the DOM", function() {
-  var component = {};
   var object = this.subject({
     didRegisterComponents: function() {
       ok(true, "`didRegisterComponents` event was triggered");
@@ -81,6 +80,20 @@ test("it triggers the `didRegisterComponents` event when the first component is 
   });
 
   object.didInsertComponent();
+});
+
+test("it maintains a property indicating whether the component has initialized or not", function() {
+  expect(3);
+
+  var object = this.subject({
+    didRegisterComponents: function() {
+      strictEqual(object.get('isInitializing'), true, "the component is initializing");
+    }
+  });
+
+  strictEqual(object.get('isInitializing'), true, "the component is initializing");
+  object.didInsertComponent();
+  strictEqual(object.get('isInitializing'), false, "the component is not initializing");
 });
 
 test("whitelisted component types are inherited", function() {

@@ -13,7 +13,7 @@ export default Mixin.create({
 
   allowedComponents: [],
 
-  _finishedRegistering: false,
+  isInitializing: true,
 
   initComponents: function() {
     set(this, 'components', EmberArray());
@@ -31,9 +31,9 @@ export default Mixin.create({
 
   didInsertComponent: function() {
     // Once a component is actually in the DOM, we know that all components have been registered
-    if (!get(this, '_finishedRegistering')) {
-      set(this, '_finishedRegistering', true);
+    if (get(this, 'isInitializing')) {
       this.trigger('didRegisterComponents');
+      set(this, 'isInitializing', false);
     }
   },
 
