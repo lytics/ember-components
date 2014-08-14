@@ -34,76 +34,21 @@ var typeKey = 'carousel';
   ```
 */
 export default Component.extend(ParentComponentMixin, {
-  typeKey: typeKey,
-
-  allowedComponents: [ 'content', 'label', 'button' ],
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
   classNameBindings: [ 'isEmpty:empty',  'isSingle:single' ],
 
-  actions: {
-    // Activate the content at the previous index
-    backward: function() {
-      var activeIndex = get(this, 'activeIndex');
-      var contentLength = get(this, 'contentLength');
-      var nextIndex = activeIndex - 1;
+  //
+  // Internal Properties
+  //
 
-      this.send('activate', nextIndex < 0 ? contentLength - 1 : nextIndex);
-    },
+  typeKey: typeKey,
 
-    // Activate the content at the next index
-    forward: function() {
-      var activeIndex = get(this, 'activeIndex');
-      var contentLength = get(this, 'contentLength');
-      var nextIndex = activeIndex + 1;
-
-      this.send('activate', nextIndex >= contentLength ? 0 : nextIndex);
-    },
-
-    // Activate the content at the given index
-    activate: function(nextIndex) {
-      var activeIndex = get(this, 'activeIndex');
-
-      // Nothing to do if the given index is already active
-      if (activeIndex === nextIndex) { return; }
-
-      // Don't attempt to transition to an invalid index
-      if (nextIndex < 0 || nextIndex > get(this, 'contentLength')) { return; }
-
-      var contents = this.componentsForType('content');
-      var lastContent = contents.objectAt(activeIndex);
-      var nextContent = contents.objectAt(nextIndex);
-
-      var labels = this.componentsForType('label');
-      var lastLabel = labels.objectAt(activeIndex);
-      var nextLabel = labels.objectAt(nextIndex);
-
-      if (lastContent) {
-        set(lastContent, 'active', false);
-
-        if (lastLabel) {
-          set(lastLabel, 'active', false);
-        }
-      }
-
-      set(nextContent, 'active', true);
-
-      if (nextLabel) {
-        set(nextLabel, 'active', true);
-      }
-    },
-
-    // Respond to a label gaining focus
-    labelFocus: function(label) {
-      var labels = this.componentsForType('label');
-      var nextIndex = labels.indexOf(label);
-
-      if (nextIndex !== -1) {
-        this.send('activate', nextIndex);
-      }
-    }
-  },
+  allowedComponents: [ 'content', 'label', 'button' ],
 
   // The index of the content item currently active
   activeIndex: function() {
@@ -124,15 +69,93 @@ export default Component.extend(ParentComponentMixin, {
   // Whether or not there is only one content item
   isSingle: computed.equal('contentLength', 1),
 
+  //
+  // Internal Actions
+  //
+
+  actions: {
+    // Activate the content at the previous index
+    backward: function() {
+      var activeIndex = get(this, 'activeIndex');
+      var contentLength = get(this, 'contentLength');
+      var nextIndex = activeIndex - 1;
+
+      this.send('activate', nextIndex < 0 ? contentLength - 1 : nextIndex, 'backward');
+    },
+
+    // Activate the content at the next index
+    forward: function() {
+      var activeIndex = get(this, 'activeIndex');
+      var contentLength = get(this, 'contentLength');
+      var nextIndex = activeIndex + 1;
+
+      this.send('activate', nextIndex >= contentLength ? 0 : nextIndex, 'forward');
+    },
+
+    // Activate the content at the given index
+    activate: function(nextIndex, direction) {
+      var activeIndex = get(this, 'activeIndex');
+
+      // Nothing to do if the given index is already active
+      if (activeIndex === nextIndex) { return; }
+
+      // Don't attempt to transition to an invalid index
+      if (nextIndex < 0 || nextIndex > get(this, 'contentLength')) { return; }
+
+      var contents = this.componentsForType('content');
+      var labels = this.componentsForType('label');
+      var activeContent = contents.objectAt(activeIndex);
+
+      // Abort if in the middle of a transition
+      if (activeContent && get(activeContent, 'isTransitioning')) { return; }
+
+      // Choose a direction based on the last/next index if none is given
+      direction || (direction = nextIndex > activeIndex ? 'forward' : 'backward');
+
+      activateNext(activeContent, contents.objectAt(nextIndex));
+      activateNext(labels.objectAt(activeIndex), labels.objectAt(nextIndex));
+
+      // Deactivate the current component and activate the next
+      function activateNext(current, next) {
+        if (current) {
+          set(current, 'transitionClass', direction);
+          current.send('deactivate');
+        }
+
+        if (next) {
+          set(next, 'transitionClass', direction);
+          next.send('activate');
+        }
+      }
+    },
+
+    // Respond to a label gaining focus
+    labelFocus: function(label) {
+      var labels = this.componentsForType('label');
+      var nextIndex = labels.indexOf(label);
+
+      if (nextIndex !== -1) {
+        this.send('activate', nextIndex);
+      }
+    }
+  },
+
+  //
+  // Hooks / Observers
+  //
+
   // Set the initially active content if none is specified
   setActiveContent: function() {
     var contents = this.componentsForType('content');
+    var firstContent = contents.objectAt(0);
 
     assert("The '" + get(this, 'tagName') + "' component can only have one active 'lio-content' component.", contents.filterBy('isActive').length <= 1);
 
     if (!get(this, 'isEmpty') && get(this, 'activeIndex') === -1) {
-      this.send('activate', 0);
+      firstContent.send('activate');
     }
+
+    this.trigger('didSetActiveContent');
   }.on('didRegisterComponents'),
 
   // Ensure there are the same number of labels as content items and that the
@@ -145,7 +168,7 @@ export default Component.extend(ParentComponentMixin, {
     assert("The '" + get(this, 'tagName') + "' component must have the same number of 'lio-label' components as 'lio-content' components.", !labelLength || labelLength === get(this.componentsForType('content'), 'length'));
 
     if (labelLength) {
-      set(labels.objectAt(activeIndex), 'active', true);
+      labels.objectAt(activeIndex).send('activate');
     }
-  }.on('didRegisterComponents')
+  }.on('didSetActiveContent')
 });

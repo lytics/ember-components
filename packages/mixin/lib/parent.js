@@ -7,17 +7,29 @@ import {
 } from 'ember';
 
 export default Mixin.create({
-  components: null,
+  //
+  // Internal Properties
+  //
 
   concatenatedProperties: [ 'allowedComponents' ],
 
   allowedComponents: [],
 
-  _finishedRegistering: false,
+  isInitializing: true,
+
+  components: null,
+
+  //
+  // Hooks / Observers
+  //
 
   initComponents: function() {
     set(this, 'components', EmberArray());
   }.on('init'),
+
+  //
+  // Internal Methods
+  //
 
   registerComponent: function(component) {
     var type = get(component, 'typeKey');
@@ -31,9 +43,9 @@ export default Mixin.create({
 
   didInsertComponent: function() {
     // Once a component is actually in the DOM, we know that all components have been registered
-    if (!get(this, '_finishedRegistering')) {
-      set(this, '_finishedRegistering', true);
+    if (get(this, 'isInitializing')) {
       this.trigger('didRegisterComponents');
+      set(this, 'isInitializing', false);
     }
   },
 

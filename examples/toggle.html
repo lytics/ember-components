@@ -1,0 +1,104 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body {
+    width: 300px;
+    margin: auto;
+    margin-top: 100px;
+    font-size: 16px;
+  }
+  label {
+    display: inline-block;
+    width: 40%;
+    line-height: 40px;
+    vertical-align: top;
+  }
+  code {
+    line-height: 40px;
+    vertical-align: top;
+  }
+  code.result {
+    color: #4157af;
+  }
+  lio-toggle {
+    display: inline-block;
+    position: relative;
+    width: 120px;
+    height: 40px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  lio-option {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    color: white;
+    background-color: #428bca;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.25);
+    font-family: sans-serif;
+    font-weight: 600;
+    line-height: 40px;
+    text-align: center;
+    transition: .2s left ease;
+  }
+  lio-option.true {
+    background-color: #79b656;
+  }
+  lio-option.false {
+    background-color: #ca5842;
+  }
+  lio-option.active:first-child,
+  lio-option.inactive.trigger:first-child {
+    left: 0;
+  }
+  lio-option.inactive:first-child,
+  lio-option.active.trigger:first-child {
+    left: -50%;
+  }
+  lio-option.active:last-child,
+  lio-option.inactive.trigger:last-child {
+    left: 50%;
+  }
+  lio-option.inactive:last-child,
+  lio-option.active.trigger:last-child {
+    left: 100%;
+  }
+</style>
+
+<script type="text/x-handlebars">
+  <p>
+    <label>Awesome?</label>
+    {{#lio-toggle value=isAwesome defaultValue=true}}
+      {{#lio-option value=true}}Yep{{/lio-option}}
+      {{#lio-option value=false}}Nope{{/lio-option}}
+    {{/lio-toggle}}
+  </p>
+  <p>
+    <label>How Big?</label>
+    {{#lio-toggle value=size defaultValue="big"}}
+      {{#lio-option value="big"}}Huge{{/lio-option}}
+      {{#lio-option value="small"}}Tiny{{/lio-option}}
+    {{/lio-toggle}}
+  </p>
+  <hr/>
+  <p>
+    <label><code>isAwesome</code>:</label> <code class="result">{{isAwesome}}</code>
+    <br/>
+    <label><code>size</code>:</label> <code class="result">{{size}}</code>
+  </p>
+</script>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/handlebars/handlebars.js"></script>
+<script src="../bower_components/ember/ember.js"></script>
+<script src="../dist/globals/main.js"></script>
+
+<script>
+  var App = Ember.Application.create();
+</script>

@@ -41,7 +41,7 @@ test("the rendered position is different than position when the tooltip needs to
   component.set('anchor', '#anchor');
 
   Ember.run(function() {
-    component.send('open');
+    component.send('activate');
     giveBounds(component);
     component.adjustPosition();
     equal(component.get('position'), 'top');
@@ -80,7 +80,7 @@ test("className is based off the rendered position", function() {
   component.set('anchor', '#anchor');
 
   Ember.run(function() {
-    component.send('open');
+    component.send('activate');
     component.set('position', 'left');
     giveBounds(component);
     component.adjustPosition();
@@ -101,7 +101,7 @@ test("the arrow position is centered on the popover", function() {
   component.set('anchor', '#anchor');
 
   Ember.run(function() {
-    component.send('open');
+    component.send('activate');
 
     giveBounds(component, {
       offsetTop: 500,
@@ -181,7 +181,7 @@ test("the tooltip is repositioned when the window resizes", function() {
   component.set('anchor', '#anchor');
 
   Ember.run(function() {
-    component.send('open');
+    component.send('activate');
     giveBounds(component, {
       offsetTop: 1337
     });
@@ -220,5 +220,29 @@ function giveBounds(component, overrides) {
     arrowOffsetLeft: 100 / 2 - 10 / 2
   }, overrides));
 }
+
+test("transition classes are added when activating the popover", function() {
+  mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
+    var component = buildComponent(this, {
+      layout: compileTemplate(defaultTemplate)
+    });
+
+    $('<div id="anchor">').appendTo('#ember-testing');
+    component.set('anchor', '#anchor');
+
+    Ember.run(component, 'set', 'active', true);
+    ok(component.$().hasClass('activating'), "it has the 'activating' class");
+    ok(!component.$().hasClass('active'), "it does not have the 'active' class");
+    Ember.run(component, 'trigger', 'transitionDidEnd');
+    ok(!component.$().hasClass('activating'), "it does not have the 'activating' class");
+    ok(component.$().hasClass('active'), "it has the 'active' class");
+    Ember.run(component, 'set', 'active', false);
+    ok(component.$().hasClass('deactivating'), "it has the 'deactivating' class");
+    ok(component.$().hasClass('active'), "it has the 'active' class");
+    Ember.run(component, 'trigger', 'transitionDidEnd');
+    ok(!component.$().hasClass('deactivating'), "it does not have the 'deactivating' class");
+    ok(!component.$().hasClass('active'), "it does not have the 'active' class");
+  });
+});
 
 })();

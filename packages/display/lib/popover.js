@@ -1,6 +1,8 @@
 import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
 import ChildComponentMixin from '../mixin/child';
+import ActiveStateMixin from '../mixin/active-state';
+import TransitionMixin from '../mixin/transition';
 import {
   A,
   Component,
@@ -12,7 +14,7 @@ import {
   assert
 } from 'ember';
 
-var typeKey = 'popover'
+var typeKey = 'popover';
 var positions = A([ 'top', 'right', 'bottom', 'left' ]);
 
 /**
@@ -28,33 +30,32 @@ var positions = A([ 'top', 'right', 'bottom', 'left' ]);
   {{/lio-popover}}
   ```
 */
-export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
-  typeKey: typeKey,
+export default Component.extend(ParentComponentMixin, ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'renderedPosition', 'active', 'inactive' ],
+  classNameBindings: [ 'renderedPosition' ],
 
-  allowedComponents: [ 'button' ],
-
-  renderedPosition: null,
+  //
+  // Handlebars Attributes
+  //
 
   anchor: null,
 
-  active: false,
+  //
+  // Internal Properties
+  //
 
-  inactive: Ember.computed.not('active').readOnly(),
+  typeKey: typeKey,
+
+  allowedComponents: [ 'button' ],
 
   canBeTopLevel: true,
 
-  actions: {
-    open: function() {
-      set(this, 'active', true);
-    },
-    close: function() {
-      set(this, 'active', false);
-    }
-  },
+  renderedPosition: null,
 
   position: function(key, value) {
     if (arguments.length === 1) {
@@ -78,6 +79,56 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
       left: get(this, 'arrowOffsetLeft')
     };
   }.property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
+
+  positioners: {
+    top: function(popover) {
+      popover.adjustHorizontalPosition();
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') - get(popover, 'height') - get(popover, 'arrowHeight'),
+        arrowOffsetTop: get(popover, 'height')
+      });
+    },
+    bottom: function(popover) {
+      popover.adjustHorizontalPosition();
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') + get(popover, 'anchorHeight') + get(popover, 'arrowHeight'),
+        arrowOffsetTop: 0 - get(popover, 'arrowHeight')
+      });
+    },
+    right: function(popover) {
+      popover.adjustVerticalPosition();
+      setProperties(popover, {
+        offsetLeft: get(popover, 'offsetLeft') + get(popover, 'anchorWidth') + get(popover, 'arrowWidth'),
+        arrowOffsetLeft:0 - get(popover, 'arrowWidth')
+      });
+    },
+    left: function(popover) {
+      popover.adjustVerticalPosition();
+      setProperties(popover, {
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') - get(popover, 'arrowWidth'),
+        arrowOffsetLeft: get(popover, 'width')
+      });
+    }
+  },
+
+  //
+  // Hooks / Observers
+  //
+
+  resizeHelper: function() {
+    set(this, 'resizeHandler', $(window).on('resize', function() {
+      this.reposition();
+    }.bind(this)));
+  }.on('didInsertElement'),
+
+  willDestroy: function() {
+    this._super();
+    $(window).unbind('resize', this.get('resizeHandler'));
+  },
+
+  //
+  // Internal Methods
+  //
 
   adjustPosition: function() {
     var position = get(this, 'position');
@@ -137,37 +188,6 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
     }
   }.observes('position', 'active'),
 
-  positioners: {
-    top: function(popover) {
-      popover.adjustHorizontalPosition();
-      setProperties(popover, {
-        offsetTop: get(popover, 'offsetTop') - get(popover, 'height') - get(popover, 'arrowHeight'),
-        arrowOffsetTop: get(popover, 'height')
-      });
-    },
-    bottom: function(popover) {
-      popover.adjustHorizontalPosition();
-      setProperties(popover, {
-        offsetTop: get(popover, 'offsetTop') + get(popover, 'anchorHeight') + get(popover, 'arrowHeight'),
-        arrowOffsetTop: 0 - get(popover, 'arrowHeight')
-      });
-    },
-    right: function(popover) {
-      popover.adjustVerticalPosition();
-      setProperties(popover, {
-        offsetLeft: get(popover, 'offsetLeft') + get(popover, 'anchorWidth') + get(popover, 'arrowWidth'),
-        arrowOffsetLeft:0 - get(popover, 'arrowWidth')
-      });
-    },
-    left: function(popover) {
-      popover.adjustVerticalPosition();
-      setProperties(popover, {
-        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') - get(popover, 'arrowWidth'),
-        arrowOffsetLeft: get(popover, 'width')
-      });
-    }
-  },
-
   adjustHorizontalPosition: function() {
     var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth');
     set(this, 'offsetLeft', adjustForEdges(dimensions.offsetLeft, dimensions.width, dimensions.anchorWidth, dimensions.windowWidth));
@@ -178,17 +198,6 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
     var dimensions = getProperties(this, 'arrowOffsetTop', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
     set(this, 'offsetTop', adjustForEdges(dimensions.offsetTop, dimensions.height, dimensions.anchorHeight, dimensions.windowHeight));
     set(this, 'arrowOffsetTop', adjustArrowForEdges(dimensions.arrowOffsetTop, dimensions.offsetTop, dimensions.height, dimensions.anchorHeight, dimensions.windowHeight));
-  },
-
-  resizeHelper: function() {
-    set(this, 'resizeHandler', $(window).on('resize', function() {
-      this.reposition();
-    }.bind(this)));
-  }.on('didInsertElement'),
-
-  willDestroy: function() {
-    this._super();
-    $(window).unbind('resize', this.get('resizeHandler'));
   }
 });
 

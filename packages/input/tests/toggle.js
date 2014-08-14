@@ -73,7 +73,35 @@ test("clicking or pressing enter triggers the component's default action", funct
   component.$().simulate('click');
 });
 
-test("the value defaults to the `defaultValue` attribute", function() {
+test("the value is set to the default to the `defaultValue` attribute", function() {
+  var contextObject = Ember.Object.create();
+
+  var component = buildComponent(this, {
+    template: template1,
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value',
+    defaultValue: true,
+  });
+
+  equal(contextObject.get('value'), true, "value is initially set to the default");
+});
+
+test("the value is not set to the default to the `defaultValue` attribute when it already has a value", function() {
+  var contextObject = Ember.Object.create({
+    value: false
+  });
+
+  var component = buildComponent(this, {
+    template: template1,
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value',
+    defaultValue: true,
+  });
+
+  equal(contextObject.get('value'), false, "value is not set to the default");
+});
+
+test("the value defaults to the `defaultValue` attribute when there is not value binding", function() {
   var component = buildComponent(this, {
     defaultValue: true,
     template: template1
@@ -100,8 +128,11 @@ test("component has the correct class based on the value", function() {
   ok(component.$().hasClass('true'), "has 'true' class when value is true");
 });
 
-test("true/false sub-components have correct classes", function() {
-  var component = buildComponent(this, { template: template1 });
+test("sub-components have correct classes", function() {
+  var component = buildComponent(this, {
+    template: template1,
+    disableTransitions: true
+  });
 
   Ember.run(component, 'set', 'value', false);
   ok(!component.$('.true').hasClass('active'), "true component does not have 'active' class when value is false");
@@ -123,6 +154,40 @@ test("there must be exactly two option components", function() {
   throws(function() {
     context.append();
   }, /The 'lio-toggle' component must contain at exactly two 'lio-option' components./);
+});
+
+test("transition classes are added when toggling", function() {
+  mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
+    var component = buildComponent(this, {
+      value: true,
+      layout: template1
+    });
+
+    var triggerTransitionEnd = function() {
+      component.componentsForType('option').invoke('trigger', 'transitionDidEnd');
+    };
+
+    Ember.run(component, 'send', 'toggle');
+    ok(component.$('lio-option:nth-of-type(1)').hasClass('deactivating'), "the first option has the 'deactivating' class");
+    ok(component.$('lio-option:nth-of-type(2)').hasClass('activating'), "the second option has the 'activating' class");
+    ok(component.$('lio-option:nth-of-type(1)').hasClass('active'), "the first option has the 'active' class");
+    ok(!component.$('lio-option:nth-of-type(2)').hasClass('active'), "the second option does not have the 'active' class");
+    Ember.run(triggerTransitionEnd);
+    ok(!component.$('lio-option:nth-of-type(1)').hasClass('deactivating'), "the first option does not have the 'deactivating' class");
+    ok(!component.$('lio-option:nth-of-type(2)').hasClass('activating'), "the second option does not have the 'activating' class");
+    ok(!component.$('lio-option:nth-of-type(1)').hasClass('active'), "the first option does not have the 'active' class");
+    ok(component.$('lio-option:nth-of-type(2)').hasClass('active'), "the second option has the 'active' class");
+    Ember.run(component, 'send', 'toggle');
+    ok(component.$('lio-option:nth-of-type(1)').hasClass('activating'), "the first option has the 'activating' class");
+    ok(component.$('lio-option:nth-of-type(2)').hasClass('deactivating'), "the second option has the 'deactivating' class");
+    ok(!component.$('lio-option:nth-of-type(1)').hasClass('active'), "the first option does not have the 'active' class");
+    ok(component.$('lio-option:nth-of-type(2)').hasClass('active'), "the second option has the 'active' class");
+    Ember.run(triggerTransitionEnd);
+    ok(!component.$('lio-option:nth-of-type(1)').hasClass('activating'), "the first option does not have the 'activating' class");
+    ok(!component.$('lio-option:nth-of-type(2)').hasClass('deactivating'), "the second option does not have the 'deactivating' class");
+    ok(component.$('lio-option:nth-of-type(1)').hasClass('active'), "the first option has the 'active' class");
+    ok(!component.$('lio-option:nth-of-type(2)').hasClass('active'), "the second option does not have the 'active' class");
+  });
 });
 
 })();

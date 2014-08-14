@@ -28,23 +28,43 @@ var typeKey = 'toggle';
   ```
 */
 export default Component.extend(ParentComponentMixin, {
-  typeKey: typeKey,
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
-  allowedComponents: [ 'option' ],
-
   classNameBindings: [ 'valueClass', 'disabled' ],
+
+  //
+  // Handlebars Attributes
+  //
+
+  disabled: false,
 
   defaultValue: false,
 
   value: computed.oneWay('defaultValue'),
 
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
+  allowedComponents: [ 'option' ],
+
   valueClass: function() {
     return '' + get(this, 'value');
   }.property('value'),
 
-  disabled: false,
+  possibleValues: computed(function() {
+    return this.componentsForType('option').mapBy('value');
+  }).property('components.[]'),
+
+  //
+  // Internal Actions
+  //
 
   actions: {
     toggle: function() {
@@ -67,9 +87,9 @@ export default Component.extend(ParentComponentMixin, {
     }
   },
 
-  possibleValues: computed(function() {
-    return this.componentsForType('option').mapBy('value');
-  }).property('components.[]'),
+  //
+  // Event Handlers
+  //
 
   click: function() {
     this.send('toggle');
@@ -81,7 +101,21 @@ export default Component.extend(ParentComponentMixin, {
     }
   },
 
+  //
+  // Hooks / Observers
+  //
+
   verifyDependencies: function() {
     assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
+  }.on('didRegisterComponents'),
+
+  populateDefault: function() {
+    var value = get(this, 'value');
+    var defaultValue = get(this, 'defaultValue');
+
+    // Only set the default if there's currently no value
+    if (value === undefined && defaultValue !== undefined) {
+      set(this, 'value', defaultValue);
+    }
   }.on('didRegisterComponents')
 });

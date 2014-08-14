@@ -1,8 +1,9 @@
 import { tagForType } from '../namespace';
 import ChildComponentMixin from '../mixin/child';
+import ActiveStateMixin from '../mixin/active-state';
+import TransitionMixin from '../mixin/transition';
 import {
-  Component,
-  computed
+  Component
 } from 'ember';
 
 var typeKey = 'content';
@@ -12,14 +13,16 @@ var typeKey = 'content';
 
   This component simply wraps a unit of content.
 */
-export default Component.extend(ChildComponentMixin, {
-  typeKey: typeKey,
+export default Component.extend(ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
+  //
+  // HTML Properties
+  //
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'isActive:active' ],
+  //
+  // Internal Properties
+  //
 
-  active: false,
-
-  isActive: computed.readOnly('active')
+  typeKey: typeKey
 });
