@@ -1,5 +1,15 @@
 # Changelog
 
+### v0.2.0 (August 19, 2014)
+
+* Namespaced all components with 'lio-'
+* Refactored 'boolean-input' into 'lio-toggle'
+* Added 'lio-popover' and 'lio-tip' components
+* Added 'lio-carousel' component
+* Added support for CSS transitions
+* Created examples for all components
+* Enabled Travis CI
+
 ### v0.1.1 (April 22, 2014)
 
 * Fixed issue with 'boolean-input' value not changing before action is triggered
