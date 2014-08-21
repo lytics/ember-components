@@ -45,6 +45,8 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
 
   anchor: null,
 
+  alignToParent: false,
+
   //
   // Internal Properties
   //
@@ -153,7 +155,8 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
       var $el = this.$();
       var $arrow = $el.find('.arrow');
       var $anchor = $(get(this, 'anchor'));
-      var anchorOffset = $anchor.offset() || { top: 0, left: 0 };
+      var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : $anchor.offset();
+      anchorOffset = anchorOffset || { top: 0, left: 0 };
 
       setProperties(this, {
         offsetTop: anchorOffset.top,
