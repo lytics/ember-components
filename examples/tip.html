@@ -10,6 +10,13 @@
   p {
     margin: 3em;
   }
+  strong {
+    color: black;
+  }
+  .spacer p {
+    margin: 0.5em;
+    text-align: center;
+  }
   lio-popover {
     position: absolute;
     pointer-events: none;
@@ -65,8 +72,15 @@
     border-bottom-color: #000;
   }
   .box {
-    background: rgba(255, 50, 200, 0.3);
-    padding: 10px;
+    position: relative;
+    border: 1px dotted #333;
+    height: 400px;
+    margin: 2em;
+  }
+  .inner-box {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
 </style>
 
@@ -94,6 +108,54 @@
   odio tortor, ac fringilla odio dictum a. Pellentesque molestie lobortis nisi a faucibus. Donec at sapien sed dui malesuada aliquet. Donec neque felis, faucibus vitae lorem sit amet, aliquet vulputate diam. Fusce ut auctor ipsum. Proin porttitor dapibus eros vel placerat. Duis id dui euismod, euismod ante ut, mattis urna. Quisque semper eros nec turpis adipiscing tempus vel sit amet quam. Fusce vestibulum urna ac eros commodo, vitae tristique metus luctus. Etiam sit amet sollicitudin purus. Maecenas nec rhoncus metus. Cras sit amet tempor eros, at cursus est. Nullam pellentesque orci et tellus luctus cursus. Nullam pulvinar fermentum ante, a feugiat mauris fringilla quis.</p>
 
 <p>Cras id congue purus, sed porttitor augue. Aenean in tortor nulla. Pellentesque aliquet suscipit lectus, consequat fringilla urna tempus non. Duis sit amet velit eget nisl imperdiet porttitor. Nunc ut sodales ante. Cras porttitor mauris in leo congue malesuada. In hac habitasse platea dictumst. Praesent aliquet, est non euismod aliquet, velit neque aliquet nisi, in varius ipsum quam sit amet lacus. Cras non interdum metus, at feugiat elit. Morbi fringilla vehicula neque vitae tristique. Vestibulum eu nulla tincidunt, convallis leo a, sollicitudin ipsum. Aliquam arcu nisl, mattis nec mi in, porta ullamcorper sapien. Mauris nulla arcu, condimentum non velit a, varius condimentum libero.</p>
+
+<div class="spacer">
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p><strong><em>scroll to the next example</em></strong></p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+  <p>&middot;</p>
+</div>
+
+<div class="box">
+  <div class="inner-box">
+  <p>In et lacus augue.
+      {{#lio-tip activator="hover"}}
+        {{#lio-label}}
+          <cite tabindex=1>Fusce et tempus nunc, ac feugiat leo. Curabitur dignissim</cite>
+        {{/lio-label}}
+        {{#lio-popover position="right"}}
+          I am not sure what that means. Sorry.
+        {{/lio-popover}}
+      {{/lio-tip}}
+    odio tortor, ac fringilla odio dictum a. Pellentesque molestie lobortis nisi a faucibus. Donec at sapien sed dui malesuada aliquet. Donec neque felis, faucibus vitae lorem sit amet, aliquet vulputate diam. Fusce ut auctor ipsum. Proin porttitor dapibus eros vel placerat. Duis id dui euismod, euismod ante ut, mattis urna. Quisque semper eros nec turpis adipiscing tempus vel sit amet quam. Fusce vestibulum urna ac eros commodo, vitae tristique metus luctus. Etiam sit amet sollicitudin purus. Maecenas nec rhoncus metus. Cras sit amet tempor eros, at cursus est. Nullam pellentesque orci et tellus luctus cursus. Nullam pulvinar fermentum ante, a feugiat mauris fringilla quis.</p>
+  </div>
+</div>
 </script>
 
 <script src="../bower_components/jquery/dist/jquery.js"></script>
