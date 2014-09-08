@@ -110,6 +110,36 @@ test("the value defaults to the `defaultValue` attribute when there is not value
   equal(component.get('value'), true, "value is initially set to default");
 });
 
+test("the value defaults to the `defaultValue` attribute when its bound value is undefined", function() {
+  var contextObject = Ember.Object.create({
+    value: undefined
+  });
+
+  var component = buildComponent(this, {
+    template: template1,
+    defaultValue: false,
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value'
+  });
+
+  equal(contextObject.get('value'), false, "value is set to default when value is undefined");
+});
+
+test("the value defaults to the `defaultValue` attribute when its bound value is null", function() {
+  var contextObject = Ember.Object.create({
+    value: null
+  });
+
+  var component = buildComponent(this, {
+    template: template1,
+    defaultValue: false,
+    contextObject: contextObject,
+    valueBinding: 'contextObject.value'
+  });
+
+  equal(contextObject.get('value'), false, "value is set to default when value is null");
+});
+
 test("component has the correct class based on disabled value", function() {
   var component = buildComponent(this, { template: template1 });
 

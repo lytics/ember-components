@@ -6,7 +6,8 @@ import {
   set,
   run,
   computed,
-  assert
+  assert,
+  isNone
 } from 'ember';
 
 var typeKey = 'toggle';
@@ -114,7 +115,7 @@ export default Component.extend(ParentComponentMixin, {
     var defaultValue = get(this, 'defaultValue');
 
     // Only set the default if there's currently no value
-    if (value === undefined && defaultValue !== undefined) {
+    if (isNone(value) && !isNone(defaultValue)) {
       set(this, 'value', defaultValue);
     }
   }.on('didRegisterComponents')
