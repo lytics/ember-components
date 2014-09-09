@@ -116,5 +116,6 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
     assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
+    set(get(this, 'popover'), 'alignToParent', true);
   }.on('didRegisterComponents')
 });

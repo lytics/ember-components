@@ -436,6 +436,8 @@ define("lytics-components/display/popover",
 
       anchor: null,
 
+      alignToParent: false,
+
       //
       // Internal Properties
       //
@@ -544,7 +546,8 @@ define("lytics-components/display/popover",
           var $el = this.$();
           var $arrow = $el.find('.arrow');
           var $anchor = $(get(this, 'anchor'));
-          var anchorOffset = $anchor.offset() || { top: 0, left: 0 };
+          var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : $anchor.offset();
+          anchorOffset = anchorOffset || { top: 0, left: 0 };
 
           setProperties(this, {
             offsetTop: anchorOffset.top,
@@ -760,6 +763,7 @@ define("lytics-components/display/tip",
         assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
         set(get(this, 'popover'), 'anchor', get(this, 'label').$());
+        set(get(this, 'popover'), 'alignToParent', true);
       }.on('didRegisterComponents')
     });
   });

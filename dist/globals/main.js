@@ -416,6 +416,8 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
 
   anchor: null,
 
+  alignToParent: false,
+
   //
   // Internal Properties
   //
@@ -524,7 +526,8 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
       var $el = this.$();
       var $arrow = $el.find('.arrow');
       var $anchor = $(get(this, 'anchor'));
-      var anchorOffset = $anchor.offset() || { top: 0, left: 0 };
+      var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : $anchor.offset();
+      anchorOffset = anchorOffset || { top: 0, left: 0 };
 
       setProperties(this, {
         offsetTop: anchorOffset.top,
@@ -734,6 +737,7 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
     assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
+    set(get(this, 'popover'), 'alignToParent', true);
   }.on('didRegisterComponents')
 });
 },{"../mixin/active-state":12,"../mixin/parent":14,"../namespace":16}],10:[function(_dereq_,module,exports){

@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.2.1 (September 9, 2014)
+
+* Allow for aligning popovers to their parent
+
 ### v0.2.0 (August 19, 2014)
 
 * Namespaced all components with 'lio-'
