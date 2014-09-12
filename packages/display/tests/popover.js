@@ -105,7 +105,9 @@ test("the arrow position is centered on the popover", function() {
 
     giveBounds(component, {
       offsetTop: 500,
-      offsetLeft: 500
+      offsetLeft: 500,
+      trueOffsetTop: 500,
+      trueOffsetLeft: 500
     });
     component.adjustPosition();
     component.positioners[component.get('renderedPosition')](component);
@@ -139,7 +141,9 @@ test("the arrow position is centered on the popover", function() {
 
     giveBounds(component, {
       offsetTop: 500,
-      offsetLeft: 500
+      offsetLeft: 500,
+      trueOffsetTop: 500,
+      trueOffsetLeft: 500
     });
     component.adjustPosition();
     component.positioners[component.get('renderedPosition')](component);
@@ -160,7 +164,9 @@ test("the arrow position is centered on the popover", function() {
 
     giveBounds(component, {
       offsetTop: 800,
-      offsetLeft: 500
+      offsetLeft: 500,
+      trueOffsetTop: 800,
+      trueOffsetLeft: 500
     });
     component.adjustPosition();
     component.positioners[component.get('renderedPosition')](component);
@@ -183,7 +189,8 @@ test("the tooltip is repositioned when the window resizes", function() {
   Ember.run(function() {
     component.send('activate');
     giveBounds(component, {
-      offsetTop: 1337
+      offsetTop: 1337,
+      trueOffsetTop: 1337
     });
 
     component.adjustPosition();
@@ -192,7 +199,28 @@ test("the tooltip is repositioned when the window resizes", function() {
     $(window).trigger('resize');
     notEqual(component.get('offsetTop'), 1337);
   });
+});
 
+test("the tooltip does not flip when the offset to the parent is too small but the true offset is not too small", function() {
+  var component = buildComponent(this, {
+    layout: compileTemplate(defaultTemplate),
+    position: 'top'
+  });
+
+  $('<div id="anchor">').appendTo('#ember-testing');
+  component.set('anchor', '#anchor');
+
+  Ember.run(function() {
+    component.send('activate');
+    giveBounds(component, {
+      offsetTop: 5,
+      trueOffsetTop: 500
+    });
+
+    component.adjustPosition();
+    equal(component.get('position'), 'top');
+    equal(component.get('renderedPosition'), 'top');
+  });
 });
 
 function defaultTemplate() {/*
@@ -203,6 +231,9 @@ function giveBounds(component, overrides) {
   component.setProperties(Ember.merge({
     offsetTop: 10,
     offsetLeft: 10,
+
+    trueOffsetTop: 10,
+    trueOffsetLeft: 10,
 
     windowWidth: 1000,
     windowHeight: 1000,
