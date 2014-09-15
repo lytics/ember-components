@@ -27,6 +27,7 @@
     margin: 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     transition: .15s opacity linear;
+    color: black;
   }
   lio-popover.active,
   lio-popover.activating {
@@ -81,6 +82,18 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+  }
+  .stamp lio-label {
+    color: white;
+    background: #666;
+    padding: 15px;
+    text-transform: uppercase;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .stamp lio-popover {
+    white-space: nowrap;
   }
 </style>
 
@@ -143,6 +156,16 @@
 </div>
 
 <div class="box">
+  <div class="stamp">
+    {{#lio-tip activator="hover"}}
+      {{#lio-label}}
+        stamp
+      {{/lio-label}}
+      {{#lio-popover position="top"}}
+        This should have busted right out of the box
+      {{/lio-popover}}
+    {{/lio-tip}}
+  </div>
   <div class="inner-box">
   <p>In et lacus augue.
       {{#lio-tip activator="hover"}}
