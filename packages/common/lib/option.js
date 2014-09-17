@@ -32,9 +32,9 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
 
   typeKey: typeKey,
 
-  valueClass: function() {
+  valueClass: computed(function() {
     return '' + get(this, 'value');
-  }.property('value'),
+  }).property('value'),
 
   // Override the active state mixin's property to use the parent's value
   isActive: computed(function() {

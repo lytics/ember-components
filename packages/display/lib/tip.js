@@ -7,6 +7,8 @@ import {
   String,
   get,
   set,
+  observer,
+  computed,
   assert
 } from 'ember';
 
@@ -51,17 +53,17 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
 
   fromFocus: false,
 
-  togglePopover: function() {
+  togglePopover: observer('active', function() {
     set(get(this, 'popover'), 'active', get(this, 'active'));
-  }.observes('active'),
+  }),
 
-  label: function() {
+  label: computed(function() {
     return get(this.componentsForType('label'), 'firstObject');
-  }.property(),
+  }).property(),
 
-  popover: function() {
+  popover: computed(function() {
     return get(this.componentsForType('popover'), 'firstObject');
-  }.property(),
+  }).property(),
 
   //
   // Event Handlers
@@ -111,12 +113,15 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
   // Hooks / Observers
   //
 
-  verifyContents: function() {
+  // Verify dependencies and auto-set options on child popover
+  didRegisterComponents: function() {
+    this._super();
+
     var labelsLength = get(this.componentsForType('label'), 'length');
     var popoversLength = get(this.componentsForType('popover'), 'length');
     assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
     set(get(this, 'popover'), 'alignToParent', true);
-  }.on('didRegisterComponents')
+  }
 });

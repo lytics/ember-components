@@ -4,11 +4,13 @@ var global = this;
 
 setResolver(Ember.DefaultResolver.extend({
   testSubjects: Object.keys(Lytics.Components).reduce(function(result, key) {
-    var shortName, factory;
+    var typeSuffix, shortName, factory;
 
     [ 'component', 'mixin', 'template' ].forEach(function(type) {
-      if (key.indexOf(type.capitalize()) !== -1) {
-        shortName = key.replace(type.capitalize(), '').dasherize();
+      typeSuffix = Ember.String.capitalize(type);
+
+      if (key.indexOf(typeSuffix) !== -1) {
+        shortName = Ember.String.dasherize(key.replace(typeSuffix, ''));
 
         factory = result[prefix(type) + shortName] = Lytics.Components[key];
 
