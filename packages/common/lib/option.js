@@ -5,7 +5,8 @@ import TransitionMixin from '../mixin/transition';
 import {
   Component,
   get,
-  computed
+  computed,
+  uuid
 } from 'ember';
 
 var typeKey = 'option';
@@ -33,8 +34,21 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   typeKey: typeKey,
 
   valueClass: computed(function() {
-    return '' + get(this, 'value');
+    var value = get(this, 'value');
+    var type = Ember.typeOf(value);
+
+    // Avoid '[Object object]' classes and complex toString'd values
+    if (type === 'object' || type === 'instance') {
+      // Look for an identifier, fall back on a uuid
+      value = get(value, 'id') || ('option-' + get(this, 'uuid'));
+    }
+
+    return '' + value;
   }).property('value'),
+
+  uuid: computed(function() {
+    return uuid();
+  }).property(),
 
   // Override the active state mixin's property to use the parent's value
   isActive: computed(function() {
