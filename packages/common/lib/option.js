@@ -5,6 +5,7 @@ import TransitionMixin from '../mixin/transition';
 import {
   Component,
   get,
+  set,
   computed,
   uuid
 } from 'ember';
@@ -15,8 +16,14 @@ var typeKey = 'option';
   Option Component
 
   This component represents an option that the user can choose from. The value
-  of the option is set through its `value` attribute, which a string
-  representation of is set as a class.
+  of the option is set through its `value` attribute, which defaults to the
+  template's context if omitted (this makes looping over options easy). Options
+  have a 'selected' state which is managed by the parent component, and an
+  optional 'unselect' attribute which effectively makes the option a 'remove'
+  button (with a value). When clicked, options send the 'select' event to their
+  parent with its value, which can be disabled using the 'disabled' state.
+  Options also have a class binding for an intelligent string representation of
+  its value.
 */
 export default Component.extend(ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
   //
@@ -25,13 +32,29 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'valueClass' ],
+  classNameBindings: [ 'valueClass', 'disabled', 'selected', 'unselect' ],
+
+  //
+  // Handlebars Attributes
+  //
+
+  selected: false,
+
+  unselect: false,
+
+  disabled: computed.oneWay('parent.disabled'),
 
   //
   // Internal Properties
   //
 
   typeKey: typeKey,
+
+  isSelected: computed.readOnly('selected'),
+
+  isUnselect: computed.readOnly('unselect'),
+
+  isDisabled: computed.readOnly('disabled'),
 
   valueClass: computed(function() {
     var value = get(this, 'value');
@@ -53,5 +76,32 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   // Override the active state mixin's property to use the parent's value
   isActive: computed(function() {
     return get(this, 'value') === get(this, 'parent.value');
-  }).property('value', 'parent.value')
+  }).property('value', 'parent.value'),
+
+  //
+  // Event Handlers
+  //
+
+  click: function() {
+    // Do not perform the action if the component is disabled
+    if (get(this, 'isDisabled')) { return; }
+
+    var parent = get(this, 'parent');
+    var isUnselect = get(this, 'isUnselect');
+    var isSelected = get(this, 'isSelected');
+    var value = get(this, 'value');
+
+    // Don't set the select state directly; let the parent manage the state
+    parent.send('select', value, isUnselect ? false : !isSelected);
+  }
+}).reopenClass({
+  create: function(props) {
+    // If the 'value' attribute is not provided, default to using the
+    // template's context for convenience
+    if (!('value' in props)) {
+      props.value = props._context;
+    }
+
+    return this._super(props);
+  }
 });

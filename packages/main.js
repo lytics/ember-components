@@ -11,6 +11,7 @@ import PopoverComponent from './display/popover';
 import PopoverTemplate from './display/templates/popover';
 import TipComponent from './display/tip';
 import ToggleComponent from './input/toggle';
+import MultiSelectComponent from './input/multi-select';
 import { Application } from 'ember';
 
 Application.initializer({
@@ -25,6 +26,7 @@ Application.initializer({
     application.register('template:components/lio-popover', PopoverTemplate);
     application.register('component:lio-tip', TipComponent);
     application.register('component:lio-toggle', ToggleComponent);
+    application.register('component:lio-multi-select', MultiSelectComponent);
   }
 });
 
@@ -38,7 +40,8 @@ export {
   ContentComponent,
   LabelComponent,
   CarouselComponent,
-  ToggleComponent,
   PopoverComponent,
-  TipComponent
+  TipComponent,
+  ToggleComponent,
+  MultiSelectComponent
 };

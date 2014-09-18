@@ -1,0 +1,183 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    width: 600px;
+    margin: auto;
+    margin-top: 50px;
+    color: #999;
+    font-family: sans-serif;
+  }
+  lio-multi-select {
+    display: block;
+    height: 200px;
+  }
+  lio-option {
+    display: block;
+    padding: 5px 40px;
+    color: #777;
+    cursor: pointer;
+  }
+  lio-option:hover {
+    background-color: #dbe3f0;
+  }
+  .native-input {
+    padding: 10px 0;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    overflow-y: auto;
+  }
+  .native-input lio-option.selected {
+    background-color: #bfc8d7;
+  }
+  .native-input lio-option.selected:hover {
+    background-color: #dbe3f0;
+  }
+  .side-by-side {
+    position: relative;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+  }
+  .side-by-side .unselected-options,
+  .side-by-side .selected-options {
+    width: 50%;
+    height: 100%;
+    padding: 10px 0;
+    border-radius: 0;
+    overflow-y: auto;
+  }
+  .side-by-side .unselected-options {
+    float: left;
+    border-right: 2px solid #aaa;
+  }
+  .side-by-side .selected-options {
+    float: right;
+  }
+  .side-by-side lio-option.selected {
+    display: none;
+  }
+  .side-by-side .actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .side-by-side .actions lio-button {
+    display: block;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 24px;
+    font-family: monospace;
+  }
+  .side-by-side .actions lio-button.disabled {
+    color: #ccc;
+    border-color: #ccc;
+  }
+  .side-by-side lio-button[action="select-all"]:before {
+    content: "⇨";
+  }
+  .side-by-side lio-button[action="unselect-all"]:before {
+    content: "⇦";
+  }
+</style>
+
+<script type="text/x-handlebars">
+  {{#lio-multi-select values=values class="native-input"}}
+    {{#each model}}
+      {{#lio-option value=value}}{{capitalize label}}{{/lio-option}}
+    {{/each}}
+  {{/lio-multi-select}}
+
+  <br/>
+
+  {{#lio-multi-select values=selection class="side-by-side"}}
+    <div class="unselected-options">
+      {{#each model}}
+        {{#lio-option}}{{capitalize label}}{{/lio-option}}
+      {{/each}}
+    </div>
+
+    <div class="selected-options">
+      {{#each selection}}
+        {{#lio-option unselect=true}}{{capitalize label}}{{/lio-option}}
+      {{/each}}
+    </div>
+
+    <span class="actions">
+      {{lio-button action="select-all"}}
+      {{lio-button action="unselect-all"}}
+    </span>
+  {{/lio-multi-select}}
+
+  <h4>Selected Values:</h4>
+  {{#if values}}
+    <ul>
+      {{#each values}}
+        <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <em>none</em>
+  {{/if}}
+</script>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/handlebars/handlebars.js"></script>
+<script src="../bower_components/ember/ember.js"></script>
+<script src="../dist/globals/main.js"></script>
+
+<script>
+  var App = Ember.Application.create();
+  var numbers = 'zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'.split(' ');
+
+  App.ApplicationRoute = Ember.Route.extend({
+    model: function() {
+      return Ember.A(numbers.map(function(number, index) {
+        return {
+          value: index,
+          label: number
+        };
+      }));
+    }
+  });
+
+  App.ApplicationController = Ember.ArrayController.extend({
+    selection: null,
+
+    // Two way mapping of selected values <=> models
+    values: Ember.computed(function(key, values) {
+      if (arguments.length === 1) {
+        return Ember.A(this.get('selection').mapBy('value'));
+      } else {
+        values = Ember.A(values);
+
+        this.set('selection', this.get('model').filter(function(model) {
+          return values.contains(model.value);
+        }));
+
+        return values;
+      }
+    }).property('selection.[]'),
+
+    // Initialize selection to a random subset of models
+    setSelection: Ember.observer('model', function() {
+      var randomModels = this.get('model').filter(function() {
+        return Math.random() < .25;
+      });
+
+      this.set('selection', Ember.A(randomModels));
+    })
+  });
+
+  Ember.Handlebars.helper('capitalize', function(str) {
+    return Ember.String.capitalize(str);
+  });
+</script>
