@@ -55,13 +55,15 @@ export default Component.extend(ParentComponentMixin, {
 
   typeKey: typeKey,
 
-  allowedComponents: [ 'option', 'button' ],
+  allowedComponents: [ 'option', 'button', 'filter' ],
 
   isDisabled: computed.readOnly('disabled'),
 
   allOptionComponents: computed.filterBy('components', 'typeKey', 'option'),
 
   optionComponents: computed.filterBy('allOptionComponents', 'unselect', false),
+
+  filteredComponents: computed.readOnly('optionComponents'),
 
   optionCount: computed.readOnly('optionComponents.length'),
 

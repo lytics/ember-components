@@ -4,6 +4,8 @@ moduleForComponent('lio-multi-select', 'MultiSelectComponent', {
   needs: [
     'component:lio-option',
     'component:lio-button',
+    'component:lio-filter',
+    'component:lio-text-field',
   ]
 });
 
@@ -349,6 +351,61 @@ test("clicking an option with the 'unselect' attribute unselects the option with
   ok(component.$('lio-option:nth-of-type(4)').hasClass('unselect'), "unselect option has 'unselect' class");
   component.$('lio-option.unselect').simulate('click');
   ok(!component.$('lio-option:nth-of-type(1)').hasClass('selected'), "first option does not have 'selected' class");
+});
+
+test("the filter component must contain a text field", function() {
+  var context = this;
+
+  this.subject({
+    layout: compileTemplate(function() {/*
+      {{#lio-filter}}
+        {{lio-button action="clear"}}
+      {{/lio-filter}}
+    */})
+  });
+
+  throws(function() {
+    context.append();
+  }, /The 'lio-filter' component must contain a single 'lio-text-field' component./);
+});
+
+test("entering a filter value filters the list of options", function() {
+  var component = buildComponent(this, {
+    layout: compileTemplate(function() {/*
+      {{#lio-option value=1}}One{{/lio-option}}
+      {{#lio-option value=2}}Two{{/lio-option}}
+      {{#lio-option value=3}}Three{{/lio-option}}
+
+      {{#lio-filter debounce=false}}
+        {{lio-text-field}}
+      {{/lio-filter}}
+    */}),
+  });
+
+  ok(!component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
+  component.$('lio-filter input').val('t').change();
+  ok(component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option has 'filtered' class");
+});
+
+test("clicking the 'clear' button removes filtered state from options", function() {
+  var component = buildComponent(this, {
+    layout: compileTemplate(function() {/*
+      {{#lio-option value=1}}One{{/lio-option}}
+      {{#lio-option value=2}}Two{{/lio-option}}
+      {{#lio-option value=3}}Three{{/lio-option}}
+
+      {{#lio-filter debounce=false}}
+        {{lio-text-field}}
+        {{lio-button action="clear"}}
+      {{/lio-filter}}
+    */}),
+  });
+
+  component.$('lio-filter input').val('t').change();
+  ok(component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option has 'filtered' class");
+  component.$('lio-button[action="clear"]').simulate('click');
+  equal(component.$('lio-filter input').val(), '', "filter value is empty");
+  ok(!component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
 });
 
 })();

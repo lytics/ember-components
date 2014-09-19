@@ -32,7 +32,7 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'valueClass', 'disabled', 'selected', 'unselect' ],
+  classNameBindings: [ 'valueClass', 'disabled', 'selected', 'unselect', 'filtered' ],
 
   //
   // Handlebars Attributes
@@ -43,6 +43,8 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   unselect: false,
 
   disabled: computed.oneWay('parent.disabled'),
+
+  filtered: false,
 
   //
   // Internal Properties
@@ -55,6 +57,8 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   isUnselect: computed.readOnly('unselect'),
 
   isDisabled: computed.readOnly('disabled'),
+
+  isFiltered: computed.readOnly('filtered'),
 
   valueClass: computed(function() {
     var value = get(this, 'value');
