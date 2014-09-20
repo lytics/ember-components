@@ -84,7 +84,8 @@
   .side-by-side .selected-options {
     right: 0;
   }
-  .side-by-side lio-option.selected,
+  .side-by-side .unselected-options lio-option.selected,
+  .side-by-side .selected-options lio-option:not(.selected),
   .side-by-side .unselected-options lio-option.filtered {
     display: none;
   }
@@ -127,7 +128,7 @@
 
   <br/>
 
-  {{#lio-multi-select values=selection class="side-by-side"}}
+  {{#lio-multi-select values=values optionValuePath="value" class="side-by-side"}}
     {{#lio-filter}}
       {{lio-text-field placeholder="search..."}}
       {{lio-button action="clear"}}
@@ -140,7 +141,7 @@
     </div>
 
     <div class="selected-options">
-      {{#each selection}}
+      {{#each model}}
         {{#lio-option unselect=true}}{{capitalize label}}{{/lio-option}}
       {{/each}}
     </div>
@@ -184,30 +185,14 @@
   });
 
   App.ApplicationController = Ember.ArrayController.extend({
-    selection: null,
-
-    // Two way mapping of selected values <=> models
-    values: Ember.computed(function(key, values) {
-      if (arguments.length === 1) {
-        return Ember.A(this.get('selection').mapBy('value'));
-      } else {
-        values = Ember.A(values);
-
-        this.set('selection', this.get('model').filter(function(model) {
-          return values.contains(model.value);
-        }));
-
-        return values;
-      }
-    }).property('selection.[]'),
-
     // Initialize selection to a random subset of models
-    setSelection: Ember.observer('model', function() {
+    setValues: Ember.observer('model', function() {
       var randomModels = this.get('model').filter(function() {
         return Math.random() < .25;
       });
+      var values = Ember.A(randomModels).mapBy('value');
 
-      this.set('selection', Ember.A(randomModels));
+      this.set('values', Ember.A(values));
     })
   });
 

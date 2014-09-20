@@ -38,6 +38,18 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   // Handlebars Attributes
   //
 
+  option: null,
+
+  value: computed(function() {
+    // The 'content' path is the current context
+    var path = this.get('valuePath');
+    var option = this.get('option');
+
+    return option && get(option, path);
+  }).property('option', 'valuePath'),
+
+  valuePath: computed.oneWay('parent.optionValuePath'),
+
   selected: false,
 
   unselect: false,
@@ -102,8 +114,8 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   create: function(props) {
     // If the 'value' attribute is not provided, default to using the
     // template's context for convenience
-    if (!('value' in props)) {
-      props.value = props._context;
+    if (!('option' in props)) {
+      props.option = props._context;
     }
 
     return this._super(props);

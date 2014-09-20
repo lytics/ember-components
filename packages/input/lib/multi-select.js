@@ -170,7 +170,7 @@ export default Component.extend(ParentComponentMixin, {
 
   // Update the `selected` state of all options to reflect current values
   syncOptions: function() {
-    var options = get(this, 'optionComponents');
+    var options = get(this, 'allOptionComponents');
     var values = A(get(this, 'values') || []);
 
     assert("The 'value' attribute of '" + get(this, 'tagName') + "' components must not contain duplicate values.", get(values, 'length') === get(values.uniq(), 'length'));

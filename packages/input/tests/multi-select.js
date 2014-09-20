@@ -408,4 +408,45 @@ test("clicking the 'clear' button removes filtered state from options", function
   ok(!component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
 });
 
+test("an option's value is looked up using the option's 'valuePath' attribute", function() {
+  var component = buildComponent(this, {
+    values: [],
+    options: Ember.A([
+      { value: 1 },
+      { value: 2 },
+      { value: 3 }
+    ]),
+    layout: compileTemplate(function() {/*
+      {{#each options}}
+        {{lio-option valuePath="value"}}
+      {{/each}}
+    */}),
+  });
+
+  component.$('lio-option:nth-of-type(1)').simulate('click');
+  component.$('lio-option:nth-of-type(2)').simulate('click');
+  deepEqual(component.get('values'), [ 1, 2 ]);
+});
+
+test("an option's value is looked up using the 'optionValuePath' attribute", function() {
+  var component = buildComponent(this, {
+    values: [],
+    optionValuePath: 'value',
+    options: Ember.A([
+      { value: 1 },
+      { value: 2 },
+      { value: 3 }
+    ]),
+    layout: compileTemplate(function() {/*
+      {{#each options}}
+        {{lio-option}}
+      {{/each}}
+    */}),
+  });
+
+  component.$('lio-option:nth-of-type(1)').simulate('click');
+  component.$('lio-option:nth-of-type(2)').simulate('click');
+  deepEqual(component.get('values'), [ 1, 2 ]);
+});
+
 })();
