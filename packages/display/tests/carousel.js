@@ -10,7 +10,7 @@ moduleForComponent('lio-carousel', 'CarouselComponent', {
 
 test("component has correct tag name", function() {
   var component = buildComponent(this, {
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
     */})
@@ -21,7 +21,7 @@ test("component has correct tag name", function() {
 
 test("the first content item has the correct class when none are marked as active", function() {
   var component = buildComponent(this, {
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
     */})
@@ -33,7 +33,7 @@ test("the first content item has the correct class when none are marked as activ
 
 test("the content item marked as active has the correct class", function() {
   var component = buildComponent(this, {
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
       {{#lio-content active=true}}bar{{/lio-content}}
     */})
@@ -47,7 +47,7 @@ test("only one content item can be active", function() {
   var context = this;
 
   this.subject({
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content active=true}}foo{{/lio-content}}
       {{#lio-content active=true}}bar{{/lio-content}}
     */})
@@ -61,7 +61,7 @@ test("only one content item can be active", function() {
 test("clicking the 'forward' button activates the next content item", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content active=true}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
       {{#lio-button action="forward"}}›{{/lio-button}}
@@ -76,7 +76,7 @@ test("clicking the 'forward' button activates the next content item", function()
 test("clicking the 'forward' button multiple times activates sequential content items", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content active=true}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
       {{#lio-content}}baz{{/lio-content}}
@@ -93,7 +93,7 @@ test("clicking the 'forward' button multiple times activates sequential content 
 test("clicking the 'forward' button activates the first content item when the last item is active", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
       {{#lio-content active=true}}bar{{/lio-content}}
       {{#lio-button action="forward"}}›{{/lio-button}}
@@ -108,7 +108,7 @@ test("clicking the 'forward' button activates the first content item when the la
 test("clicking the 'backward' button activates the previous content item", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
       {{#lio-content active=true}}bar{{/lio-content}}
       {{#lio-button action="backward"}}‹{{/lio-button}}
@@ -123,7 +123,7 @@ test("clicking the 'backward' button activates the previous content item", funct
 test("clicking the 'backward' button activates the last content item when the first item is active", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content active=true}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
       {{#lio-button action="backward"}}‹{{/lio-button}}
@@ -139,7 +139,7 @@ test("the number of labels must be the same as the number of content items", fun
   var context = this;
 
   this.subject({
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
       {{lio-label}}
@@ -154,7 +154,7 @@ test("the number of labels must be the same as the number of content items", fun
 test("clicking a label activates the content item with the same index", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content active=true}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
       {{lio-label}}
@@ -170,7 +170,7 @@ test("clicking a label activates the content item with the same index", function
 test("labels are activated at the same index as the content item", function() {
   var component = buildComponent(this, {
     disableTransitions: true,
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content active=true}}foo{{/lio-content}}
       {{#lio-content}}bar{{/lio-content}}
       {{lio-label}}
@@ -187,7 +187,7 @@ test("labels are activated at the same index as the content item", function() {
 
 test("the component has the correct class when it contains no content items", function() {
   var component = buildComponent(this, {
-    template: compileTemplate(function() {/* */})
+    layout: compileTemplate(function() {/* */})
   });
 
   ok(component.$().hasClass('empty'), "has the 'empty' class");
@@ -195,7 +195,7 @@ test("the component has the correct class when it contains no content items", fu
 
 test("the component has the correct class when it contains one content item", function() {
   var component = buildComponent(this, {
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{#lio-content}}foo{{/lio-content}}
     */})
   });
@@ -206,7 +206,7 @@ test("the component has the correct class when it contains one content item", fu
 test("transition classes are added when activating content items", function() {
   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
     var component = buildComponent(this, {
-      template: compileTemplate(function() {/*
+      layout: compileTemplate(function() {/*
         {{#lio-content active=true}}foo{{/lio-content}}
         {{#lio-content}}bar{{/lio-content}}
         {{#lio-button action="forward"}}›{{/lio-button}}
