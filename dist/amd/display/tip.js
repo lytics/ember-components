@@ -10,6 +10,8 @@ define(
     var String = __dependency4__.String;
     var get = __dependency4__.get;
     var set = __dependency4__.set;
+    var observer = __dependency4__.observer;
+    var computed = __dependency4__.computed;
     var assert = __dependency4__.assert;
 
     var typeKey = 'tip';
@@ -53,17 +55,17 @@ define(
 
       fromFocus: false,
 
-      togglePopover: function() {
+      togglePopover: observer('active', function() {
         set(get(this, 'popover'), 'active', get(this, 'active'));
-      }.observes('active'),
+      }),
 
-      label: function() {
+      label: computed(function() {
         return get(this.componentsForType('label'), 'firstObject');
-      }.property(),
+      }).property(),
 
-      popover: function() {
+      popover: computed(function() {
         return get(this.componentsForType('popover'), 'firstObject');
-      }.property(),
+      }).property(),
 
       //
       // Event Handlers
@@ -113,13 +115,16 @@ define(
       // Hooks / Observers
       //
 
-      verifyContents: function() {
+      // Verify dependencies and auto-set options on child popover
+      didRegisterComponents: function() {
+        this._super();
+
         var labelsLength = get(this.componentsForType('label'), 'length');
         var popoversLength = get(this.componentsForType('popover'), 'length');
         assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
         set(get(this, 'popover'), 'anchor', get(this, 'label').$());
         set(get(this, 'popover'), 'alignToParent', true);
-      }.on('didRegisterComponents')
+      }
     });
   });

@@ -1,6 +1,6 @@
 define(
-  ["./mixin/parent","./mixin/child","./mixin/active-state","./mixin/transition","./common/option","./common/button","./common/content","./common/label","./display/carousel","./display/popover","./display/templates/popover","./display/tip","./input/toggle","ember","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __dependency14__, __exports__) {
+  ["./mixin/parent","./mixin/child","./mixin/active-state","./mixin/transition","./common/option","./common/button","./common/content","./common/label","./common/text-field","./common/filter","./display/carousel","./display/popover","./display/templates/popover","./display/tip","./input/toggle","./input/multi-select","ember","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __dependency14__, __dependency15__, __dependency16__, __dependency17__, __exports__) {
     "use strict";
     var ParentComponentMixin = __dependency1__["default"] || __dependency1__;
     var ChildComponentMixin = __dependency2__["default"] || __dependency2__;
@@ -10,12 +10,15 @@ define(
     var ButtonComponent = __dependency6__["default"] || __dependency6__;
     var ContentComponent = __dependency7__["default"] || __dependency7__;
     var LabelComponent = __dependency8__["default"] || __dependency8__;
-    var CarouselComponent = __dependency9__["default"] || __dependency9__;
-    var PopoverComponent = __dependency10__["default"] || __dependency10__;
-    var PopoverTemplate = __dependency11__["default"] || __dependency11__;
-    var TipComponent = __dependency12__["default"] || __dependency12__;
-    var ToggleComponent = __dependency13__["default"] || __dependency13__;
-    var Application = __dependency14__.Application;
+    var TextFieldComponent = __dependency9__["default"] || __dependency9__;
+    var FilterComponent = __dependency10__["default"] || __dependency10__;
+    var CarouselComponent = __dependency11__["default"] || __dependency11__;
+    var PopoverComponent = __dependency12__["default"] || __dependency12__;
+    var PopoverTemplate = __dependency13__["default"] || __dependency13__;
+    var TipComponent = __dependency14__["default"] || __dependency14__;
+    var ToggleComponent = __dependency15__["default"] || __dependency15__;
+    var MultiSelectComponent = __dependency16__["default"] || __dependency16__;
+    var Application = __dependency17__.Application;
 
     Application.initializer({
       name: 'lyticsComponents',
@@ -24,11 +27,14 @@ define(
         application.register('component:lio-button', ButtonComponent);
         application.register('component:lio-content', ContentComponent);
         application.register('component:lio-label', LabelComponent);
+        application.register('component:lio-text-field', TextFieldComponent);
+        application.register('component:lio-filter', FilterComponent);
         application.register('component:lio-carousel', CarouselComponent);
         application.register('component:lio-popover', PopoverComponent);
         application.register('template:components/lio-popover', PopoverTemplate);
         application.register('component:lio-tip', TipComponent);
         application.register('component:lio-toggle', ToggleComponent);
+        application.register('component:lio-multi-select', MultiSelectComponent);
       }
     });
 
@@ -40,8 +46,11 @@ define(
     __exports__.ButtonComponent = ButtonComponent;
     __exports__.ContentComponent = ContentComponent;
     __exports__.LabelComponent = LabelComponent;
+    __exports__.TextFieldComponent = TextFieldComponent;
+    __exports__.FilterComponent = FilterComponent;
     __exports__.CarouselComponent = CarouselComponent;
-    __exports__.ToggleComponent = ToggleComponent;
     __exports__.PopoverComponent = PopoverComponent;
     __exports__.TipComponent = TipComponent;
+    __exports__.ToggleComponent = ToggleComponent;
+    __exports__.MultiSelectComponent = MultiSelectComponent;
   });

@@ -53,9 +53,9 @@ exports["default"] = Component.extend(ParentComponentMixin, {
 
   allowedComponents: [ 'option' ],
 
-  valueClass: function() {
+  valueClass: computed(function() {
     return '' + get(this, 'value');
-  }.property('value'),
+  }).property('value'),
 
   possibleValues: computed(function() {
     return this.componentsForType('option').mapBy('value');
@@ -104,11 +104,12 @@ exports["default"] = Component.extend(ParentComponentMixin, {
   // Hooks / Observers
   //
 
-  verifyDependencies: function() {
-    assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
-  }.on('didRegisterComponents'),
+  // Verify dependencies and initialize the default value
+  didRegisterComponents: function() {
+    this._super();
 
-  populateDefault: function() {
+    assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
+
     var value = get(this, 'value');
     var defaultValue = get(this, 'defaultValue');
 
@@ -116,5 +117,5 @@ exports["default"] = Component.extend(ParentComponentMixin, {
     if (value === undefined && defaultValue !== undefined) {
       set(this, 'value', defaultValue);
     }
-  }.on('didRegisterComponents')
+  }
 });

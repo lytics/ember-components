@@ -5,6 +5,7 @@ var Mixin = require("ember").Mixin;
 var A = require("ember").A;
 var get = require("ember").get;
 var set = require("ember").set;
+var computed = require("ember").computed;
 var run = require("ember").run;
 var $ = require("ember").$;
 
@@ -18,9 +19,9 @@ exports["default"] = Mixin.create({
 
   // Any component can override this property to never use transitions,
   // otherwise it defaults to the parent component's value
-  disableTransitions: function() {
+  disableTransitions: computed(function() {
     return get(this, 'parent.disableTransitions') === true;
-  }.property(),
+  }).property(),
 
   //
   // Internal Properties
@@ -41,7 +42,9 @@ exports["default"] = Mixin.create({
 
   // Normalize the 'transitionend' event by setting up an Ember event to fire
   // when the DOM event fires; this is primarily for testing purposes
-  initTransitionEvent: function() {
+  didInsertElement: function(view) {
+    this._super(view);
+
     var component = this;
 
     if ($.support.transition) {
@@ -55,7 +58,7 @@ exports["default"] = Mixin.create({
         return false;
       });
     }
-  }.on('didInsertElement'),
+  },
 
   //
   // Internal Methods

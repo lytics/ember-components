@@ -3,7 +3,7 @@ define(
   function(__dependency1__, __exports__) {
     "use strict";
     var Mixin = __dependency1__.Mixin;
-    var EmberArray = __dependency1__.A;
+    var A = __dependency1__.A;
     var get = __dependency1__.get;
     var set = __dependency1__.set;
     var assert = __dependency1__.assert;
@@ -25,9 +25,11 @@ define(
       // Hooks / Observers
       //
 
-      initComponents: function() {
-        set(this, 'components', EmberArray());
-      }.on('init'),
+      init: function() {
+        this._super();
+
+        set(this, 'components', A());
+      },
 
       //
       // Internal Methods
@@ -38,10 +40,13 @@ define(
         var allowed = get(this, 'allowedComponents');
 
         assert("All registered components must have a `typeKey` property, got '" + type + "'", typeof type === 'string');
-        assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", EmberArray(allowed).contains(type));
+        assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", A(allowed).contains(type));
 
         get(this, 'components').pushObject(component);
       },
+
+      // Hook stub to allow uses of `_super`
+      didRegisterComponents: Ember.K,
 
       didInsertComponent: function() {
         // Once a component is actually in the DOM, we know that all components have been registered
@@ -52,7 +57,7 @@ define(
       },
 
       componentsForType: function(type) {
-        return get(this, 'components').filterBy('typeKey', type);
+        return A(get(this, 'components').filterBy('typeKey', type));
       }
     });
   });

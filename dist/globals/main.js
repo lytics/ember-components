@@ -56,6 +56,8 @@ exports["default"] = Component.extend(ChildComponentMixin, {
 
   attributeBindings: [ 'action', 'disabled' ],
 
+  classNameBindings: [ 'disabled' ],
+
   //
   // Handlebars Attributes
   //
@@ -84,10 +86,10 @@ exports["default"] = Component.extend(ChildComponentMixin, {
 
     assert("All '" + get(this, 'tagName') + "' components must define an `action` attribute.", action);
 
-    get(this, 'parent').send(action);
+    get(this, 'parent').send(Ember.String.camelize(action));
   }
 });
-},{"../mixin/child":13,"../namespace":16}],3:[function(_dereq_,module,exports){
+},{"../mixin/child":16,"../namespace":19}],3:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ChildComponentMixin = _dereq_("../mixin/child")["default"] || _dereq_("../mixin/child");
@@ -115,7 +117,132 @@ exports["default"] = Component.extend(ChildComponentMixin, ActiveStateMixin, Tra
 
   typeKey: typeKey
 });
-},{"../mixin/active-state":12,"../mixin/child":13,"../mixin/transition":15,"../namespace":16}],4:[function(_dereq_,module,exports){
+},{"../mixin/active-state":15,"../mixin/child":16,"../mixin/transition":18,"../namespace":19}],4:[function(_dereq_,module,exports){
+"use strict";
+var tagForType = _dereq_("../namespace").tagForType;
+var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
+var ChildComponentMixin = _dereq_("../mixin/child")["default"] || _dereq_("../mixin/child");
+var A = window.Ember.A;
+var Component = window.Ember.Component;
+var get = window.Ember.get;
+var set = window.Ember.set;
+var computed = window.Ember.computed;
+var observer = window.Ember.observer;
+var run = window.Ember.run;
+var assert = window.Ember.assert;
+
+var typeKey = 'filter';
+
+/**
+  Filter Component
+
+  This component provides an interface for filtering a set of components. The
+  text field component provides the filter pattern and an optional button can
+  be provided to clear the text field. Components are filtered based on their
+  `innerText`, and when filtered out, the `filtered` property is set to true.
+
+  ```handlebars
+  {{#lio-filter}}
+    {{lio-text-field}}
+    {{lio-button action="clear"}}
+  {{/lio-multi-select}}
+  ```
+*/
+exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin, {
+  //
+  // HTML Properties
+  //
+
+  tagName: tagForType(typeKey),
+
+  //
+  // Handlebars Attributes
+  //
+
+  value: null,
+
+  debounce: 200,
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
+  allowedComponents: [ 'text-field', 'button' ],
+
+  textFieldComponent: computed(function() {
+    return get(this.componentsForType('text-field'), 'firstObject');
+  }).property('components.[]'),
+
+  filterValue: computed.alias('textFieldComponent.value'),
+
+  //
+  // Internal Actions
+  //
+
+  actions: {
+    clear: function() {
+      set(this, 'filterValue', '');
+      this.updateFilter();
+    }
+  },
+
+  //
+  // Hooks / Observers
+  //
+
+  // Verify dependencies and initialized CPs
+  didRegisterComponents: function() {
+    this._super();
+
+    assert("The '" + get(this, 'tagName') + "' component must contain a single 'lio-text-field' component.", this.componentsForType('text-field').length === 1);
+
+    // Prime the computed property so that it can be observed
+    get(this, 'textFieldComponent');
+  },
+
+  debouncedFilterUpdate: Ember.observer('filterValue', function() {
+    var interval = get(this, 'debounce');
+
+    if (interval) {
+      run.debounce(this, this.updateFilter, interval);
+    } else {
+      this.updateFilter();
+    }
+  }),
+
+  updateFilter: function() {
+    var filterValue = get(this, 'filterValue');
+    var components = get(this, 'parent.filteredComponents');
+
+    if (!filterValue) {
+      components.invoke('set', 'filtered', false);
+    } else {
+      components.forEach(function(component) {
+        var matches = fuzzyMatch(filterValue, component.$().text());
+
+        set(component, 'filtered', !matches);
+      });
+    }
+  }
+});
+
+// Simple fuzzy pattern matching using regular expressions, adapted from:
+// http://codereview.stackexchange.com/questions/23899/faster-javascript-fuzzy-string-matching-function
+function fuzzyMatch(pattern, str) {
+  var cache = fuzzyMatch.cache || (fuzzyMatch.cache = {});
+  var regexp = cache[pattern];
+
+  if (!regexp) {
+    regexp = cache[pattern] = new RegExp(pattern.split('').reduce(function(a, b) {
+      return a + '[^' + b + ']*' + b;
+    }), 'i');
+  }
+
+  return regexp.test(str);
+}
+},{"../mixin/child":16,"../mixin/parent":17,"../namespace":19}],5:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ChildComponentMixin = _dereq_("../mixin/child")["default"] || _dereq_("../mixin/child");
@@ -152,7 +279,7 @@ exports["default"] = Component.extend(ChildComponentMixin, ActiveStateMixin, {
     get(this, 'parent').send('labelFocus', this);
   }
 });
-},{"../mixin/active-state":12,"../mixin/child":13,"../namespace":16}],5:[function(_dereq_,module,exports){
+},{"../mixin/active-state":15,"../mixin/child":16,"../namespace":19}],6:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ChildComponentMixin = _dereq_("../mixin/child")["default"] || _dereq_("../mixin/child");
@@ -160,7 +287,9 @@ var ActiveStateMixin = _dereq_("../mixin/active-state")["default"] || _dereq_(".
 var TransitionMixin = _dereq_("../mixin/transition")["default"] || _dereq_("../mixin/transition");
 var Component = window.Ember.Component;
 var get = window.Ember.get;
+var set = window.Ember.set;
 var computed = window.Ember.computed;
+var uuid = window.Ember.uuid;
 
 var typeKey = 'option';
 
@@ -168,8 +297,14 @@ var typeKey = 'option';
   Option Component
 
   This component represents an option that the user can choose from. The value
-  of the option is set through its `value` attribute, which a string
-  representation of is set as a class.
+  of the option is set through its `value` attribute, which defaults to the
+  template's context if omitted (this makes looping over options easy). Options
+  have a 'selected' state which is managed by the parent component, and an
+  optional 'unselect' attribute which effectively makes the option a 'remove'
+  button (with a value). When clicked, options send the 'select' event to their
+  parent with its value, which can be disabled using the 'disabled' state.
+  Options also have a class binding for an intelligent string representation of
+  its value.
 */
 exports["default"] = Component.extend(ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
   //
@@ -178,7 +313,31 @@ exports["default"] = Component.extend(ChildComponentMixin, ActiveStateMixin, Tra
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'valueClass' ],
+  classNameBindings: [ 'valueClass', 'disabled', 'selected', 'unselect', 'filtered' ],
+
+  //
+  // Handlebars Attributes
+  //
+
+  option: null,
+
+  value: computed(function() {
+    // The 'content' path is the current context
+    var path = this.get('valuePath');
+    var option = this.get('option');
+
+    return option && get(option, path);
+  }).property('option', 'valuePath'),
+
+  valuePath: computed.oneWay('parent.optionValuePath'),
+
+  selected: false,
+
+  unselect: false,
+
+  disabled: computed.oneWay('parent.disabled'),
+
+  filtered: false,
 
   //
   // Internal Properties
@@ -186,16 +345,85 @@ exports["default"] = Component.extend(ChildComponentMixin, ActiveStateMixin, Tra
 
   typeKey: typeKey,
 
-  valueClass: function() {
-    return '' + get(this, 'value');
-  }.property('value'),
+  isSelected: computed.readOnly('selected'),
+
+  isUnselect: computed.readOnly('unselect'),
+
+  isDisabled: computed.readOnly('disabled'),
+
+  isFiltered: computed.readOnly('filtered'),
+
+  valueClass: computed(function() {
+    var value = get(this, 'value');
+    var type = Ember.typeOf(value);
+
+    // Avoid '[Object object]' classes and complex toString'd values
+    if (type === 'object' || type === 'instance') {
+      // Look for an identifier, fall back on a uuid
+      value = get(value, 'id') || ('option-' + get(this, 'uuid'));
+    }
+
+    return '' + value;
+  }).property('value'),
+
+  uuid: computed(function() {
+    return uuid();
+  }).property(),
 
   // Override the active state mixin's property to use the parent's value
   isActive: computed(function() {
     return get(this, 'value') === get(this, 'parent.value');
-  }).property('value', 'parent.value')
+  }).property('value', 'parent.value'),
+
+  //
+  // Event Handlers
+  //
+
+  click: function() {
+    // Do not perform the action if the component is disabled
+    if (get(this, 'isDisabled')) { return; }
+
+    var parent = get(this, 'parent');
+    var isUnselect = get(this, 'isUnselect');
+    var isSelected = get(this, 'isSelected');
+    var value = get(this, 'value');
+
+    // Don't set the select state directly; let the parent manage the state
+    parent.send('select', value, isUnselect ? false : !isSelected);
+  }
+}).reopenClass({
+  create: function(props) {
+    // If the 'value' attribute is not provided, default to using the
+    // template's context for convenience
+    if (!('option' in props)) {
+      props.option = props._context;
+    }
+
+    return this._super(props);
+  }
 });
-},{"../mixin/active-state":12,"../mixin/child":13,"../mixin/transition":15,"../namespace":16}],6:[function(_dereq_,module,exports){
+},{"../mixin/active-state":15,"../mixin/child":16,"../mixin/transition":18,"../namespace":19}],7:[function(_dereq_,module,exports){
+"use strict";
+var tagForType = _dereq_("../namespace").tagForType;
+var ChildComponentMixin = _dereq_("../mixin/child")["default"] || _dereq_("../mixin/child");
+var TextField = window.Ember.TextField;
+
+var typeKey = 'text-field';
+
+/**
+  Text Field Component
+
+  This component is a thin wrapper around Ember's `TextField` component that
+  registers itself with its parent component.
+*/
+exports["default"] = TextField.extend(ChildComponentMixin, {
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey
+});
+},{"../mixin/child":16,"../namespace":19}],8:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
@@ -248,17 +476,17 @@ exports["default"] = Component.extend(ParentComponentMixin, {
   allowedComponents: [ 'content', 'label', 'button' ],
 
   // The index of the content item currently active
-  activeIndex: function() {
+  activeIndex: computed(function() {
     var contents = this.componentsForType('content');
     var active = contents.findBy('isActive');
 
     return contents.indexOf(active);
-  }.property('components.@each.isActive').readOnly(),
+  }).property('components.@each.isActive').readOnly(),
 
   // The number of content items in the carousel
-  contentLength: function() {
+  contentLength: computed(function() {
     return get(this.componentsForType('content'), 'length');
-  }.property('components.[]').readOnly(),
+  }).property('components.[]').readOnly(),
 
   // Whether or not the carousel has no content items
   isEmpty: computed.equal('contentLength', 0),
@@ -341,8 +569,12 @@ exports["default"] = Component.extend(ParentComponentMixin, {
   // Hooks / Observers
   //
 
-  // Set the initially active content if none is specified
-  setActiveContent: function() {
+  // Set the initially active content if none is specified, and ensure there
+  // are the same number of labels as content items and that the correct label
+  // is activated initially
+  didRegisterComponents: function() {
+    this._super();
+
     var contents = this.componentsForType('content');
     var firstContent = contents.objectAt(0);
 
@@ -352,12 +584,6 @@ exports["default"] = Component.extend(ParentComponentMixin, {
       firstContent.send('activate');
     }
 
-    this.trigger('didSetActiveContent');
-  }.on('didRegisterComponents'),
-
-  // Ensure there are the same number of labels as content items and that the
-  // correct label is activated initially
-  verifyLabels: function() {
     var labels = this.componentsForType('label');
     var labelLength = get(labels, 'length');
     var activeIndex = get(this, 'activeIndex');
@@ -367,9 +593,9 @@ exports["default"] = Component.extend(ParentComponentMixin, {
     if (labelLength) {
       labels.objectAt(activeIndex).send('activate');
     }
-  }.on('didSetActiveContent')
+  }
 });
-},{"../mixin/parent":14,"../namespace":16}],7:[function(_dereq_,module,exports){
+},{"../mixin/parent":17,"../namespace":19}],9:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
@@ -383,6 +609,8 @@ var get = window.Ember.get;
 var set = window.Ember.set;
 var setProperties = window.Ember.setProperties;
 var getProperties = window.Ember.getProperties;
+var computed = window.Ember.computed;
+var observer = window.Ember.observer;
 var assert = window.Ember.assert;
 
 var typeKey = 'popover';
@@ -430,28 +658,28 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
 
   renderedPosition: null,
 
-  position: function(key, value) {
+  position: computed(function(key, value) {
     if (arguments.length === 1) {
       return positions[0];
     } else {
       assert(String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
       return value;
     }
-  }.property(),
+  }).property(),
 
-  offset: function() {
+  offset: computed(function() {
     return {
       top: get(this, 'offsetTop'),
       left: get(this, 'offsetLeft')
     };
-  }.property('offsetTop', 'offsetLeft').readOnly(),
+  }).property('offsetTop', 'offsetLeft').readOnly(),
 
-  arrowOffset: function() {
+  arrowOffset: computed(function() {
     return {
       top: get(this, 'arrowOffsetTop'),
       left: get(this, 'arrowOffsetLeft')
     };
-  }.property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
+  }).property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
 
   positioners: {
     top: function(popover) {
@@ -488,14 +716,18 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
   // Hooks / Observers
   //
 
-  resizeHelper: function() {
+  // Add resize handler to window
+  didInsertElement: function(view) {
+    this._super(view);
+
     set(this, 'resizeHandler', $(window).on('resize', function() {
       this.reposition();
     }.bind(this)));
-  }.on('didInsertElement'),
+  },
 
   willDestroy: function() {
     this._super();
+
     $(window).unbind('resize', this.get('resizeHandler'));
   },
 
@@ -505,33 +737,38 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
 
   adjustPosition: function() {
     var position = get(this, 'position');
-    var dimensions = getProperties(this, 'offsetLeft', 'width', 'anchorWidth', 'windowWidth', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
+    var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
-    if (position == 'left' && dimensions.offsetLeft - dimensions.width < 0) {
+    if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
       position = 'right';
-    } else if (position == 'right' && dimensions.offsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+    } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
       position = 'left';
-    } else if (position == 'top' && dimensions.offsetTop - dimensions.height < 0) {
+    } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
       position = 'bottom';
-    } else if (position == 'bottom' && dimensions.offsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+    } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
       position = 'top';
     }
 
     set(this, 'renderedPosition', position);
   },
 
-  reposition: function() {
+  reposition: observer('position', 'active', function() {
     if (get(this, 'active')) {
       var $el = this.$();
       var $arrow = $el.find('.arrow');
       var $anchor = $(get(this, 'anchor'));
-      var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : $anchor.offset();
-      anchorOffset = anchorOffset || { top: 0, left: 0 };
+      var trueAnchorOffset = $anchor.offset();
+      var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : trueAnchorOffset;
+      trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
+      anchorOffset || (anchorOffset = { top: 0, left: 0 });
 
       setProperties(this, {
         offsetTop: anchorOffset.top,
         offsetLeft: anchorOffset.left,
+
+        trueOffsetTop: trueAnchorOffset.top,
+        trueOffsetLeft: trueAnchorOffset.left,
 
         windowWidth: $(window).width(),
         windowHeight: $(window).height(),
@@ -560,7 +797,7 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
       $el.css(get(this, 'offset'));
       $arrow.css(get(this, 'arrowOffset'));
     }
-  }.observes('position', 'active'),
+  }),
 
   adjustHorizontalPosition: function() {
     var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth');
@@ -603,7 +840,7 @@ function adjustArrowForEdges(arrowStart, start, box, anchor, frame) {
 
   return arrowEnd;
 }
-},{"../mixin/active-state":12,"../mixin/child":13,"../mixin/parent":14,"../mixin/transition":15,"../namespace":16}],8:[function(_dereq_,module,exports){
+},{"../mixin/active-state":15,"../mixin/child":16,"../mixin/parent":17,"../mixin/transition":18,"../namespace":19}],10:[function(_dereq_,module,exports){
 "use strict";
 var Ember = window.Ember["default"] || window.Ember;
 exports["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
@@ -618,7 +855,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   return buffer;
   
 });
-},{}],9:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
@@ -628,6 +865,8 @@ var Object = window.Ember.Object;
 var String = window.Ember.String;
 var get = window.Ember.get;
 var set = window.Ember.set;
+var observer = window.Ember.observer;
+var computed = window.Ember.computed;
 var assert = window.Ember.assert;
 
 var typeKey = 'tip';
@@ -671,17 +910,17 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
 
   fromFocus: false,
 
-  togglePopover: function() {
+  togglePopover: observer('active', function() {
     set(get(this, 'popover'), 'active', get(this, 'active'));
-  }.observes('active'),
+  }),
 
-  label: function() {
+  label: computed(function() {
     return get(this.componentsForType('label'), 'firstObject');
-  }.property(),
+  }).property(),
 
-  popover: function() {
+  popover: computed(function() {
     return get(this.componentsForType('popover'), 'firstObject');
-  }.property(),
+  }).property(),
 
   //
   // Event Handlers
@@ -731,16 +970,220 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
   // Hooks / Observers
   //
 
-  verifyContents: function() {
+  // Verify dependencies and auto-set options on child popover
+  didRegisterComponents: function() {
+    this._super();
+
     var labelsLength = get(this.componentsForType('label'), 'length');
     var popoversLength = get(this.componentsForType('popover'), 'length');
     assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
     set(get(this, 'popover'), 'alignToParent', true);
-  }.on('didRegisterComponents')
+  }
 });
-},{"../mixin/active-state":12,"../mixin/parent":14,"../namespace":16}],10:[function(_dereq_,module,exports){
+},{"../mixin/active-state":15,"../mixin/parent":17,"../namespace":19}],12:[function(_dereq_,module,exports){
+"use strict";
+var tagForType = _dereq_("../namespace").tagForType;
+var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
+var A = window.Ember.A;
+var Component = window.Ember.Component;
+var get = window.Ember.get;
+var set = window.Ember.set;
+var computed = window.Ember.computed;
+var observer = window.Ember.observer;
+var run = window.Ember.run;
+var assert = window.Ember.assert;
+
+var typeKey = 'multi-select';
+
+/**
+  Multi Select Component
+
+  This component selects multiple values from a set of options. The `values`
+  attribute is an array of values that is kept in sync with the `value`
+  attributes of all options in the selected state. There are two actions for
+  bulk updating the selected state of options: `select-all` and `unselect-all`.
+
+  ```handlebars
+  {{#lio-multi-select}}
+    {{#lio-option value="one"}}One{{/lio-option}}
+    {{#lio-option value="two"}}Two{{/lio-option}}
+    {{#lio-option value="three"}}Three{{/lio-option}}
+
+    {{lio-button action="select-all"}}
+    {{lio-button action="unselect-all"}}
+  {{/lio-multi-select}}
+  ```
+*/
+exports["default"] = Component.extend(ParentComponentMixin, {
+  //
+  // HTML Properties
+  //
+
+  tagName: tagForType(typeKey),
+
+  classNameBindings: [ 'disabled' ],
+
+  //
+  // Handlebars Attributes
+  //
+
+  disabled: false,
+
+  values: null,
+
+  //
+  // Internal Properties
+  //
+
+  typeKey: typeKey,
+
+  allowedComponents: [ 'option', 'button', 'filter' ],
+
+  isDisabled: computed.readOnly('disabled'),
+
+  allOptionComponents: computed.filterBy('components', 'typeKey', 'option'),
+
+  optionComponents: computed.filterBy('allOptionComponents', 'unselect', false),
+
+  filteredComponents: computed.readOnly('optionComponents'),
+
+  optionCount: computed.readOnly('optionComponents.length'),
+
+  selectedOptionCount: computed.readOnly('values.length'),
+
+  selectAllButton: computed(function() {
+    return this.componentsForType('button').findBy('action', 'select-all');
+  }).property('components.[]'),
+
+  unselectAllButton: computed(function() {
+    return this.componentsForType('button').findBy('action', 'unselect-all');
+  }).property('components.[]'),
+
+  //
+  // Internal Actions
+  //
+
+  actions: {
+    selectAll: function() {
+      this.runAction(function() {
+        this.suspendOptionObservers(function() {
+          get(this, 'optionComponents').invoke('set', 'selected', true);
+        });
+        this.syncValues();
+      });
+    },
+
+    unselectAll: function() {
+      this.runAction(function() {
+        this.suspendOptionObservers(function() {
+          get(this, 'optionComponents').invoke('set', 'selected', false);
+        });
+        this.syncValues();
+      });
+    },
+
+    select: function(optionValue, selectedState) {
+      this.runAction(function() {
+        var option = get(this, 'optionComponents').findBy('value', optionValue);
+
+        if (selectedState === undefined) {
+          selectedState = true;
+        }
+
+        option && set(option, 'selected', selectedState);
+      });
+    }
+  },
+
+  runAction: function(callback) {
+    if (get(this, 'isDisabled')) { return; }
+
+    run(this, callback);
+
+    this.sendAction('action', get(this, 'values'));
+  },
+
+  //
+  // Hooks / Observers
+  //
+
+  // Sync initial state of values/options
+  didRegisterComponents: function() {
+    this._super();
+
+    assert("Options in '" + get(this, 'tagName') + "' components cannot contain duplicate values.", get(this, 'optionComponents').length === A(get(this, 'optionComponents').mapBy('value')).uniq().length);
+
+    // If `values` is set, use it as the source of truth, otherwise use the
+    // `selected` state of option components
+    if (get(this, 'values')) {
+      this.syncOptions();
+    } else {
+      this.syncValues();
+    }
+
+    this.setButtonState();
+  },
+
+  updateValues: observer('optionComponents.@each.{isSelected,value}', function(obj, key) {
+    if (this._suspendOptionObservers || get(this, 'isInitializing')) { return; }
+
+    this.syncValues();
+  }),
+
+  updateOptions: observer('values.[]', function() {
+    if (get(this, 'isInitializing')) { return; }
+
+    this.suspendOptionObservers(function() {
+      this.syncOptions();
+    });
+
+    this.setButtonState();
+  }),
+
+  // Update values to reflect the `selected` state of all options
+  syncValues: function() {
+    var selectedOptions = A(get(this, 'optionComponents').filterBy('isSelected'));
+
+    // The `values` attribute must be set to a new array reflecting the state
+    // of selected options; manipulating the array is not compatible with
+    // bindings that point to computed properties
+    set(this, 'values', A(selectedOptions.mapBy('value')));
+  },
+
+  // Update the `selected` state of all options to reflect current values
+  syncOptions: function() {
+    var options = get(this, 'allOptionComponents');
+    var values = A(get(this, 'values') || []);
+
+    assert("The 'value' attribute of '" + get(this, 'tagName') + "' components must not contain duplicate values.", get(values, 'length') === get(values.uniq(), 'length'));
+
+    options.forEach(function(option) {
+      set(option, 'selected', values.contains(get(option, 'value')));
+    });
+  },
+
+  // Disable/enable action buttons
+  setButtonState: function() {
+    var total = get(this, 'optionCount');
+    var selected = get(this, 'selectedOptionCount');
+    var selectAllButton = get(this, 'selectAllButton');
+    var unselectAllButton = get(this, 'unselectAllButton');
+
+    selectAllButton && set(selectAllButton, 'disabled', selected === total);
+    unselectAllButton && set(unselectAllButton, 'disabled', selected === 0);
+  },
+
+  // Temporarily prevent option observers from having an effect to allow for
+  // batch option updates
+  suspendOptionObservers: function(callback) {
+    this._suspendOptionObservers = true;
+    callback.call(this);
+    this._suspendOptionObservers = false;
+  }
+});
+},{"../mixin/parent":17,"../namespace":19}],13:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
 var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
@@ -796,9 +1239,9 @@ exports["default"] = Component.extend(ParentComponentMixin, {
 
   allowedComponents: [ 'option' ],
 
-  valueClass: function() {
+  valueClass: computed(function() {
     return '' + get(this, 'value');
-  }.property('value'),
+  }).property('value'),
 
   possibleValues: computed(function() {
     return this.componentsForType('option').mapBy('value');
@@ -847,11 +1290,12 @@ exports["default"] = Component.extend(ParentComponentMixin, {
   // Hooks / Observers
   //
 
-  verifyDependencies: function() {
-    assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
-  }.on('didRegisterComponents'),
+  // Verify dependencies and initialize the default value
+  didRegisterComponents: function() {
+    this._super();
 
-  populateDefault: function() {
+    assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
+
     var value = get(this, 'value');
     var defaultValue = get(this, 'defaultValue');
 
@@ -859,9 +1303,9 @@ exports["default"] = Component.extend(ParentComponentMixin, {
     if (value === undefined && defaultValue !== undefined) {
       set(this, 'value', defaultValue);
     }
-  }.on('didRegisterComponents')
+  }
 });
-},{"../mixin/parent":14,"../namespace":16}],11:[function(_dereq_,module,exports){
+},{"../mixin/parent":17,"../namespace":19}],14:[function(_dereq_,module,exports){
 "use strict";
 var ParentComponentMixin = _dereq_("./mixin/parent")["default"] || _dereq_("./mixin/parent");
 var ChildComponentMixin = _dereq_("./mixin/child")["default"] || _dereq_("./mixin/child");
@@ -871,11 +1315,14 @@ var OptionComponent = _dereq_("./common/option")["default"] || _dereq_("./common
 var ButtonComponent = _dereq_("./common/button")["default"] || _dereq_("./common/button");
 var ContentComponent = _dereq_("./common/content")["default"] || _dereq_("./common/content");
 var LabelComponent = _dereq_("./common/label")["default"] || _dereq_("./common/label");
+var TextFieldComponent = _dereq_("./common/text-field")["default"] || _dereq_("./common/text-field");
+var FilterComponent = _dereq_("./common/filter")["default"] || _dereq_("./common/filter");
 var CarouselComponent = _dereq_("./display/carousel")["default"] || _dereq_("./display/carousel");
 var PopoverComponent = _dereq_("./display/popover")["default"] || _dereq_("./display/popover");
 var PopoverTemplate = _dereq_("./display/templates/popover")["default"] || _dereq_("./display/templates/popover");
 var TipComponent = _dereq_("./display/tip")["default"] || _dereq_("./display/tip");
 var ToggleComponent = _dereq_("./input/toggle")["default"] || _dereq_("./input/toggle");
+var MultiSelectComponent = _dereq_("./input/multi-select")["default"] || _dereq_("./input/multi-select");
 var Application = window.Ember.Application;
 
 Application.initializer({
@@ -885,11 +1332,14 @@ Application.initializer({
     application.register('component:lio-button', ButtonComponent);
     application.register('component:lio-content', ContentComponent);
     application.register('component:lio-label', LabelComponent);
+    application.register('component:lio-text-field', TextFieldComponent);
+    application.register('component:lio-filter', FilterComponent);
     application.register('component:lio-carousel', CarouselComponent);
     application.register('component:lio-popover', PopoverComponent);
     application.register('template:components/lio-popover', PopoverTemplate);
     application.register('component:lio-tip', TipComponent);
     application.register('component:lio-toggle', ToggleComponent);
+    application.register('component:lio-multi-select', MultiSelectComponent);
   }
 });
 
@@ -901,16 +1351,20 @@ exports.OptionComponent = OptionComponent;
 exports.ButtonComponent = ButtonComponent;
 exports.ContentComponent = ContentComponent;
 exports.LabelComponent = LabelComponent;
+exports.TextFieldComponent = TextFieldComponent;
+exports.FilterComponent = FilterComponent;
 exports.CarouselComponent = CarouselComponent;
-exports.ToggleComponent = ToggleComponent;
 exports.PopoverComponent = PopoverComponent;
 exports.TipComponent = TipComponent;
-},{"./common/button":2,"./common/content":3,"./common/label":4,"./common/option":5,"./display/carousel":6,"./display/popover":7,"./display/templates/popover":8,"./display/tip":9,"./input/toggle":10,"./mixin/active-state":12,"./mixin/child":13,"./mixin/parent":14,"./mixin/transition":15}],12:[function(_dereq_,module,exports){
+exports.ToggleComponent = ToggleComponent;
+exports.MultiSelectComponent = MultiSelectComponent;
+},{"./common/button":2,"./common/content":3,"./common/filter":4,"./common/label":5,"./common/option":6,"./common/text-field":7,"./display/carousel":8,"./display/popover":9,"./display/templates/popover":10,"./display/tip":11,"./input/multi-select":12,"./input/toggle":13,"./mixin/active-state":15,"./mixin/child":16,"./mixin/parent":17,"./mixin/transition":18}],15:[function(_dereq_,module,exports){
 "use strict";
 var Mixin = window.Ember.Mixin;
 var get = window.Ember.get;
 var set = window.Ember.set;
 var computed = window.Ember.computed;
+var observer = window.Ember.observer;
 
 exports["default"] = Mixin.create({
   //
@@ -959,12 +1413,14 @@ exports["default"] = Mixin.create({
   // Initialize the `isVisuallyActive` flag to the initial value of `active`; it
   // can't use `computed.oneWay` because the value must always act independently
   // (since it is managed by the function below).
-  initVisuallyActive: function() {
+  init: function() {
+    this._super();
+
     set(this, 'isVisuallyActive', get(this, 'isActive'));
-  }.on('init'),
+  },
 
   // Begin a transition that ends with setting the visual state to the current state
-  transitionVisualState: function() {
+  transitionVisualState: observer('isActive', function() {
     var isActive = this.get('isActive');
 
     // The component may not use transitions
@@ -975,9 +1431,9 @@ exports["default"] = Mixin.create({
     } else {
       set(this, 'isVisuallyActive', isActive);
     }
-  }.observes('isActive')
+  })
 });
-},{}],13:[function(_dereq_,module,exports){
+},{}],16:[function(_dereq_,module,exports){
 "use strict";
 var Mixin = window.Ember.Mixin;
 var EmberArray = window.Ember.A;
@@ -996,7 +1452,10 @@ exports["default"] = Mixin.create({
   // Hooks / Observers
   //
 
-  registerWithParent: function() {
+  // Register self with parent component
+  willInsertElement: function(view) {
+    this._super(view);
+
     var parent = get(this, 'parent');
 
     if (!get(this, 'canBeTopLevel')) {
@@ -1004,17 +1463,20 @@ exports["default"] = Mixin.create({
     }
 
     parent && parent.registerComponent && parent.registerComponent(this);
-  }.on('willInsertElement'),
+  },
 
-  notifyParent: function() {
+  // Notify parent of insertion into DOM
+  didInsertElement: function(view) {
+    this._super(view);
+
     var parent = get(this, 'parent');
     parent && parent.didInsertComponent && parent.didInsertComponent(this);
-  }.on('didInsertElement')
+  }
 });
-},{}],14:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
 "use strict";
 var Mixin = window.Ember.Mixin;
-var EmberArray = window.Ember.A;
+var A = window.Ember.A;
 var get = window.Ember.get;
 var set = window.Ember.set;
 var assert = window.Ember.assert;
@@ -1036,9 +1498,11 @@ exports["default"] = Mixin.create({
   // Hooks / Observers
   //
 
-  initComponents: function() {
-    set(this, 'components', EmberArray());
-  }.on('init'),
+  init: function() {
+    this._super();
+
+    set(this, 'components', A());
+  },
 
   //
   // Internal Methods
@@ -1049,10 +1513,13 @@ exports["default"] = Mixin.create({
     var allowed = get(this, 'allowedComponents');
 
     assert("All registered components must have a `typeKey` property, got '" + type + "'", typeof type === 'string');
-    assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", EmberArray(allowed).contains(type));
+    assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", A(allowed).contains(type));
 
     get(this, 'components').pushObject(component);
   },
+
+  // Hook stub to allow uses of `_super`
+  didRegisterComponents: Ember.K,
 
   didInsertComponent: function() {
     // Once a component is actually in the DOM, we know that all components have been registered
@@ -1063,10 +1530,10 @@ exports["default"] = Mixin.create({
   },
 
   componentsForType: function(type) {
-    return get(this, 'components').filterBy('typeKey', type);
+    return A(get(this, 'components').filterBy('typeKey', type));
   }
 });
-},{}],15:[function(_dereq_,module,exports){
+},{}],18:[function(_dereq_,module,exports){
 "use strict";
 var testTrasitionSupport = _dereq_("../browser").testTrasitionSupport;
 var RSVP = window.Ember.RSVP;
@@ -1074,6 +1541,7 @@ var Mixin = window.Ember.Mixin;
 var A = window.Ember.A;
 var get = window.Ember.get;
 var set = window.Ember.set;
+var computed = window.Ember.computed;
 var run = window.Ember.run;
 var $ = window.Ember.$;
 
@@ -1087,9 +1555,9 @@ exports["default"] = Mixin.create({
 
   // Any component can override this property to never use transitions,
   // otherwise it defaults to the parent component's value
-  disableTransitions: function() {
+  disableTransitions: computed(function() {
     return get(this, 'parent.disableTransitions') === true;
-  }.property(),
+  }).property(),
 
   //
   // Internal Properties
@@ -1110,7 +1578,9 @@ exports["default"] = Mixin.create({
 
   // Normalize the 'transitionend' event by setting up an Ember event to fire
   // when the DOM event fires; this is primarily for testing purposes
-  initTransitionEvent: function() {
+  didInsertElement: function(view) {
+    this._super(view);
+
     var component = this;
 
     if ($.support.transition) {
@@ -1124,7 +1594,7 @@ exports["default"] = Mixin.create({
         return false;
       });
     }
-  }.on('didInsertElement'),
+  },
 
   //
   // Internal Methods
@@ -1208,7 +1678,7 @@ function Transition(component, transitionClass) {
   // Add class to start the transition
   $el.addClass(triggerClass);
 }
-},{"../browser":1}],16:[function(_dereq_,module,exports){
+},{"../browser":1}],19:[function(_dereq_,module,exports){
 "use strict";
 var namespace = 'lio';
 
@@ -1217,6 +1687,6 @@ function tagForType(type) {
 }
 
 exports.tagForType = tagForType;exports["default"] = namespace;
-},{}]},{},[11])
-(11)
+},{}]},{},[14])
+(14)
 });

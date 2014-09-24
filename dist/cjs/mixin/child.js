@@ -16,7 +16,10 @@ exports["default"] = Mixin.create({
   // Hooks / Observers
   //
 
-  registerWithParent: function() {
+  // Register self with parent component
+  willInsertElement: function(view) {
+    this._super(view);
+
     var parent = get(this, 'parent');
 
     if (!get(this, 'canBeTopLevel')) {
@@ -24,10 +27,13 @@ exports["default"] = Mixin.create({
     }
 
     parent && parent.registerComponent && parent.registerComponent(this);
-  }.on('willInsertElement'),
+  },
 
-  notifyParent: function() {
+  // Notify parent of insertion into DOM
+  didInsertElement: function(view) {
+    this._super(view);
+
     var parent = get(this, 'parent');
     parent && parent.didInsertComponent && parent.didInsertComponent(this);
-  }.on('didInsertElement')
+  }
 });

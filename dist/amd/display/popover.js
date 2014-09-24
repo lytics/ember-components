@@ -14,6 +14,8 @@ define(
     var set = __dependency6__.set;
     var setProperties = __dependency6__.setProperties;
     var getProperties = __dependency6__.getProperties;
+    var computed = __dependency6__.computed;
+    var observer = __dependency6__.observer;
     var assert = __dependency6__.assert;
 
     var typeKey = 'popover';
@@ -61,28 +63,28 @@ define(
 
       renderedPosition: null,
 
-      position: function(key, value) {
+      position: computed(function(key, value) {
         if (arguments.length === 1) {
           return positions[0];
         } else {
           assert(String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
           return value;
         }
-      }.property(),
+      }).property(),
 
-      offset: function() {
+      offset: computed(function() {
         return {
           top: get(this, 'offsetTop'),
           left: get(this, 'offsetLeft')
         };
-      }.property('offsetTop', 'offsetLeft').readOnly(),
+      }).property('offsetTop', 'offsetLeft').readOnly(),
 
-      arrowOffset: function() {
+      arrowOffset: computed(function() {
         return {
           top: get(this, 'arrowOffsetTop'),
           left: get(this, 'arrowOffsetLeft')
         };
-      }.property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
+      }).property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
 
       positioners: {
         top: function(popover) {
@@ -119,14 +121,18 @@ define(
       // Hooks / Observers
       //
 
-      resizeHelper: function() {
+      // Add resize handler to window
+      didInsertElement: function(view) {
+        this._super(view);
+
         set(this, 'resizeHandler', $(window).on('resize', function() {
           this.reposition();
         }.bind(this)));
-      }.on('didInsertElement'),
+      },
 
       willDestroy: function() {
         this._super();
+
         $(window).unbind('resize', this.get('resizeHandler'));
       },
 
@@ -136,33 +142,38 @@ define(
 
       adjustPosition: function() {
         var position = get(this, 'position');
-        var dimensions = getProperties(this, 'offsetLeft', 'width', 'anchorWidth', 'windowWidth', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
+        var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
         // The rendered position is the opposite of the preferred position when there is no room where preferred
-        if (position == 'left' && dimensions.offsetLeft - dimensions.width < 0) {
+        if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
           position = 'right';
-        } else if (position == 'right' && dimensions.offsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+        } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
           position = 'left';
-        } else if (position == 'top' && dimensions.offsetTop - dimensions.height < 0) {
+        } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
           position = 'bottom';
-        } else if (position == 'bottom' && dimensions.offsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+        } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
           position = 'top';
         }
 
         set(this, 'renderedPosition', position);
       },
 
-      reposition: function() {
+      reposition: observer('position', 'active', function() {
         if (get(this, 'active')) {
           var $el = this.$();
           var $arrow = $el.find('.arrow');
           var $anchor = $(get(this, 'anchor'));
-          var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : $anchor.offset();
-          anchorOffset = anchorOffset || { top: 0, left: 0 };
+          var trueAnchorOffset = $anchor.offset();
+          var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : trueAnchorOffset;
+          trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
+          anchorOffset || (anchorOffset = { top: 0, left: 0 });
 
           setProperties(this, {
             offsetTop: anchorOffset.top,
             offsetLeft: anchorOffset.left,
+
+            trueOffsetTop: trueAnchorOffset.top,
+            trueOffsetLeft: trueAnchorOffset.left,
 
             windowWidth: $(window).width(),
             windowHeight: $(window).height(),
@@ -191,7 +202,7 @@ define(
           $el.css(get(this, 'offset'));
           $arrow.css(get(this, 'arrowOffset'));
         }
-      }.observes('position', 'active'),
+      }),
 
       adjustHorizontalPosition: function() {
         var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth');

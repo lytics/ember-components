@@ -61,6 +61,8 @@ define("lytics-components/common/button",
 
       attributeBindings: [ 'action', 'disabled' ],
 
+      classNameBindings: [ 'disabled' ],
+
       //
       // Handlebars Attributes
       //
@@ -89,7 +91,7 @@ define("lytics-components/common/button",
 
         assert("All '" + get(this, 'tagName') + "' components must define an `action` attribute.", action);
 
-        get(this, 'parent').send(action);
+        get(this, 'parent').send(Ember.String.camelize(action));
       }
     });
   });
@@ -123,6 +125,134 @@ define("lytics-components/common/content",
 
       typeKey: typeKey
     });
+  });
+define("lytics-components/common/filter",
+  ["../namespace","../mixin/parent","../mixin/child","ember","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __exports__) {
+    "use strict";
+    var tagForType = __dependency1__.tagForType;
+    var ParentComponentMixin = __dependency2__["default"] || __dependency2__;
+    var ChildComponentMixin = __dependency3__["default"] || __dependency3__;
+    var A = __dependency4__.A;
+    var Component = __dependency4__.Component;
+    var get = __dependency4__.get;
+    var set = __dependency4__.set;
+    var computed = __dependency4__.computed;
+    var observer = __dependency4__.observer;
+    var run = __dependency4__.run;
+    var assert = __dependency4__.assert;
+
+    var typeKey = 'filter';
+
+    /**
+      Filter Component
+
+      This component provides an interface for filtering a set of components. The
+      text field component provides the filter pattern and an optional button can
+      be provided to clear the text field. Components are filtered based on their
+      `innerText`, and when filtered out, the `filtered` property is set to true.
+
+      ```handlebars
+      {{#lio-filter}}
+        {{lio-text-field}}
+        {{lio-button action="clear"}}
+      {{/lio-multi-select}}
+      ```
+    */
+    __exports__["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin, {
+      //
+      // HTML Properties
+      //
+
+      tagName: tagForType(typeKey),
+
+      //
+      // Handlebars Attributes
+      //
+
+      value: null,
+
+      debounce: 200,
+
+      //
+      // Internal Properties
+      //
+
+      typeKey: typeKey,
+
+      allowedComponents: [ 'text-field', 'button' ],
+
+      textFieldComponent: computed(function() {
+        return get(this.componentsForType('text-field'), 'firstObject');
+      }).property('components.[]'),
+
+      filterValue: computed.alias('textFieldComponent.value'),
+
+      //
+      // Internal Actions
+      //
+
+      actions: {
+        clear: function() {
+          set(this, 'filterValue', '');
+          this.updateFilter();
+        }
+      },
+
+      //
+      // Hooks / Observers
+      //
+
+      // Verify dependencies and initialized CPs
+      didRegisterComponents: function() {
+        this._super();
+
+        assert("The '" + get(this, 'tagName') + "' component must contain a single 'lio-text-field' component.", this.componentsForType('text-field').length === 1);
+
+        // Prime the computed property so that it can be observed
+        get(this, 'textFieldComponent');
+      },
+
+      debouncedFilterUpdate: Ember.observer('filterValue', function() {
+        var interval = get(this, 'debounce');
+
+        if (interval) {
+          run.debounce(this, this.updateFilter, interval);
+        } else {
+          this.updateFilter();
+        }
+      }),
+
+      updateFilter: function() {
+        var filterValue = get(this, 'filterValue');
+        var components = get(this, 'parent.filteredComponents');
+
+        if (!filterValue) {
+          components.invoke('set', 'filtered', false);
+        } else {
+          components.forEach(function(component) {
+            var matches = fuzzyMatch(filterValue, component.$().text());
+
+            set(component, 'filtered', !matches);
+          });
+        }
+      }
+    });
+
+    // Simple fuzzy pattern matching using regular expressions, adapted from:
+    // http://codereview.stackexchange.com/questions/23899/faster-javascript-fuzzy-string-matching-function
+    function fuzzyMatch(pattern, str) {
+      var cache = fuzzyMatch.cache || (fuzzyMatch.cache = {});
+      var regexp = cache[pattern];
+
+      if (!regexp) {
+        regexp = cache[pattern] = new RegExp(pattern.split('').reduce(function(a, b) {
+          return a + '[^' + b + ']*' + b;
+        }), 'i');
+      }
+
+      return regexp.test(str);
+    }
   });
 define("lytics-components/common/label",
   ["../namespace","../mixin/child","../mixin/active-state","ember","exports"],
@@ -174,7 +304,9 @@ define("lytics-components/common/option",
     var TransitionMixin = __dependency4__["default"] || __dependency4__;
     var Component = __dependency5__.Component;
     var get = __dependency5__.get;
+    var set = __dependency5__.set;
     var computed = __dependency5__.computed;
+    var uuid = __dependency5__.uuid;
 
     var typeKey = 'option';
 
@@ -182,8 +314,14 @@ define("lytics-components/common/option",
       Option Component
 
       This component represents an option that the user can choose from. The value
-      of the option is set through its `value` attribute, which a string
-      representation of is set as a class.
+      of the option is set through its `value` attribute, which defaults to the
+      template's context if omitted (this makes looping over options easy). Options
+      have a 'selected' state which is managed by the parent component, and an
+      optional 'unselect' attribute which effectively makes the option a 'remove'
+      button (with a value). When clicked, options send the 'select' event to their
+      parent with its value, which can be disabled using the 'disabled' state.
+      Options also have a class binding for an intelligent string representation of
+      its value.
     */
     __exports__["default"] = Component.extend(ChildComponentMixin, ActiveStateMixin, TransitionMixin, {
       //
@@ -192,7 +330,31 @@ define("lytics-components/common/option",
 
       tagName: tagForType(typeKey),
 
-      classNameBindings: [ 'valueClass' ],
+      classNameBindings: [ 'valueClass', 'disabled', 'selected', 'unselect', 'filtered' ],
+
+      //
+      // Handlebars Attributes
+      //
+
+      option: null,
+
+      value: computed(function() {
+        // The 'content' path is the current context
+        var path = this.get('valuePath');
+        var option = this.get('option');
+
+        return option && get(option, path);
+      }).property('option', 'valuePath'),
+
+      valuePath: computed.oneWay('parent.optionValuePath'),
+
+      selected: false,
+
+      unselect: false,
+
+      disabled: computed.oneWay('parent.disabled'),
+
+      filtered: false,
 
       //
       // Internal Properties
@@ -200,14 +362,86 @@ define("lytics-components/common/option",
 
       typeKey: typeKey,
 
-      valueClass: function() {
-        return '' + get(this, 'value');
-      }.property('value'),
+      isSelected: computed.readOnly('selected'),
+
+      isUnselect: computed.readOnly('unselect'),
+
+      isDisabled: computed.readOnly('disabled'),
+
+      isFiltered: computed.readOnly('filtered'),
+
+      valueClass: computed(function() {
+        var value = get(this, 'value');
+        var type = Ember.typeOf(value);
+
+        // Avoid '[Object object]' classes and complex toString'd values
+        if (type === 'object' || type === 'instance') {
+          // Look for an identifier, fall back on a uuid
+          value = get(value, 'id') || ('option-' + get(this, 'uuid'));
+        }
+
+        return '' + value;
+      }).property('value'),
+
+      uuid: computed(function() {
+        return uuid();
+      }).property(),
 
       // Override the active state mixin's property to use the parent's value
       isActive: computed(function() {
         return get(this, 'value') === get(this, 'parent.value');
-      }).property('value', 'parent.value')
+      }).property('value', 'parent.value'),
+
+      //
+      // Event Handlers
+      //
+
+      click: function() {
+        // Do not perform the action if the component is disabled
+        if (get(this, 'isDisabled')) { return; }
+
+        var parent = get(this, 'parent');
+        var isUnselect = get(this, 'isUnselect');
+        var isSelected = get(this, 'isSelected');
+        var value = get(this, 'value');
+
+        // Don't set the select state directly; let the parent manage the state
+        parent.send('select', value, isUnselect ? false : !isSelected);
+      }
+    }).reopenClass({
+      create: function(props) {
+        // If the 'value' attribute is not provided, default to using the
+        // template's context for convenience
+        if (!('option' in props)) {
+          props.option = props._context;
+        }
+
+        return this._super(props);
+      }
+    });
+  });
+define("lytics-components/common/text-field",
+  ["../namespace","../mixin/child","ember","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var tagForType = __dependency1__.tagForType;
+    var ChildComponentMixin = __dependency2__["default"] || __dependency2__;
+    var TextField = __dependency3__.TextField;
+
+    var typeKey = 'text-field';
+
+    /**
+      Text Field Component
+
+      This component is a thin wrapper around Ember's `TextField` component that
+      registers itself with its parent component.
+    */
+    __exports__["default"] = TextField.extend(ChildComponentMixin, {
+      //
+      // Internal Properties
+      //
+
+      typeKey: typeKey
     });
   });
 define("lytics-components/display/carousel",
@@ -265,17 +499,17 @@ define("lytics-components/display/carousel",
       allowedComponents: [ 'content', 'label', 'button' ],
 
       // The index of the content item currently active
-      activeIndex: function() {
+      activeIndex: computed(function() {
         var contents = this.componentsForType('content');
         var active = contents.findBy('isActive');
 
         return contents.indexOf(active);
-      }.property('components.@each.isActive').readOnly(),
+      }).property('components.@each.isActive').readOnly(),
 
       // The number of content items in the carousel
-      contentLength: function() {
+      contentLength: computed(function() {
         return get(this.componentsForType('content'), 'length');
-      }.property('components.[]').readOnly(),
+      }).property('components.[]').readOnly(),
 
       // Whether or not the carousel has no content items
       isEmpty: computed.equal('contentLength', 0),
@@ -358,8 +592,12 @@ define("lytics-components/display/carousel",
       // Hooks / Observers
       //
 
-      // Set the initially active content if none is specified
-      setActiveContent: function() {
+      // Set the initially active content if none is specified, and ensure there
+      // are the same number of labels as content items and that the correct label
+      // is activated initially
+      didRegisterComponents: function() {
+        this._super();
+
         var contents = this.componentsForType('content');
         var firstContent = contents.objectAt(0);
 
@@ -369,12 +607,6 @@ define("lytics-components/display/carousel",
           firstContent.send('activate');
         }
 
-        this.trigger('didSetActiveContent');
-      }.on('didRegisterComponents'),
-
-      // Ensure there are the same number of labels as content items and that the
-      // correct label is activated initially
-      verifyLabels: function() {
         var labels = this.componentsForType('label');
         var labelLength = get(labels, 'length');
         var activeIndex = get(this, 'activeIndex');
@@ -384,7 +616,7 @@ define("lytics-components/display/carousel",
         if (labelLength) {
           labels.objectAt(activeIndex).send('activate');
         }
-      }.on('didSetActiveContent')
+      }
     });
   });
 define("lytics-components/display/popover",
@@ -403,6 +635,8 @@ define("lytics-components/display/popover",
     var set = __dependency6__.set;
     var setProperties = __dependency6__.setProperties;
     var getProperties = __dependency6__.getProperties;
+    var computed = __dependency6__.computed;
+    var observer = __dependency6__.observer;
     var assert = __dependency6__.assert;
 
     var typeKey = 'popover';
@@ -450,28 +684,28 @@ define("lytics-components/display/popover",
 
       renderedPosition: null,
 
-      position: function(key, value) {
+      position: computed(function(key, value) {
         if (arguments.length === 1) {
           return positions[0];
         } else {
           assert(String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
           return value;
         }
-      }.property(),
+      }).property(),
 
-      offset: function() {
+      offset: computed(function() {
         return {
           top: get(this, 'offsetTop'),
           left: get(this, 'offsetLeft')
         };
-      }.property('offsetTop', 'offsetLeft').readOnly(),
+      }).property('offsetTop', 'offsetLeft').readOnly(),
 
-      arrowOffset: function() {
+      arrowOffset: computed(function() {
         return {
           top: get(this, 'arrowOffsetTop'),
           left: get(this, 'arrowOffsetLeft')
         };
-      }.property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
+      }).property('arrowOffsetTop', 'arrowOffsetLeft').readOnly(),
 
       positioners: {
         top: function(popover) {
@@ -508,14 +742,18 @@ define("lytics-components/display/popover",
       // Hooks / Observers
       //
 
-      resizeHelper: function() {
+      // Add resize handler to window
+      didInsertElement: function(view) {
+        this._super(view);
+
         set(this, 'resizeHandler', $(window).on('resize', function() {
           this.reposition();
         }.bind(this)));
-      }.on('didInsertElement'),
+      },
 
       willDestroy: function() {
         this._super();
+
         $(window).unbind('resize', this.get('resizeHandler'));
       },
 
@@ -525,33 +763,38 @@ define("lytics-components/display/popover",
 
       adjustPosition: function() {
         var position = get(this, 'position');
-        var dimensions = getProperties(this, 'offsetLeft', 'width', 'anchorWidth', 'windowWidth', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
+        var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
         // The rendered position is the opposite of the preferred position when there is no room where preferred
-        if (position == 'left' && dimensions.offsetLeft - dimensions.width < 0) {
+        if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
           position = 'right';
-        } else if (position == 'right' && dimensions.offsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+        } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
           position = 'left';
-        } else if (position == 'top' && dimensions.offsetTop - dimensions.height < 0) {
+        } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
           position = 'bottom';
-        } else if (position == 'bottom' && dimensions.offsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+        } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
           position = 'top';
         }
 
         set(this, 'renderedPosition', position);
       },
 
-      reposition: function() {
+      reposition: observer('position', 'active', function() {
         if (get(this, 'active')) {
           var $el = this.$();
           var $arrow = $el.find('.arrow');
           var $anchor = $(get(this, 'anchor'));
-          var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : $anchor.offset();
-          anchorOffset = anchorOffset || { top: 0, left: 0 };
+          var trueAnchorOffset = $anchor.offset();
+          var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : trueAnchorOffset;
+          trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
+          anchorOffset || (anchorOffset = { top: 0, left: 0 });
 
           setProperties(this, {
             offsetTop: anchorOffset.top,
             offsetLeft: anchorOffset.left,
+
+            trueOffsetTop: trueAnchorOffset.top,
+            trueOffsetLeft: trueAnchorOffset.left,
 
             windowWidth: $(window).width(),
             windowHeight: $(window).height(),
@@ -580,7 +823,7 @@ define("lytics-components/display/popover",
           $el.css(get(this, 'offset'));
           $arrow.css(get(this, 'arrowOffset'));
         }
-      }.observes('position', 'active'),
+      }),
 
       adjustHorizontalPosition: function() {
         var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth');
@@ -654,6 +897,8 @@ define("lytics-components/display/tip",
     var String = __dependency4__.String;
     var get = __dependency4__.get;
     var set = __dependency4__.set;
+    var observer = __dependency4__.observer;
+    var computed = __dependency4__.computed;
     var assert = __dependency4__.assert;
 
     var typeKey = 'tip';
@@ -697,17 +942,17 @@ define("lytics-components/display/tip",
 
       fromFocus: false,
 
-      togglePopover: function() {
+      togglePopover: observer('active', function() {
         set(get(this, 'popover'), 'active', get(this, 'active'));
-      }.observes('active'),
+      }),
 
-      label: function() {
+      label: computed(function() {
         return get(this.componentsForType('label'), 'firstObject');
-      }.property(),
+      }).property(),
 
-      popover: function() {
+      popover: computed(function() {
         return get(this.componentsForType('popover'), 'firstObject');
-      }.property(),
+      }).property(),
 
       //
       // Event Handlers
@@ -757,14 +1002,221 @@ define("lytics-components/display/tip",
       // Hooks / Observers
       //
 
-      verifyContents: function() {
+      // Verify dependencies and auto-set options on child popover
+      didRegisterComponents: function() {
+        this._super();
+
         var labelsLength = get(this.componentsForType('label'), 'length');
         var popoversLength = get(this.componentsForType('popover'), 'length');
         assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
         set(get(this, 'popover'), 'anchor', get(this, 'label').$());
         set(get(this, 'popover'), 'alignToParent', true);
-      }.on('didRegisterComponents')
+      }
+    });
+  });
+define("lytics-components/input/multi-select",
+  ["../namespace","../mixin/parent","ember","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __exports__) {
+    "use strict";
+    var tagForType = __dependency1__.tagForType;
+    var ParentComponentMixin = __dependency2__["default"] || __dependency2__;
+    var A = __dependency3__.A;
+    var Component = __dependency3__.Component;
+    var get = __dependency3__.get;
+    var set = __dependency3__.set;
+    var computed = __dependency3__.computed;
+    var observer = __dependency3__.observer;
+    var run = __dependency3__.run;
+    var assert = __dependency3__.assert;
+
+    var typeKey = 'multi-select';
+
+    /**
+      Multi Select Component
+
+      This component selects multiple values from a set of options. The `values`
+      attribute is an array of values that is kept in sync with the `value`
+      attributes of all options in the selected state. There are two actions for
+      bulk updating the selected state of options: `select-all` and `unselect-all`.
+
+      ```handlebars
+      {{#lio-multi-select}}
+        {{#lio-option value="one"}}One{{/lio-option}}
+        {{#lio-option value="two"}}Two{{/lio-option}}
+        {{#lio-option value="three"}}Three{{/lio-option}}
+
+        {{lio-button action="select-all"}}
+        {{lio-button action="unselect-all"}}
+      {{/lio-multi-select}}
+      ```
+    */
+    __exports__["default"] = Component.extend(ParentComponentMixin, {
+      //
+      // HTML Properties
+      //
+
+      tagName: tagForType(typeKey),
+
+      classNameBindings: [ 'disabled' ],
+
+      //
+      // Handlebars Attributes
+      //
+
+      disabled: false,
+
+      values: null,
+
+      //
+      // Internal Properties
+      //
+
+      typeKey: typeKey,
+
+      allowedComponents: [ 'option', 'button', 'filter' ],
+
+      isDisabled: computed.readOnly('disabled'),
+
+      allOptionComponents: computed.filterBy('components', 'typeKey', 'option'),
+
+      optionComponents: computed.filterBy('allOptionComponents', 'unselect', false),
+
+      filteredComponents: computed.readOnly('optionComponents'),
+
+      optionCount: computed.readOnly('optionComponents.length'),
+
+      selectedOptionCount: computed.readOnly('values.length'),
+
+      selectAllButton: computed(function() {
+        return this.componentsForType('button').findBy('action', 'select-all');
+      }).property('components.[]'),
+
+      unselectAllButton: computed(function() {
+        return this.componentsForType('button').findBy('action', 'unselect-all');
+      }).property('components.[]'),
+
+      //
+      // Internal Actions
+      //
+
+      actions: {
+        selectAll: function() {
+          this.runAction(function() {
+            this.suspendOptionObservers(function() {
+              get(this, 'optionComponents').invoke('set', 'selected', true);
+            });
+            this.syncValues();
+          });
+        },
+
+        unselectAll: function() {
+          this.runAction(function() {
+            this.suspendOptionObservers(function() {
+              get(this, 'optionComponents').invoke('set', 'selected', false);
+            });
+            this.syncValues();
+          });
+        },
+
+        select: function(optionValue, selectedState) {
+          this.runAction(function() {
+            var option = get(this, 'optionComponents').findBy('value', optionValue);
+
+            if (selectedState === undefined) {
+              selectedState = true;
+            }
+
+            option && set(option, 'selected', selectedState);
+          });
+        }
+      },
+
+      runAction: function(callback) {
+        if (get(this, 'isDisabled')) { return; }
+
+        run(this, callback);
+
+        this.sendAction('action', get(this, 'values'));
+      },
+
+      //
+      // Hooks / Observers
+      //
+
+      // Sync initial state of values/options
+      didRegisterComponents: function() {
+        this._super();
+
+        assert("Options in '" + get(this, 'tagName') + "' components cannot contain duplicate values.", get(this, 'optionComponents').length === A(get(this, 'optionComponents').mapBy('value')).uniq().length);
+
+        // If `values` is set, use it as the source of truth, otherwise use the
+        // `selected` state of option components
+        if (get(this, 'values')) {
+          this.syncOptions();
+        } else {
+          this.syncValues();
+        }
+
+        this.setButtonState();
+      },
+
+      updateValues: observer('optionComponents.@each.{isSelected,value}', function(obj, key) {
+        if (this._suspendOptionObservers || get(this, 'isInitializing')) { return; }
+
+        this.syncValues();
+      }),
+
+      updateOptions: observer('values.[]', function() {
+        if (get(this, 'isInitializing')) { return; }
+
+        this.suspendOptionObservers(function() {
+          this.syncOptions();
+        });
+
+        this.setButtonState();
+      }),
+
+      // Update values to reflect the `selected` state of all options
+      syncValues: function() {
+        var selectedOptions = A(get(this, 'optionComponents').filterBy('isSelected'));
+
+        // The `values` attribute must be set to a new array reflecting the state
+        // of selected options; manipulating the array is not compatible with
+        // bindings that point to computed properties
+        set(this, 'values', A(selectedOptions.mapBy('value')));
+      },
+
+      // Update the `selected` state of all options to reflect current values
+      syncOptions: function() {
+        var options = get(this, 'allOptionComponents');
+        var values = A(get(this, 'values') || []);
+
+        assert("The 'value' attribute of '" + get(this, 'tagName') + "' components must not contain duplicate values.", get(values, 'length') === get(values.uniq(), 'length'));
+
+        options.forEach(function(option) {
+          set(option, 'selected', values.contains(get(option, 'value')));
+        });
+      },
+
+      // Disable/enable action buttons
+      setButtonState: function() {
+        var total = get(this, 'optionCount');
+        var selected = get(this, 'selectedOptionCount');
+        var selectAllButton = get(this, 'selectAllButton');
+        var unselectAllButton = get(this, 'unselectAllButton');
+
+        selectAllButton && set(selectAllButton, 'disabled', selected === total);
+        unselectAllButton && set(unselectAllButton, 'disabled', selected === 0);
+      },
+
+      // Temporarily prevent option observers from having an effect to allow for
+      // batch option updates
+      suspendOptionObservers: function(callback) {
+        this._suspendOptionObservers = true;
+        callback.call(this);
+        this._suspendOptionObservers = false;
+      }
     });
   });
 define("lytics-components/input/toggle",
@@ -825,9 +1277,9 @@ define("lytics-components/input/toggle",
 
       allowedComponents: [ 'option' ],
 
-      valueClass: function() {
+      valueClass: computed(function() {
         return '' + get(this, 'value');
-      }.property('value'),
+      }).property('value'),
 
       possibleValues: computed(function() {
         return this.componentsForType('option').mapBy('value');
@@ -876,11 +1328,12 @@ define("lytics-components/input/toggle",
       // Hooks / Observers
       //
 
-      verifyDependencies: function() {
-        assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
-      }.on('didRegisterComponents'),
+      // Verify dependencies and initialize the default value
+      didRegisterComponents: function() {
+        this._super();
 
-      populateDefault: function() {
+        assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
+
         var value = get(this, 'value');
         var defaultValue = get(this, 'defaultValue');
 
@@ -888,12 +1341,12 @@ define("lytics-components/input/toggle",
         if (value === undefined && defaultValue !== undefined) {
           set(this, 'value', defaultValue);
         }
-      }.on('didRegisterComponents')
+      }
     });
   });
 define("lytics-components",
-  ["./mixin/parent","./mixin/child","./mixin/active-state","./mixin/transition","./common/option","./common/button","./common/content","./common/label","./display/carousel","./display/popover","./display/templates/popover","./display/tip","./input/toggle","ember","exports"],
-  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __dependency14__, __exports__) {
+  ["./mixin/parent","./mixin/child","./mixin/active-state","./mixin/transition","./common/option","./common/button","./common/content","./common/label","./common/text-field","./common/filter","./display/carousel","./display/popover","./display/templates/popover","./display/tip","./input/toggle","./input/multi-select","ember","exports"],
+  function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__, __dependency6__, __dependency7__, __dependency8__, __dependency9__, __dependency10__, __dependency11__, __dependency12__, __dependency13__, __dependency14__, __dependency15__, __dependency16__, __dependency17__, __exports__) {
     "use strict";
     var ParentComponentMixin = __dependency1__["default"] || __dependency1__;
     var ChildComponentMixin = __dependency2__["default"] || __dependency2__;
@@ -903,12 +1356,15 @@ define("lytics-components",
     var ButtonComponent = __dependency6__["default"] || __dependency6__;
     var ContentComponent = __dependency7__["default"] || __dependency7__;
     var LabelComponent = __dependency8__["default"] || __dependency8__;
-    var CarouselComponent = __dependency9__["default"] || __dependency9__;
-    var PopoverComponent = __dependency10__["default"] || __dependency10__;
-    var PopoverTemplate = __dependency11__["default"] || __dependency11__;
-    var TipComponent = __dependency12__["default"] || __dependency12__;
-    var ToggleComponent = __dependency13__["default"] || __dependency13__;
-    var Application = __dependency14__.Application;
+    var TextFieldComponent = __dependency9__["default"] || __dependency9__;
+    var FilterComponent = __dependency10__["default"] || __dependency10__;
+    var CarouselComponent = __dependency11__["default"] || __dependency11__;
+    var PopoverComponent = __dependency12__["default"] || __dependency12__;
+    var PopoverTemplate = __dependency13__["default"] || __dependency13__;
+    var TipComponent = __dependency14__["default"] || __dependency14__;
+    var ToggleComponent = __dependency15__["default"] || __dependency15__;
+    var MultiSelectComponent = __dependency16__["default"] || __dependency16__;
+    var Application = __dependency17__.Application;
 
     Application.initializer({
       name: 'lyticsComponents',
@@ -917,11 +1373,14 @@ define("lytics-components",
         application.register('component:lio-button', ButtonComponent);
         application.register('component:lio-content', ContentComponent);
         application.register('component:lio-label', LabelComponent);
+        application.register('component:lio-text-field', TextFieldComponent);
+        application.register('component:lio-filter', FilterComponent);
         application.register('component:lio-carousel', CarouselComponent);
         application.register('component:lio-popover', PopoverComponent);
         application.register('template:components/lio-popover', PopoverTemplate);
         application.register('component:lio-tip', TipComponent);
         application.register('component:lio-toggle', ToggleComponent);
+        application.register('component:lio-multi-select', MultiSelectComponent);
       }
     });
 
@@ -933,10 +1392,13 @@ define("lytics-components",
     __exports__.ButtonComponent = ButtonComponent;
     __exports__.ContentComponent = ContentComponent;
     __exports__.LabelComponent = LabelComponent;
+    __exports__.TextFieldComponent = TextFieldComponent;
+    __exports__.FilterComponent = FilterComponent;
     __exports__.CarouselComponent = CarouselComponent;
-    __exports__.ToggleComponent = ToggleComponent;
     __exports__.PopoverComponent = PopoverComponent;
     __exports__.TipComponent = TipComponent;
+    __exports__.ToggleComponent = ToggleComponent;
+    __exports__.MultiSelectComponent = MultiSelectComponent;
   });
 define("lytics-components/mixin/active-state",
   ["ember","exports"],
@@ -946,6 +1408,7 @@ define("lytics-components/mixin/active-state",
     var get = __dependency1__.get;
     var set = __dependency1__.set;
     var computed = __dependency1__.computed;
+    var observer = __dependency1__.observer;
 
     __exports__["default"] = Mixin.create({
       //
@@ -994,12 +1457,14 @@ define("lytics-components/mixin/active-state",
       // Initialize the `isVisuallyActive` flag to the initial value of `active`; it
       // can't use `computed.oneWay` because the value must always act independently
       // (since it is managed by the function below).
-      initVisuallyActive: function() {
+      init: function() {
+        this._super();
+
         set(this, 'isVisuallyActive', get(this, 'isActive'));
-      }.on('init'),
+      },
 
       // Begin a transition that ends with setting the visual state to the current state
-      transitionVisualState: function() {
+      transitionVisualState: observer('isActive', function() {
         var isActive = this.get('isActive');
 
         // The component may not use transitions
@@ -1010,7 +1475,7 @@ define("lytics-components/mixin/active-state",
         } else {
           set(this, 'isVisuallyActive', isActive);
         }
-      }.observes('isActive')
+      })
     });
   });
 define("lytics-components/mixin/child",
@@ -1034,7 +1499,10 @@ define("lytics-components/mixin/child",
       // Hooks / Observers
       //
 
-      registerWithParent: function() {
+      // Register self with parent component
+      willInsertElement: function(view) {
+        this._super(view);
+
         var parent = get(this, 'parent');
 
         if (!get(this, 'canBeTopLevel')) {
@@ -1042,12 +1510,15 @@ define("lytics-components/mixin/child",
         }
 
         parent && parent.registerComponent && parent.registerComponent(this);
-      }.on('willInsertElement'),
+      },
 
-      notifyParent: function() {
+      // Notify parent of insertion into DOM
+      didInsertElement: function(view) {
+        this._super(view);
+
         var parent = get(this, 'parent');
         parent && parent.didInsertComponent && parent.didInsertComponent(this);
-      }.on('didInsertElement')
+      }
     });
   });
 define("lytics-components/mixin/parent",
@@ -1055,7 +1526,7 @@ define("lytics-components/mixin/parent",
   function(__dependency1__, __exports__) {
     "use strict";
     var Mixin = __dependency1__.Mixin;
-    var EmberArray = __dependency1__.A;
+    var A = __dependency1__.A;
     var get = __dependency1__.get;
     var set = __dependency1__.set;
     var assert = __dependency1__.assert;
@@ -1077,9 +1548,11 @@ define("lytics-components/mixin/parent",
       // Hooks / Observers
       //
 
-      initComponents: function() {
-        set(this, 'components', EmberArray());
-      }.on('init'),
+      init: function() {
+        this._super();
+
+        set(this, 'components', A());
+      },
 
       //
       // Internal Methods
@@ -1090,10 +1563,13 @@ define("lytics-components/mixin/parent",
         var allowed = get(this, 'allowedComponents');
 
         assert("All registered components must have a `typeKey` property, got '" + type + "'", typeof type === 'string');
-        assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", EmberArray(allowed).contains(type));
+        assert("A '" + get(component, 'tagName') + "' component cannot be nested within a '" + get(this, 'tagName') + "' component.", A(allowed).contains(type));
 
         get(this, 'components').pushObject(component);
       },
+
+      // Hook stub to allow uses of `_super`
+      didRegisterComponents: Ember.K,
 
       didInsertComponent: function() {
         // Once a component is actually in the DOM, we know that all components have been registered
@@ -1104,7 +1580,7 @@ define("lytics-components/mixin/parent",
       },
 
       componentsForType: function(type) {
-        return get(this, 'components').filterBy('typeKey', type);
+        return A(get(this, 'components').filterBy('typeKey', type));
       }
     });
   });
@@ -1118,6 +1594,7 @@ define("lytics-components/mixin/transition",
     var A = __dependency2__.A;
     var get = __dependency2__.get;
     var set = __dependency2__.set;
+    var computed = __dependency2__.computed;
     var run = __dependency2__.run;
     var $ = __dependency2__.$;
 
@@ -1131,9 +1608,9 @@ define("lytics-components/mixin/transition",
 
       // Any component can override this property to never use transitions,
       // otherwise it defaults to the parent component's value
-      disableTransitions: function() {
+      disableTransitions: computed(function() {
         return get(this, 'parent.disableTransitions') === true;
-      }.property(),
+      }).property(),
 
       //
       // Internal Properties
@@ -1154,7 +1631,9 @@ define("lytics-components/mixin/transition",
 
       // Normalize the 'transitionend' event by setting up an Ember event to fire
       // when the DOM event fires; this is primarily for testing purposes
-      initTransitionEvent: function() {
+      didInsertElement: function(view) {
+        this._super(view);
+
         var component = this;
 
         if ($.support.transition) {
@@ -1168,7 +1647,7 @@ define("lytics-components/mixin/transition",
             return false;
           });
         }
-      }.on('didInsertElement'),
+      },
 
       //
       // Internal Methods

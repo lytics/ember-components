@@ -53,17 +53,17 @@ define(
       allowedComponents: [ 'content', 'label', 'button' ],
 
       // The index of the content item currently active
-      activeIndex: function() {
+      activeIndex: computed(function() {
         var contents = this.componentsForType('content');
         var active = contents.findBy('isActive');
 
         return contents.indexOf(active);
-      }.property('components.@each.isActive').readOnly(),
+      }).property('components.@each.isActive').readOnly(),
 
       // The number of content items in the carousel
-      contentLength: function() {
+      contentLength: computed(function() {
         return get(this.componentsForType('content'), 'length');
-      }.property('components.[]').readOnly(),
+      }).property('components.[]').readOnly(),
 
       // Whether or not the carousel has no content items
       isEmpty: computed.equal('contentLength', 0),
@@ -146,8 +146,12 @@ define(
       // Hooks / Observers
       //
 
-      // Set the initially active content if none is specified
-      setActiveContent: function() {
+      // Set the initially active content if none is specified, and ensure there
+      // are the same number of labels as content items and that the correct label
+      // is activated initially
+      didRegisterComponents: function() {
+        this._super();
+
         var contents = this.componentsForType('content');
         var firstContent = contents.objectAt(0);
 
@@ -157,12 +161,6 @@ define(
           firstContent.send('activate');
         }
 
-        this.trigger('didSetActiveContent');
-      }.on('didRegisterComponents'),
-
-      // Ensure there are the same number of labels as content items and that the
-      // correct label is activated initially
-      verifyLabels: function() {
         var labels = this.componentsForType('label');
         var labelLength = get(labels, 'length');
         var activeIndex = get(this, 'activeIndex');
@@ -172,6 +170,6 @@ define(
         if (labelLength) {
           labels.objectAt(activeIndex).send('activate');
         }
-      }.on('didSetActiveContent')
+      }
     });
   });

@@ -1,5 +1,13 @@
 # Changelog
 
+### v0.2.2 (September 24, 2014)
+
+* Added `option` and `valuePath` attributes to 'lio-option' component
+* Added 'lio-filter' common component
+* Added 'lio-multi-select' input component
+* Fixed option component value classes for object values
+* Support not extending prototypes
+
 ### v0.2.1 (September 9, 2014)
 
 * Allow for aligning popovers to their parent

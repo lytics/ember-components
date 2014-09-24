@@ -3,6 +3,7 @@ var Mixin = require("ember").Mixin;
 var get = require("ember").get;
 var set = require("ember").set;
 var computed = require("ember").computed;
+var observer = require("ember").observer;
 
 exports["default"] = Mixin.create({
   //
@@ -51,12 +52,14 @@ exports["default"] = Mixin.create({
   // Initialize the `isVisuallyActive` flag to the initial value of `active`; it
   // can't use `computed.oneWay` because the value must always act independently
   // (since it is managed by the function below).
-  initVisuallyActive: function() {
+  init: function() {
+    this._super();
+
     set(this, 'isVisuallyActive', get(this, 'isActive'));
-  }.on('init'),
+  },
 
   // Begin a transition that ends with setting the visual state to the current state
-  transitionVisualState: function() {
+  transitionVisualState: observer('isActive', function() {
     var isActive = this.get('isActive');
 
     // The component may not use transitions
@@ -67,5 +70,5 @@ exports["default"] = Mixin.create({
     } else {
       set(this, 'isVisuallyActive', isActive);
     }
-  }.observes('isActive')
+  })
 });

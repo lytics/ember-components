@@ -7,11 +7,14 @@ var OptionComponent = require("./common/option")["default"] || require("./common
 var ButtonComponent = require("./common/button")["default"] || require("./common/button");
 var ContentComponent = require("./common/content")["default"] || require("./common/content");
 var LabelComponent = require("./common/label")["default"] || require("./common/label");
+var TextFieldComponent = require("./common/text-field")["default"] || require("./common/text-field");
+var FilterComponent = require("./common/filter")["default"] || require("./common/filter");
 var CarouselComponent = require("./display/carousel")["default"] || require("./display/carousel");
 var PopoverComponent = require("./display/popover")["default"] || require("./display/popover");
 var PopoverTemplate = require("./display/templates/popover")["default"] || require("./display/templates/popover");
 var TipComponent = require("./display/tip")["default"] || require("./display/tip");
 var ToggleComponent = require("./input/toggle")["default"] || require("./input/toggle");
+var MultiSelectComponent = require("./input/multi-select")["default"] || require("./input/multi-select");
 var Application = require("ember").Application;
 
 Application.initializer({
@@ -21,11 +24,14 @@ Application.initializer({
     application.register('component:lio-button', ButtonComponent);
     application.register('component:lio-content', ContentComponent);
     application.register('component:lio-label', LabelComponent);
+    application.register('component:lio-text-field', TextFieldComponent);
+    application.register('component:lio-filter', FilterComponent);
     application.register('component:lio-carousel', CarouselComponent);
     application.register('component:lio-popover', PopoverComponent);
     application.register('template:components/lio-popover', PopoverTemplate);
     application.register('component:lio-tip', TipComponent);
     application.register('component:lio-toggle', ToggleComponent);
+    application.register('component:lio-multi-select', MultiSelectComponent);
   }
 });
 
@@ -37,7 +43,10 @@ exports.OptionComponent = OptionComponent;
 exports.ButtonComponent = ButtonComponent;
 exports.ContentComponent = ContentComponent;
 exports.LabelComponent = LabelComponent;
+exports.TextFieldComponent = TextFieldComponent;
+exports.FilterComponent = FilterComponent;
 exports.CarouselComponent = CarouselComponent;
-exports.ToggleComponent = ToggleComponent;
 exports.PopoverComponent = PopoverComponent;
 exports.TipComponent = TipComponent;
+exports.ToggleComponent = ToggleComponent;
+exports.MultiSelectComponent = MultiSelectComponent;
