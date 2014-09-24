@@ -1,5 +1,9 @@
 # Changelog
 
+### v0.2.3 (September 24, 2014)
+
+* Fixed hard dependency on Ember v1.7.0
+
 ### v0.2.2 (September 24, 2014)
 
 * Added `option` and `valuePath` attributes to 'lio-option' component
