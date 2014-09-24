@@ -80,7 +80,7 @@ test("the component throws if there isn't a popover", function() {
   var context = this;
 
   this.subject({
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{lio-label}}
     */})
   });
@@ -94,7 +94,7 @@ test("the component throws if there is more than one popover", function() {
   var context = this;
 
   this.subject({
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{lio-label}}
       {{lio-popover}}
       {{lio-popover}}
@@ -110,7 +110,7 @@ test("the component throws if there isn't a label", function() {
   var context = this;
 
   this.subject({
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{lio-popover}}
     */})
   });
@@ -124,7 +124,7 @@ test("the component throws if there is more than one label", function() {
   var context = this;
 
   this.subject({
-    template: compileTemplate(function() {/*
+    layout: compileTemplate(function() {/*
       {{lio-popover}}
     */})
   });

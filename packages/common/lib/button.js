@@ -25,6 +25,8 @@ export default Component.extend(ChildComponentMixin, {
 
   attributeBindings: [ 'action', 'disabled' ],
 
+  classNameBindings: [ 'disabled' ],
+
   //
   // Handlebars Attributes
   //
@@ -53,6 +55,6 @@ export default Component.extend(ChildComponentMixin, {
 
     assert("All '" + get(this, 'tagName') + "' components must define an `action` attribute.", action);
 
-    get(this, 'parent').send(action);
+    get(this, 'parent').send(Ember.String.camelize(action));
   }
 });

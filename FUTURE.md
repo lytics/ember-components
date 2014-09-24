@@ -11,18 +11,15 @@
 * `lio-multi-input`
   * `lio-text-field`
   * `lio-option`
-  * `lio-value`
   * `lio-button` `action="add"`
   * `lio-button` `action="remove-all"`
 * `lio-select`
-  * `lio-value`
   * `lio-option`
   * `lio-filter`
     * `lio-text-field`
     * `lio-button` `action="clear"`
 * `lio-multi-select`
   * `lio-option`
-  * `lio-value`
   * `lio-button` `action="select-all"`
   * `lio-button` `action="unselect-all"`
   * `lio-filter`
