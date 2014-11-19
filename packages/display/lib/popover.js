@@ -166,6 +166,8 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
       trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
       anchorOffset || (anchorOffset = { top: 0, left: 0 });
 
+      trueAnchorOffset.top -= $(document).scrollTop();
+
       setProperties(this, {
         offsetTop: anchorOffset.top,
         offsetLeft: anchorOffset.left,
