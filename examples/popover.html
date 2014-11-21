@@ -36,7 +36,8 @@
     top: 50%;
     left: 0;
     right: 0;
-    margin: -50px auto 0;
+    margin: 0 auto;
+    transform: translateY(-50%);
     width: 150px;
     text-align: center;
   }
@@ -55,12 +56,13 @@
   .links .right {
     top: 50%;
     right: 0;
-    margin-top:-50px;
+    transform: translateY(-50%);
+    text-align: right;
   }
   .links .left {
     top: 50%;
     left: 0;
-    margin-top:-50px;
+    transform: translateY(-50%);
   }
   .links .bottom {
     text-align: center;
@@ -101,6 +103,10 @@
       <cite id="cite4" {{action 'togglePopover' 4}}>Left</cite>
       <cite id="cite2" {{action 'togglePopover' 2}}>Right</cite>
       <cite id="cite3" {{action 'togglePopover' 3}}>Bottom</cite>
+      <cite id="cite21" {{action 'togglePopover' 21}}>Top Left</cite>
+      <cite id="cite22" {{action 'togglePopover' 22}}>Top Right</cite>
+      <cite id="cite23" {{action 'togglePopover' 23}}>Bottom Left</cite>
+      <cite id="cite24" {{action 'togglePopover' 24}}>Bottom Right</cite>
     </div>
 
     <div class="top">
@@ -194,6 +200,19 @@
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
   {{#lio-popover anchor="#cite20" active=active20 position="left"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+
+  {{#lio-popover anchor="#cite21" active=active21 position="top-left"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite22" active=active22 position="top-right"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite23" active=active23 position="bottom-left"}}
+    <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
+  {{/lio-popover}}
+  {{#lio-popover anchor="#cite24" active=active24 position="bottom-right"}}
     <span>Here are the contents of the tooltip. I hope this is enough of a demonstration</span>
   {{/lio-popover}}
 

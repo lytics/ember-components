@@ -92,6 +92,27 @@ test("className is based off the rendered position", function() {
   });
 });
 
+test("corner positions result in two position class names (matching the edges)", function() {
+  var component = buildComponent(this, {
+    layout: compileTemplate(defaultTemplate)
+  });
+
+  $('<div id="anchor">').appendTo('#ember-testing');
+  component.set('anchor', '#anchor');
+
+  Ember.run(function() {
+    component.send('acivate');
+    component.set('position', 'top-left');
+    giveBounds(component);
+    component.adjustPosition();
+    equal(component.get('renderedPosition'), 'top-right');
+    Ember.run.next(function() {
+      ok(component.$().hasClass('right'));
+      ok(component.$().hasClass('top'));
+    });
+  });
+});
+
 test("the arrow position is centered on the popover", function() {
   var component = buildComponent(this, {
     layout: compileTemplate(defaultTemplate)

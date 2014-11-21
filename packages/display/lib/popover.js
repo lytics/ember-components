@@ -17,7 +17,7 @@ import {
 } from 'ember';
 
 var typeKey = 'popover';
-var positions = A([ 'top', 'right', 'bottom', 'left' ]);
+var positions = A([ 'top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);
 
 /**
   Popover Component
@@ -39,7 +39,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'renderedPosition' ],
+  classNameBindings: [ 'positionClassName' ],
 
   //
   // Handlebars Attributes
@@ -60,6 +60,11 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
   canBeTopLevel: true,
 
   renderedPosition: null,
+
+  positionClassName: computed(function() {
+    var position = get(this, 'renderedPosition');
+    return position && position.replace('-', ' ');
+  }).property('renderedPosition'),
 
   position: computed(function(key, value) {
     if (arguments.length === 1) {
@@ -112,6 +117,38 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
         offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') - get(popover, 'arrowWidth'),
         arrowOffsetLeft: get(popover, 'width')
       });
+    },
+    'top-left': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') - get(popover, 'height') - get(popover, 'arrowHeight'),
+        arrowOffsetTop: get(popover, 'height'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'arrowWidth'),
+        arrowOffsetLeft: 0
+      });
+    },
+    'top-right': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') - get(popover, 'height') - get(popover, 'arrowHeight'),
+        arrowOffsetTop: get(popover, 'height'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') + get(popover, 'anchorWidth'),
+        arrowOffsetLeft: get(popover, 'width') - get(popover, 'arrowWidth')
+      });
+    },
+    'bottom-left': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') + get(popover, 'anchorHeight') + get(popover, 'arrowHeight'),
+        arrowOffsetTop: 0 - get(popover, 'arrowHeight'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'arrowWidth'),
+        arrowOffsetLeft: 0
+      });
+    },
+    'bottom-right': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') + get(popover, 'anchorHeight') + get(popover, 'arrowHeight'),
+        arrowOffsetTop: 0 - get(popover, 'arrowHeight'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') + get(popover, 'anchorWidth'),
+        arrowOffsetLeft: get(popover, 'width') - get(popover, 'arrowWidth')
+      });
     }
   },
 
@@ -143,14 +180,14 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
     var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
-    if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
-      position = 'right';
-    } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
-      position = 'left';
-    } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
-      position = 'bottom';
-    } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
-      position = 'top';
+    if (position.indexOf('left') !== -1 && dimensions.trueOffsetLeft - dimensions.width < 0) {
+      position = position.replace('left', 'right');
+    } else if (position.indexOf('right') !== -1 && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+      position = position.replace('right', 'left');
+    } else if (position.indexOf('top') !== -1 && dimensions.trueOffsetTop - dimensions.height < 0) {
+      position = position.replace('top', 'bottom');
+    } else if (position.indexOf('bottom') !== -1 && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+      position = position.replace('bottom', 'top');
     }
 
     set(this, 'renderedPosition', position);
