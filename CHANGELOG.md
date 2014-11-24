@@ -1,5 +1,11 @@
 # Changelog
 
+### v0.2.4 (November 24, 2014)
+
+* Added 'bubbles' attribute to 'tip' component for bubbling actions
+* Added corner positions to 'popover' component
+* Fixed issue with 'popover' positioning not taking scroll position into account
+
 ### v0.2.3 (September 24, 2014)
 
 * Fixed hard dependency on Ember v1.7.0

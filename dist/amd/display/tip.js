@@ -44,6 +44,7 @@ define(
       //
 
       activator: 'click',
+      bubbles: true,
 
       //
       // Internal Properties
@@ -67,6 +68,8 @@ define(
         return get(this.componentsForType('popover'), 'firstObject');
       }).property(),
 
+      shouldBubble: computed.bool('bubbles'),
+
       //
       // Event Handlers
       //
@@ -74,33 +77,38 @@ define(
       click: function(event) {
         if (get(this, 'fromFocus')) {
           set(this, 'fromFocus', false);
-          return;
+          return get(this, 'shouldBubble');
         }
         if (get(this, 'activator') === 'click') {
           this.send('toggleActive');
         }
+        return get(this, 'shouldBubble');
       },
 
       mouseEnter: function() {
         if (get(this, 'activator') === 'hover') {
           this.send('activate');
         }
+        return get(this, 'shouldBubble');
       },
 
       mouseLeave: function() {
         if (get(this, 'activator') === 'hover') {
           this.send('deactivate');
         }
+        return get(this, 'shouldBubble');
       },
 
       focusIn: function() {
         set(this, 'fromFocus', true);
         this.send('activate');
+        return get(this, 'shouldBubble');
       },
 
       focusOut: function() {
         set(this, 'fromFocus', false);
         this.send('deactivate');
+        return get(this, 'shouldBubble');
       },
 
       keyPress: function(event) {
@@ -109,6 +117,7 @@ define(
         } else if (event.which === 27) {
           this.send('deactivate');
         }
+        return get(this, 'shouldBubble');
       },
 
       //

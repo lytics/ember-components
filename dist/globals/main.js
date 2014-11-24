@@ -614,7 +614,7 @@ var observer = window.Ember.observer;
 var assert = window.Ember.assert;
 
 var typeKey = 'popover';
-var positions = A([ 'top', 'right', 'bottom', 'left' ]);
+var positions = A([ 'top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);
 
 /**
   Popover Component
@@ -636,7 +636,7 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
 
   tagName: tagForType(typeKey),
 
-  classNameBindings: [ 'renderedPosition' ],
+  classNameBindings: [ 'positionClassName' ],
 
   //
   // Handlebars Attributes
@@ -657,6 +657,11 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
   canBeTopLevel: true,
 
   renderedPosition: null,
+
+  positionClassName: computed(function() {
+    var position = get(this, 'renderedPosition');
+    return position && position.replace('-', ' ');
+  }).property('renderedPosition'),
 
   position: computed(function(key, value) {
     if (arguments.length === 1) {
@@ -709,6 +714,38 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
         offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') - get(popover, 'arrowWidth'),
         arrowOffsetLeft: get(popover, 'width')
       });
+    },
+    'top-left': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') - get(popover, 'height') - get(popover, 'arrowHeight'),
+        arrowOffsetTop: get(popover, 'height'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'arrowWidth'),
+        arrowOffsetLeft: 0
+      });
+    },
+    'top-right': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') - get(popover, 'height') - get(popover, 'arrowHeight'),
+        arrowOffsetTop: get(popover, 'height'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') + get(popover, 'anchorWidth'),
+        arrowOffsetLeft: get(popover, 'width') - get(popover, 'arrowWidth')
+      });
+    },
+    'bottom-left': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') + get(popover, 'anchorHeight') + get(popover, 'arrowHeight'),
+        arrowOffsetTop: 0 - get(popover, 'arrowHeight'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'arrowWidth'),
+        arrowOffsetLeft: 0
+      });
+    },
+    'bottom-right': function(popover) {
+      setProperties(popover, {
+        offsetTop: get(popover, 'offsetTop') + get(popover, 'anchorHeight') + get(popover, 'arrowHeight'),
+        arrowOffsetTop: 0 - get(popover, 'arrowHeight'),
+        offsetLeft: get(popover, 'offsetLeft') - get(popover, 'width') + get(popover, 'anchorWidth'),
+        arrowOffsetLeft: get(popover, 'width') - get(popover, 'arrowWidth')
+      });
     }
   },
 
@@ -740,14 +777,14 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
     var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
-    if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
-      position = 'right';
-    } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
-      position = 'left';
-    } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
-      position = 'bottom';
-    } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
-      position = 'top';
+    if (position.indexOf('left') !== -1 && dimensions.trueOffsetLeft - dimensions.width < 0) {
+      position = position.replace('left', 'right');
+    } else if (position.indexOf('right') !== -1 && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+      position = position.replace('right', 'left');
+    } else if (position.indexOf('top') !== -1 && dimensions.trueOffsetTop - dimensions.height < 0) {
+      position = position.replace('top', 'bottom');
+    } else if (position.indexOf('bottom') !== -1 && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+      position = position.replace('bottom', 'top');
     }
 
     set(this, 'renderedPosition', position);
@@ -762,6 +799,8 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
       var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : trueAnchorOffset;
       trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
       anchorOffset || (anchorOffset = { top: 0, left: 0 });
+
+      trueAnchorOffset.top -= $(document).scrollTop();
 
       setProperties(this, {
         offsetTop: anchorOffset.top,
@@ -899,6 +938,7 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
   //
 
   activator: 'click',
+  bubbles: true,
 
   //
   // Internal Properties
@@ -922,6 +962,8 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
     return get(this.componentsForType('popover'), 'firstObject');
   }).property(),
 
+  shouldBubble: computed.bool('bubbles'),
+
   //
   // Event Handlers
   //
@@ -929,33 +971,38 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
   click: function(event) {
     if (get(this, 'fromFocus')) {
       set(this, 'fromFocus', false);
-      return;
+      return get(this, 'shouldBubble');
     }
     if (get(this, 'activator') === 'click') {
       this.send('toggleActive');
     }
+    return get(this, 'shouldBubble');
   },
 
   mouseEnter: function() {
     if (get(this, 'activator') === 'hover') {
       this.send('activate');
     }
+    return get(this, 'shouldBubble');
   },
 
   mouseLeave: function() {
     if (get(this, 'activator') === 'hover') {
       this.send('deactivate');
     }
+    return get(this, 'shouldBubble');
   },
 
   focusIn: function() {
     set(this, 'fromFocus', true);
     this.send('activate');
+    return get(this, 'shouldBubble');
   },
 
   focusOut: function() {
     set(this, 'fromFocus', false);
     this.send('deactivate');
+    return get(this, 'shouldBubble');
   },
 
   keyPress: function(event) {
@@ -964,6 +1011,7 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
     } else if (event.which === 27) {
       this.send('deactivate');
     }
+    return get(this, 'shouldBubble');
   },
 
   //
