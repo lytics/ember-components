@@ -105,9 +105,9 @@ test("corner positions result in two position class names (matching the edges)",
     component.set('position', 'top-left');
     giveBounds(component);
     component.adjustPosition();
-    equal(component.get('renderedPosition'), 'top-right');
+    equal(component.get('renderedPosition'), 'top-left');
     Ember.run.next(function() {
-      ok(component.$().hasClass('right'));
+      ok(component.$().hasClass('left'));
       ok(component.$().hasClass('top'));
     });
   });
