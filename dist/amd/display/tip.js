@@ -5,6 +5,7 @@ define(
     var tagForType = __dependency1__.tagForType;
     var ParentComponentMixin = __dependency2__["default"] || __dependency2__;
     var ActiveStateMixin = __dependency3__["default"] || __dependency3__;
+    var A = __dependency4__.A;
     var Component = __dependency4__.Component;
     var Object = __dependency4__.Object;
     var String = __dependency4__.String;
@@ -105,12 +106,6 @@ define(
         return get(this, 'shouldBubble');
       },
 
-      focusOut: function() {
-        set(this, 'fromFocus', false);
-        this.send('deactivate');
-        return get(this, 'shouldBubble');
-      },
-
       keyPress: function(event) {
         if (event.which === 13) {
           this.send('toggleActive');
@@ -134,6 +129,26 @@ define(
 
         set(get(this, 'popover'), 'anchor', get(this, 'label').$());
         set(get(this, 'popover'), 'alignToParent', true);
+
+        var component = this;
+        var handler = function(event) {
+          if (component.get('active') && !withinComponent(event.target, component.$().add(component.get('anchor')))) {
+            component.set('active', false);
+          }
+        };
+
+        this.set('windowClickHandler', handler);
+        $(window).on('click.lio', handler);
+      },
+
+      willDestroyElement: function() {
+        $(window).off('click.lio', this.get('windowClickHandler'));
       }
     });
+
+    function withinComponent(target, $elements) {
+      return A($elements.toArray()).any(function(el) {
+        return target === el || $.contains(el, target);
+      });
+    }
   });

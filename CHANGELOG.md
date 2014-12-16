@@ -1,5 +1,10 @@
 # Changelog
 
+### v0.2.5 (December 16, 2014)
+
+* Removed automatic position flipping for corner positioned popovers
+* Improved the automatic closing of the 'tip' component
+
 ### v0.2.4 (November 24, 2014)
 
 * Added 'bubbles' attribute to 'tip' component for bubbling actions

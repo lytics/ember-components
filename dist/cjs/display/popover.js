@@ -179,14 +179,15 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
     var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
-    if (position.indexOf('left') !== -1 && dimensions.trueOffsetLeft - dimensions.width < 0) {
-      position = position.replace('left', 'right');
-    } else if (position.indexOf('right') !== -1 && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
-      position = position.replace('right', 'left');
-    } else if (position.indexOf('top') !== -1 && dimensions.trueOffsetTop - dimensions.height < 0) {
-      position = position.replace('top', 'bottom');
-    } else if (position.indexOf('bottom') !== -1 && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
-      position = position.replace('bottom', 'top');
+    // NOTE: this does not affect corner positions
+    if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
+      position = 'right';
+    } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+      position = 'left';
+    } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
+      position = 'bottom';
+    } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+      position = 'top';
     }
 
     set(this, 'renderedPosition', position);

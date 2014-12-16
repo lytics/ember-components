@@ -803,14 +803,15 @@ define("lytics-components/display/popover",
         var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
         // The rendered position is the opposite of the preferred position when there is no room where preferred
-        if (position.indexOf('left') !== -1 && dimensions.trueOffsetLeft - dimensions.width < 0) {
-          position = position.replace('left', 'right');
-        } else if (position.indexOf('right') !== -1 && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
-          position = position.replace('right', 'left');
-        } else if (position.indexOf('top') !== -1 && dimensions.trueOffsetTop - dimensions.height < 0) {
-          position = position.replace('top', 'bottom');
-        } else if (position.indexOf('bottom') !== -1 && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
-          position = position.replace('bottom', 'top');
+        // NOTE: this does not affect corner positions
+        if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
+          position = 'right';
+        } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+          position = 'left';
+        } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
+          position = 'bottom';
+        } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+          position = 'top';
         }
 
         set(this, 'renderedPosition', position);
@@ -911,7 +912,8 @@ define("lytics-components/display/templates/popover",
   function(__dependency1__, __exports__) {
     "use strict";
     var Ember = __dependency1__["default"] || __dependency1__;
-    __exports__["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+    __exports__["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data
+    /**/) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
       var buffer = '', stack1;
@@ -931,6 +933,7 @@ define("lytics-components/display/tip",
     var tagForType = __dependency1__.tagForType;
     var ParentComponentMixin = __dependency2__["default"] || __dependency2__;
     var ActiveStateMixin = __dependency3__["default"] || __dependency3__;
+    var A = __dependency4__.A;
     var Component = __dependency4__.Component;
     var Object = __dependency4__.Object;
     var String = __dependency4__.String;
@@ -1031,12 +1034,6 @@ define("lytics-components/display/tip",
         return get(this, 'shouldBubble');
       },
 
-      focusOut: function() {
-        set(this, 'fromFocus', false);
-        this.send('deactivate');
-        return get(this, 'shouldBubble');
-      },
-
       keyPress: function(event) {
         if (event.which === 13) {
           this.send('toggleActive');
@@ -1060,8 +1057,28 @@ define("lytics-components/display/tip",
 
         set(get(this, 'popover'), 'anchor', get(this, 'label').$());
         set(get(this, 'popover'), 'alignToParent', true);
+
+        var component = this;
+        var handler = function(event) {
+          if (component.get('active') && !withinComponent(event.target, component.$().add(component.get('anchor')))) {
+            component.set('active', false);
+          }
+        };
+
+        this.set('windowClickHandler', handler);
+        $(window).on('click.lio', handler);
+      },
+
+      willDestroyElement: function() {
+        $(window).off('click.lio', this.get('windowClickHandler'));
       }
     });
+
+    function withinComponent(target, $elements) {
+      return A($elements.toArray()).any(function(el) {
+        return target === el || $.contains(el, target);
+      });
+    }
   });
 define("lytics-components/input/multi-select",
   ["../namespace","../mixin/parent","ember","exports"],

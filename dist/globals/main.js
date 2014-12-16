@@ -777,14 +777,15 @@ exports["default"] = Component.extend(ParentComponentMixin, ChildComponentMixin,
     var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
-    if (position.indexOf('left') !== -1 && dimensions.trueOffsetLeft - dimensions.width < 0) {
-      position = position.replace('left', 'right');
-    } else if (position.indexOf('right') !== -1 && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
-      position = position.replace('right', 'left');
-    } else if (position.indexOf('top') !== -1 && dimensions.trueOffsetTop - dimensions.height < 0) {
-      position = position.replace('top', 'bottom');
-    } else if (position.indexOf('bottom') !== -1 && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
-      position = position.replace('bottom', 'top');
+    // NOTE: this does not affect corner positions
+    if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
+      position = 'right';
+    } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+      position = 'left';
+    } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
+      position = 'bottom';
+    } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+      position = 'top';
     }
 
     set(this, 'renderedPosition', position);
@@ -882,7 +883,8 @@ function adjustArrowForEdges(arrowStart, start, box, anchor, frame) {
 },{"../mixin/active-state":15,"../mixin/child":16,"../mixin/parent":17,"../mixin/transition":18,"../namespace":19}],10:[function(_dereq_,module,exports){
 "use strict";
 var Ember = window.Ember["default"] || window.Ember;
-exports["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+exports["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data
+/**/) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1;
@@ -899,6 +901,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 var tagForType = _dereq_("../namespace").tagForType;
 var ParentComponentMixin = _dereq_("../mixin/parent")["default"] || _dereq_("../mixin/parent");
 var ActiveStateMixin = _dereq_("../mixin/active-state")["default"] || _dereq_("../mixin/active-state");
+var A = window.Ember.A;
 var Component = window.Ember.Component;
 var Object = window.Ember.Object;
 var String = window.Ember.String;
@@ -999,12 +1002,6 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
     return get(this, 'shouldBubble');
   },
 
-  focusOut: function() {
-    set(this, 'fromFocus', false);
-    this.send('deactivate');
-    return get(this, 'shouldBubble');
-  },
-
   keyPress: function(event) {
     if (event.which === 13) {
       this.send('toggleActive');
@@ -1028,8 +1025,28 @@ exports["default"] = Component.extend(ParentComponentMixin, ActiveStateMixin, {
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
     set(get(this, 'popover'), 'alignToParent', true);
+
+    var component = this;
+    var handler = function(event) {
+      if (component.get('active') && !withinComponent(event.target, component.$().add(component.get('anchor')))) {
+        component.set('active', false);
+      }
+    };
+
+    this.set('windowClickHandler', handler);
+    $(window).on('click.lio', handler);
+  },
+
+  willDestroyElement: function() {
+    $(window).off('click.lio', this.get('windowClickHandler'));
   }
 });
+
+function withinComponent(target, $elements) {
+  return A($elements.toArray()).any(function(el) {
+    return target === el || $.contains(el, target);
+  });
+}
 },{"../mixin/active-state":15,"../mixin/parent":17,"../namespace":19}],12:[function(_dereq_,module,exports){
 "use strict";
 var tagForType = _dereq_("../namespace").tagForType;
