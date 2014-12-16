@@ -2,6 +2,7 @@ import { tagForType } from '../namespace';
 import ParentComponentMixin from '../mixin/parent';
 import ActiveStateMixin from '../mixin/active-state';
 import {
+  A,
   Component,
   Object,
   String,
@@ -103,12 +104,6 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
     return get(this, 'shouldBubble');
   },
 
-  focusOut: function() {
-    set(this, 'fromFocus', false);
-    this.send('deactivate');
-    return get(this, 'shouldBubble');
-  },
-
   keyPress: function(event) {
     if (event.which === 13) {
       this.send('toggleActive');
@@ -132,5 +127,25 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
     set(get(this, 'popover'), 'alignToParent', true);
+
+    var component = this;
+    var handler = function(event) {
+      if (component.get('active') && !withinComponent(event.target, component.$().add(component.get('anchor')))) {
+        component.set('active', false);
+      }
+    };
+
+    this.set('windowClickHandler', handler);
+    $(window).on('click.lio', handler);
+  },
+
+  willDestroyElement: function() {
+    $(window).off('click.lio', this.get('windowClickHandler'));
   }
 });
+
+function withinComponent(target, $elements) {
+  return A($elements.toArray()).any(function(el) {
+    return target === el || $.contains(el, target);
+  });
+}

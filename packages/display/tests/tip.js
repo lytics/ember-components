@@ -4,7 +4,15 @@ moduleForComponent('lio-tip', 'TipComponent', {
   needs: [
     'component:lio-label',
     'component:lio-popover'
-  ]
+  ],
+  teardown: function() {
+    // This happens in the willDestroyElement hook of the tip component, but
+    // ember-qunit, being the leading the ember test adapter, doesn't yet
+    // destroy views on teardown
+    //
+    // Look for that in ember-qunit v0.2.0! Yay?
+    $(window).off('click.lio');
+  }
 });
 
 test("component has correct tag name", function() {
@@ -63,8 +71,10 @@ test("it is not active when blurred", function() {
     active: true
   });
 
-  component.$('lio-label').focusout();
-  ok(!component.get('active'));
+  Ember.run(function() {
+    component.$().parent().simulate('click');
+    ok(!component.get('active'));
+  });
 });
 
 test("the popover is open when active", function() {
