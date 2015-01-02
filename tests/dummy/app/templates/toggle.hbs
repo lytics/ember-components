@@ -1,5 +1,3 @@
-<!doctype html>
-<meta charset="utf-8">
 <style>
   body {
     width: 300px;
@@ -71,34 +69,23 @@
   }
 </style>
 
-<script type="text/x-handlebars">
-  <p>
-    <label>Awesome?</label>
-    {{#lio-toggle value=isAwesome defaultValue=true}}
-      {{#lio-option value=true}}Yep{{/lio-option}}
-      {{#lio-option value=false}}Nope{{/lio-option}}
-    {{/lio-toggle}}
-  </p>
-  <p>
-    <label>How Big?</label>
-    {{#lio-toggle value=size defaultValue="big"}}
-      {{#lio-option value="big"}}Huge{{/lio-option}}
-      {{#lio-option value="small"}}Tiny{{/lio-option}}
-    {{/lio-toggle}}
-  </p>
-  <hr/>
-  <p>
-    <label><code>isAwesome</code>:</label> <code class="result">{{isAwesome}}</code>
-    <br/>
-    <label><code>size</code>:</label> <code class="result">{{size}}</code>
-  </p>
-</script>
-
-<script src="../bower_components/jquery/dist/jquery.js"></script>
-<script src="../bower_components/handlebars/handlebars.js"></script>
-<script src="../bower_components/ember/ember.js"></script>
-<script src="../dist/globals/main.js"></script>
-
-<script>
-  var App = Ember.Application.create();
-</script>
+<p>
+  <label>Awesome?</label>
+  {{#lio-toggle value=isAwesome defaultValue=true}}
+    {{#lio-option value=true}}Yep{{/lio-option}}
+    {{#lio-option value=false}}Nope{{/lio-option}}
+  {{/lio-toggle}}
+</p>
+<p>
+  <label>How Big?</label>
+  {{#lio-toggle value=size defaultValue="big"}}
+    {{#lio-option value="big"}}Huge{{/lio-option}}
+    {{#lio-option value="small"}}Tiny{{/lio-option}}
+  {{/lio-toggle}}
+</p>
+<hr/>
+<p>
+  <label><code>isAwesome</code>:</label> <code class="result">{{isAwesome}}</code>
+  <br/>
+  <label><code>size</code>:</label> <code class="result">{{size}}</code>
+</p>

@@ -1,5 +1,3 @@
-<!doctype html>
-<meta charset="utf-8">
 <style>
   body {
     width: 300px;
@@ -131,30 +129,19 @@
   }
 </style>
 
-<script type="text/x-handlebars">
-  {{#lio-carousel}}
-    <div class="slides">
-      {{#lio-content active=true}}<img src="http://placehold.it/300x300" />{{/lio-content}}
-      {{#lio-content}}<img src="http://placekitten.com/300/300" />{{/lio-content}}
-      {{#lio-content}}<img src="http://placedoge.net/300/300" />{{/lio-content}}
-    </div>
+{{#lio-carousel}}
+  <div class="slides">
+    {{#lio-content active=true}}<img src="http://placehold.it/300x300" />{{/lio-content}}
+    {{#lio-content}}<img src="http://placekitten.com/g/300/300" />{{/lio-content}}
+    {{#lio-content}}<img src="http://placedoge.net/300/300" />{{/lio-content}}
+  </div>
 
-    <div class="indicators">
-      {{lio-label}}
-      {{lio-label}}
-      {{lio-label}}
-    </div>
+  <div class="indicators">
+    {{lio-label}}
+    {{lio-label}}
+    {{lio-label}}
+  </div>
 
-    {{lio-button action="forward"}}
-    {{lio-button action="backward"}}
-  {{/lio-carousel}}
-</script>
-
-<script src="../bower_components/jquery/dist/jquery.js"></script>
-<script src="../bower_components/handlebars/handlebars.js"></script>
-<script src="../bower_components/ember/ember.js"></script>
-<script src="../dist/globals/main.js"></script>
-
-<script>
-  var App = Ember.Application.create();
-</script>
+  {{lio-button action="forward"}}
+  {{lio-button action="backward"}}
+{{/lio-carousel}}

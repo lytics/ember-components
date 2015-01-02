@@ -1,5 +1,3 @@
-<!doctype html>
-<meta charset="utf-8">
 <style>
   * {
     box-sizing: border-box;
@@ -119,84 +117,45 @@
   }
 </style>
 
-<script type="text/x-handlebars">
-  {{#lio-multi-select values=values class="native-input"}}
+{{#lio-multi-select values=values class="native-input"}}
+  {{#each model}}
+    {{#lio-option value=value}}{{capitalize label}}{{/lio-option}}
+  {{/each}}
+{{/lio-multi-select}}
+
+<br/>
+
+{{#lio-multi-select values=values optionValuePath="value" class="side-by-side"}}
+  {{#lio-filter}}
+    {{lio-text-field placeholder="search..."}}
+    {{lio-button action="clear"}}
+  {{/lio-filter}}
+
+  <div class="unselected-options">
     {{#each model}}
-      {{#lio-option value=value}}{{capitalize label}}{{/lio-option}}
+      {{#lio-option}}{{capitalize label}}{{/lio-option}}
     {{/each}}
-  {{/lio-multi-select}}
+  </div>
 
-  <br/>
+  <div class="selected-options">
+    {{#each model}}
+      {{#lio-option unselect=true}}{{capitalize label}}{{/lio-option}}
+    {{/each}}
+  </div>
 
-  {{#lio-multi-select values=values optionValuePath="value" class="side-by-side"}}
-    {{#lio-filter}}
-      {{lio-text-field placeholder="search..."}}
-      {{lio-button action="clear"}}
-    {{/lio-filter}}
+  <span class="actions">
+    {{lio-button action="select-all"}}
+    {{lio-button action="unselect-all"}}
+  </span>
+{{/lio-multi-select}}
 
-    <div class="unselected-options">
-      {{#each model}}
-        {{#lio-option}}{{capitalize label}}{{/lio-option}}
-      {{/each}}
-    </div>
-
-    <div class="selected-options">
-      {{#each model}}
-        {{#lio-option unselect=true}}{{capitalize label}}{{/lio-option}}
-      {{/each}}
-    </div>
-
-    <span class="actions">
-      {{lio-button action="select-all"}}
-      {{lio-button action="unselect-all"}}
-    </span>
-  {{/lio-multi-select}}
-
-  <h4>Selected Values:</h4>
-  {{#if values}}
-    <ul>
-      {{#each values}}
-        <li>{{this}}</li>
-      {{/each}}
-    </ul>
-  {{else}}
-    <em>none</em>
-  {{/if}}
-</script>
-
-<script src="../bower_components/jquery/dist/jquery.js"></script>
-<script src="../bower_components/handlebars/handlebars.js"></script>
-<script src="../bower_components/ember/ember.js"></script>
-<script src="../dist/globals/main.js"></script>
-
-<script>
-  var App = Ember.Application.create();
-  var numbers = 'zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen'.split(' ');
-
-  App.ApplicationRoute = Ember.Route.extend({
-    model: function() {
-      return Ember.A(numbers.map(function(number, index) {
-        return {
-          value: index,
-          label: number
-        };
-      }));
-    }
-  });
-
-  App.ApplicationController = Ember.ArrayController.extend({
-    // Initialize selection to a random subset of models
-    setValues: Ember.observer('model', function() {
-      var randomModels = this.get('model').filter(function() {
-        return Math.random() < .25;
-      });
-      var values = Ember.A(randomModels).mapBy('value');
-
-      this.set('values', Ember.A(values));
-    })
-  });
-
-  Ember.Handlebars.helper('capitalize', function(str) {
-    return Ember.String.capitalize(str);
-  });
-</script>
+<h4>Selected Values:</h4>
+{{#if values}}
+  <ul>
+    {{#each values}}
+      <li>{{this}}</li>
+    {{/each}}
+  </ul>
+{{else}}
+  <em>none</em>
+{{/if}}

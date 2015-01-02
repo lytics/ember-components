@@ -6,6 +6,11 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('carousel');
+  this.route('multi-select');
+  this.route('popover');
+  this.route('tip');
+  this.route('toggle');
 });
 
 export default Router;
