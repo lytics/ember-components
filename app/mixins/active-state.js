@@ -1,10 +1,10 @@
-import {
-  Mixin,
-  get,
-  set,
-  computed,
-  observer
-} from 'ember';
+import Ember from 'ember';
+
+var Mixin    = Ember.Mixin;
+var get      = Ember.get;
+var set      = Ember.set;
+var computed = Ember.computed;
+var observer = Ember.observer;
 
 export default Mixin.create({
   //

@@ -1,10 +1,10 @@
-import {
-  Mixin,
-  A,
-  get,
-  set,
-  assert
-} from 'ember';
+import Ember from 'ember';
+
+var Mixin  = Ember.Mixin;
+var A      = Ember.A;
+var get    = Ember.get;
+var set    = Ember.set;
+var assert = Ember.assert;
 
 export default Mixin.create({
   //

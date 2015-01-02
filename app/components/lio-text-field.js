@@ -1,8 +1,8 @@
 import { tagForType } from '../util/namespace';
 import ChildComponentMixin from '../mixins/child';
-import {
-  TextField
-} from 'ember';
+import Ember from 'ember';
+
+var TextField = Ember.TextField;
 
 var typeKey = 'text-field';
 

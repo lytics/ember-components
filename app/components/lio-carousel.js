@@ -1,12 +1,12 @@
 import { tagForType } from '../util/namespace';
 import ParentComponentMixin from '../mixins/parent';
-import {
-  Component,
-  get,
-  set,
-  computed,
-  assert
-} from 'ember';
+import Ember from 'ember';
+
+var Component = Ember.Component;
+var get       = Ember.get;
+var set       = Ember.set;
+var computed  = Ember.computed;
+var assert    = Ember.assert;
 
 var typeKey = 'carousel';
 

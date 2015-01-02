@@ -2,9 +2,9 @@ import { tagForType } from '../util/namespace';
 import ChildComponentMixin from '../mixins/child';
 import ActiveStateMixin from '../mixins/active-state';
 import TransitionMixin from '../mixins/transition';
-import {
-  Component
-} from 'ember';
+import Ember from 'ember';
+
+var Component = Ember.Component;
 
 var typeKey = 'content';
 

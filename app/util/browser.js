@@ -1,6 +1,6 @@
-import {
-  $
-} from 'ember';
+import Ember from 'ember';
+
+var $ = Ember.$;
 
 // Taken from Bootstrap/Modernizr
 function testTrasitionSupport() {

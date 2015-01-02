@@ -1,15 +1,15 @@
 import { tagForType } from '../util/namespace';
 import ParentComponentMixin from '../mixins/parent';
-import {
-  A,
-  Component,
-  get,
-  set,
-  computed,
-  observer,
-  run,
-  assert
-} from 'ember';
+import Ember from 'ember';
+
+var A         = Ember.A;
+var Component = Ember.Component;
+var get       = Ember.get;
+var set       = Ember.set;
+var computed  = Ember.computed;
+var observer  = Ember.observer;
+var run       = Ember.run;
+var assert    = Ember.assert;
 
 var typeKey = 'multi-select';
 

@@ -1,14 +1,14 @@
 import { testTrasitionSupport } from '../util/browser';
-import {
-  RSVP,
-  Mixin,
-  A,
-  get,
-  set,
-  computed,
-  run,
-  $
-} from 'ember';
+import Ember from 'ember';
+
+var RSVP     = Ember.RSVP;
+var Mixin    = Ember.Mixin;
+var A        = Ember.A;
+var get      = Ember.get;
+var set      = Ember.set;
+var computed = Ember.computed;
+var run      = Ember.run;
+var $        = Ember.$;
 
 // Test transition support once, then check the exported value in `$.support.transition`
 testTrasitionSupport();

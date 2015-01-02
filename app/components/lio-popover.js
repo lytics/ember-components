@@ -3,18 +3,18 @@ import ParentComponentMixin from '../mixins/parent';
 import ChildComponentMixin from '../mixins/child';
 import ActiveStateMixin from '../mixins/active-state';
 import TransitionMixin from '../mixins/transition';
-import {
-  A,
-  Component,
-  String,
-  get,
-  set,
-  setProperties,
-  getProperties,
-  computed,
-  observer,
-  assert
-} from 'ember';
+import Ember from 'ember';
+
+var A             = Ember.A;
+var Component     = Ember.Component;
+var String        = Ember.String;
+var get           = Ember.get;
+var set           = Ember.set;
+var setProperties = Ember.setProperties;
+var getProperties = Ember.getProperties;
+var computed      = Ember.computed;
+var observer      = Ember.observer;
+var assert        = Ember.assert;
 
 var typeKey = 'popover';
 var positions = A([ 'top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);

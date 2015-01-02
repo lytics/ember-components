@@ -1,17 +1,17 @@
 import { tagForType } from '../util/namespace';
 import ParentComponentMixin from '../mixins/parent';
 import ActiveStateMixin from '../mixins/active-state';
-import {
-  A,
-  Component,
-  Object,
-  String,
-  get,
-  set,
-  observer,
-  computed,
-  assert
-} from 'ember';
+import Ember from 'ember';
+
+var A         = Ember.A;
+var Component = Ember.Component;
+var Object    = Ember.Object;
+var String    = Ember.String;
+var get       = Ember.get;
+var set       = Ember.set;
+var observer  = Ember.observer;
+var computed  = Ember.computed;
+var assert    = Ember.assert;
 
 var typeKey = 'tip';
 

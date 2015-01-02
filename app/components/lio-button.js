@@ -1,11 +1,11 @@
 import { tagForType } from '../util/namespace';
 import ChildComponentMixin from '../mixins/child';
-import {
-  Component,
-  get,
-  computed,
-  assert
-} from 'ember';
+import Ember from 'ember';
+
+var Component = Ember.Component;
+var get       = Ember.get;
+var computed  = Ember.computed;
+var assert    = Ember.assert;
 
 var typeKey = 'button';
 

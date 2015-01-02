@@ -1,10 +1,10 @@
 import { tagForType } from '../util/namespace';
 import ChildComponentMixin from '../mixins/child';
 import ActiveStateMixin from '../mixins/active-state';
-import {
-  Component,
-  get
-} from 'ember';
+import Ember from 'ember';
+
+var Component = Ember.Component;
+var get       = Ember.get;
 
 var typeKey = 'label';
 
