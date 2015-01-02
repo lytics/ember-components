@@ -1,53 +1,21 @@
-var fs = require('fs');
-var mergeTrees = require('broccoli-merge-trees');
-var pickFiles = require('broccoli-static-compiler');
-var compileModules = require('broccoli-dist-es6-module');
-var compileTemplates = require('broccoli-template-compiler');
+/* jshint node: true */
+/* global require, module */
 
-// Source files are located in the 'package' directory
-var srcTree = 'packages';
+var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
-// Find all package names
-var packages = fs.readdirSync(srcTree).filter(function(name) {
-  return fs.statSync(srcTree + '/' + name).isDirectory();
-});
+var app = new EmberAddon();
 
-// Create a tree for each package that only uses files in the 'lib' subdirectory
-packages = packages.map(function(name) {
-  return pickFiles(srcTree + '/' + name, {
-    srcDir: '/lib',
-    destDir: '/' + name,
-  });
-});
+// Use `app.import` to add additional libraries to the generated
+// output files.
+//
+// If you need to use different assets in different
+// environments, specify an object as the first parameter. That
+// object's keys should be the environment name and the values
+// should be the asset to use in that environment.
+//
+// If the library that you are including contains AMD or ES6
+// modules that you would like to import into your application
+// please specify an object with the list of modules as keys
+// along with the exports of each module as its value.
 
-// Find all files at the root directory
-var files = fs.readdirSync(srcTree).filter(function(name) {
-  return fs.statSync(srcTree + '/' + name).isFile();
-});
-
-// Pick out source files at the root
-srcTree = pickFiles(srcTree, {
-  srcDir: '/',
-  files: files,
-  destDir: '/',
-});
-
-// Merge them all together
-srcTree = mergeTrees(packages.concat(srcTree));
-
-// Compile templates
-srcTree = compileTemplates(srcTree, {
-  module: true
-});
-
-// Compile modules into different formats
-var moduleTree = compileModules(srcTree, {
-  global: 'Lytics.Components',
-  packageName: 'lytics-components',
-  main: 'main',
-  shim: {
-    'ember': 'Ember'
-  }
-});
-
-module.exports = mergeTrees([ moduleTree ]);
+module.exports = app.toTree();
