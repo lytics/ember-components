@@ -1,4 +1,4 @@
-import { testTrasitionSupport } from '../browser';
+import { testTrasitionSupport } from '../util/browser';
 import {
   RSVP,
   Mixin,

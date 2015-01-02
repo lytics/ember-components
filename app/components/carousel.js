@@ -1,5 +1,5 @@
-import { tagForType } from '../namespace';
-import ParentComponentMixin from '../mixin/parent';
+import { tagForType } from '../util/namespace';
+import ParentComponentMixin from '../mixins/parent';
 import {
   Component,
   get,

@@ -1,8 +1,8 @@
-import { tagForType } from '../namespace';
-import ParentComponentMixin from '../mixin/parent';
-import ChildComponentMixin from '../mixin/child';
-import ActiveStateMixin from '../mixin/active-state';
-import TransitionMixin from '../mixin/transition';
+import { tagForType } from '../util/namespace';
+import ParentComponentMixin from '../mixins/parent';
+import ChildComponentMixin from '../mixins/child';
+import ActiveStateMixin from '../mixins/active-state';
+import TransitionMixin from '../mixins/transition';
 import {
   A,
   Component,
