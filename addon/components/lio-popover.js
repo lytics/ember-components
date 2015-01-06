@@ -7,7 +7,6 @@ import Ember from 'ember';
 
 var A             = Ember.A;
 var Component     = Ember.Component;
-var String        = Ember.String;
 var get           = Ember.get;
 var set           = Ember.set;
 var setProperties = Ember.setProperties;
@@ -70,7 +69,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
     if (arguments.length === 1) {
       return positions[0];
     } else {
-      assert(String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
+      assert(Ember.String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
       return value;
     }
   }).property(),
@@ -181,13 +180,13 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
     // NOTE: this does not affect corner positions
-    if (position == 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
+    if (position === 'left' && dimensions.trueOffsetLeft - dimensions.width < 0) {
       position = 'right';
-    } else if (position == 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
+    } else if (position === 'right' && dimensions.trueOffsetLeft + dimensions.width + dimensions.anchorWidth > dimensions.windowWidth) {
       position = 'left';
-    } else if (position == 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
+    } else if (position === 'top' && dimensions.trueOffsetTop - dimensions.height < 0) {
       position = 'bottom';
-    } else if (position == 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
+    } else if (position === 'bottom' && dimensions.trueOffsetTop + dimensions.height + dimensions.anchorHeight > dimensions.windowHeight) {
       position = 'top';
     }
 

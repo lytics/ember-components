@@ -8,7 +8,6 @@ var get      = Ember.get;
 var set      = Ember.set;
 var computed = Ember.computed;
 var run      = Ember.run;
-var $        = Ember.$;
 
 // Test transition support once, then check the exported value in `$.support.transition`
 testTrasitionSupport();

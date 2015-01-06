@@ -1,7 +1,5 @@
 import Ember from 'ember';
 
-var $ = Ember.$;
-
 // Taken from Bootstrap/Modernizr
 function testTrasitionSupport() {
   var support = $.support.transition || false;
@@ -25,7 +23,7 @@ function testTrasitionSupport() {
     }
   }
 
-  $.support.transition = support;
+  Ember.$.support.transition = support;
 }
 
 export {

@@ -5,8 +5,6 @@ import Ember from 'ember';
 
 var A         = Ember.A;
 var Component = Ember.Component;
-var Object    = Ember.Object;
-var String    = Ember.String;
 var get       = Ember.get;
 var set       = Ember.set;
 var observer  = Ember.observer;
@@ -123,7 +121,7 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
 
     var labelsLength = get(this.componentsForType('label'), 'length');
     var popoversLength = get(this.componentsForType('popover'), 'length');
-    assert(String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
+    assert(Ember.String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
     set(get(this, 'popover'), 'alignToParent', true);
