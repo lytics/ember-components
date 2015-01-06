@@ -19,5 +19,6 @@ var app = new EmberAddon();
 // along with the exports of each module as its value.
 
 app.import('vendor/jquery.simulate.js');
+app.import('vendor/phantom-shims.js');
 
 module.exports = app.toTree();
