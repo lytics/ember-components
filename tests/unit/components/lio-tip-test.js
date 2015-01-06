@@ -1,4 +1,10 @@
-(function() {
+import Ember from "ember";
+import {
+  test,
+  moduleForComponent
+} from 'ember-qunit';
+import compileTemplate from '../../helpers/compile-template';
+import tagNameFor from '../../helpers/tag-name-for';
 
 moduleForComponent('lio-tip', 'TipComponent', {
   needs: [
@@ -16,72 +22,75 @@ moduleForComponent('lio-tip', 'TipComponent', {
 });
 
 test("component has correct tag name", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
-  equal(tagNameFor(component), 'lio-tip', "component has 'lio-tip' tag");
+  equal(tagNameFor(this), 'lio-tip', "component has 'lio-tip' tag");
 });
 
 test("component is active when the label is clicked", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
   ok(!component.get('active'), "component is inactive by default");
-  component.$('lio-label').simulate('click');
+  this.$().find('lio-label').simulate('click');
   ok(component.get('active'), "component is active when the label is clicked");
 });
 
 test("component is active when the label is hovered and the activator is set to hover", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     activator: 'hover'
   });
 
   ok(!component.get('active'), "component is inactive by default");
-  component.$('lio-label').trigger('mouseenter');
+  this.$().find('lio-label').trigger('mouseenter');
   ok(component.get('active'), "component is active when the label is 'mouse entered'");
-  component.$('lio-label').trigger('mouseleave');
+  this.$().find('lio-label').trigger('mouseleave');
   ok(!component.get('active'), "component is no longer active once the label has 'mouse left'");
 });
 
 test("component has the active class when it is active", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
 
-  ok(component.$().hasClass('active'), "the active class is present when active is true");
+  ok(this.$().hasClass('active'), "the active class is present when active is true");
 });
 
 test("it is active when focused", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: false
   });
 
-  component.$('lio-label').focusin();
+  this.$().find('lio-label').focusin();
   ok(component.get('active'));
 });
 
 test("it is not active when blurred", function() {
-  var component = buildComponent(this, {
+  var context = this;
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
 
   Ember.run(function() {
-    component.$().parent().simulate('click');
+    context.$().parent().simulate('click');
     ok(!component.get('active'));
   });
 });
 
 test("the popover is open when active", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
+
+  this.$();
 
   ok(component.get('popover').$().is(':visible'));
 });
@@ -148,5 +157,3 @@ function defaultTemplate() {/*
   {{#lio-label}}The label for the tip{{/lio-label}}
   {{#lio-popover}}The popover for the tip{{/lio-popover}}
 */}
-
-})();

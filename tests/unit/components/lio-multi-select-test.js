@@ -1,4 +1,10 @@
-(function() {
+import Ember from "ember";
+import {
+  test,
+  moduleForComponent
+} from 'ember-qunit';
+import compileTemplate from '../../helpers/compile-template';
+import tagNameFor from '../../helpers/tag-name-for';
 
 moduleForComponent('lio-multi-select', 'MultiSelectComponent', {
   needs: [
@@ -16,11 +22,11 @@ var defaultTemplate = compileTemplate(function() {/*
 */});
 
 test("component has correct tag name", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate
   });
 
-  equal(tagNameFor(component), 'lio-multi-select', "component has 'lio-multi-select' tag");
+  equal(tagNameFor(this), 'lio-multi-select', "component has 'lio-multi-select' tag");
 });
 
 test("options cannot have duplicate values", function() {
@@ -34,14 +40,16 @@ test("options cannot have duplicate values", function() {
   });
 
   throws(function() {
-    context.append();
+    context.$();
   }, /Options in 'lio-multi-select' components cannot contain duplicate values./);
 });
 
 test("the 'values' attribute cannot contain duplicates", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate
   });
+
+  this.$();
 
   throws(function() {
     component.set('values', [ 1, 1 ]);
@@ -49,18 +57,18 @@ test("the 'values' attribute cannot contain duplicates", function() {
 });
 
 test("options with values contained in the 'values' attribute initially are set to selected", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     values: [ 1, 3 ]
   });
 
-  ok(component.$('lio-option:nth-of-type(1)').hasClass('selected'), "first option has 'selected' class");
-  ok(!component.$('lio-option:nth-of-type(2)').hasClass('selected'), "second option does not have 'selected' class");
-  ok(component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(1)').hasClass('selected'), "first option has 'selected' class");
+  ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('selected'), "second option does not have 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
 });
 
 test("the 'values' attribute is initialized with options that are selected if it is falsy", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1 selected=true}}
       {{lio-option value=2}}
@@ -69,33 +77,37 @@ test("the 'values' attribute is initialized with options that are selected if it
     values: null
   });
 
+  this.$();
+
   deepEqual(component.get('values'), [ 1, 3 ]);
 });
 
 test("adding an element to the 'value' attribute sets the corresponding option to selected", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     values: [ 1 ]
   });
 
-  ok(!component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
+  ok(!this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
   Ember.run(function() {
     component.get('values').pushObject(3);
   });
-  ok(component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
 });
 
 test("selecting an option adds its value to the 'values' attribute", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     values: [ 1 ]
   });
 
+  this.$();
+
   var lastOption = component.componentsForType('option').get('lastObject');
 
-  ok(!component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
+  ok(!this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
   Ember.run(lastOption, 'set', 'selected', true);
-  ok(component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
 });
 
 test("the property bound to the `value` attribute is replaced when the selection changes", function() {
@@ -103,11 +115,13 @@ test("the property bound to the `value` attribute is replaced when the selection
     value: []
   });
 
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     contextObject: contextObject,
     valuesBinding: 'contextObject.values'
   });
+
+  this.$();
 
   var lastOption = component.componentsForType('option').get('lastObject');
   var values = contextObject.get('values');
@@ -117,40 +131,42 @@ test("the property bound to the `value` attribute is replaced when the selection
 });
 
 test("clicking an option toggles its selected state", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate
   });
+
+  this.$();
 
   var lastOption = component.componentsForType('option').get('lastObject');
 
   ok(!lastOption.get('selected'));
-  component.$('lio-option:nth-of-type(3)').simulate('click');
+  this.$().find('lio-option:nth-of-type(3)').simulate('click');
   ok(lastOption.get('selected'));
-  component.$('lio-option:nth-of-type(3)').simulate('click');
+  this.$().find('lio-option:nth-of-type(3)').simulate('click');
   ok(!lastOption.get('selected'));
 });
 
 test("clicking an option when the component is disabled has no effect", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: []
   });
 
-  component.$('lio-option:nth-of-type(1)').simulate('click');
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
   deepEqual(component.get('values'), [], "`values` attribute did not change");
 });
 
 test("all options are disabled when the component is disabled", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: []
   });
 
-  ok(component.$('lio-option:nth-of-type(1)').hasClass('disabled'), "first option has 'disabled' class");
-  ok(component.$('lio-option:nth-of-type(2)').hasClass('disabled'), "second option has 'disabled' class");
-  ok(component.$('lio-option:nth-of-type(3)').hasClass('disabled'), "third option has 'disabled' class");
+  ok(this.$().find('lio-option:nth-of-type(1)').hasClass('disabled'), "first option has 'disabled' class");
+  ok(this.$().find('lio-option:nth-of-type(2)').hasClass('disabled'), "second option has 'disabled' class");
+  ok(this.$().find('lio-option:nth-of-type(3)').hasClass('disabled'), "third option has 'disabled' class");
 });
 
 test("clicking an option triggers the component's default action", function() {
@@ -167,7 +183,7 @@ test("clicking an option triggers the component's default action", function() {
     }
   };
 
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     contextObject: contextObject,
     valuesBinding: 'contextObject.values',
@@ -175,11 +191,11 @@ test("clicking an option triggers the component's default action", function() {
     targetObject: targetObject
   });
 
-  component.$('lio-option:nth-of-type(1)').simulate('click');
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
 });
 
 test("clicking the 'select-all' button selects all options", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -190,14 +206,14 @@ test("clicking the 'select-all' button selects all options", function() {
     values: [ 1 ]
   });
 
-  component.$('lio-button[action="select-all"]').simulate('click');
-  ok(component.$('lio-option:nth-of-type(1)').hasClass('selected'), "first option has 'selected' class");
-  ok(component.$('lio-option:nth-of-type(2)').hasClass('selected'), "second option has 'selected' class");
-  ok(component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
+  this.$().find('lio-button[action="select-all"]').simulate('click');
+  ok(this.$().find('lio-option:nth-of-type(1)').hasClass('selected'), "first option has 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(2)').hasClass('selected'), "second option has 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option has 'selected' class");
 });
 
 test("the 'select-all' button is disabled when all options are selected", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -208,21 +224,21 @@ test("the 'select-all' button is disabled when all options are selected", functi
     values: [ 1, 2, 3 ]
   });
 
-  ok(component.$('lio-button[action="select-all"]').hasClass('disabled'), "'select all' button has 'disabled' class");
-  component.$('lio-option:nth-of-type(1)').simulate('click');
-  ok(!component.$('lio-button[action="select-all"]').hasClass('disabled'), "'select all' button does not have 'disabled' class");
-  component.$('lio-option:nth-of-type(1)').simulate('click');
-  ok(component.$('lio-button[action="select-all"]').hasClass('disabled'), "'select all' button has 'disabled' class");
+  ok(this.$().find('lio-button[action="select-all"]').hasClass('disabled'), "'select all' button has 'disabled' class");
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
+  ok(!this.$().find('lio-button[action="select-all"]').hasClass('disabled'), "'select all' button does not have 'disabled' class");
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
+  ok(this.$().find('lio-button[action="select-all"]').hasClass('disabled'), "'select all' button has 'disabled' class");
 });
 
 test("clicking the 'select-all' button has no effect when the component is disabled", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: []
   });
 
-  component.$('lio-button[action="select-all"]').simulate('click');
+  this.$().find('lio-button[action="select-all"]').simulate('click');
   deepEqual(component.get('values'), [], "`values` attribute did not change");
 });
 
@@ -240,7 +256,7 @@ test("clicking the 'select-all' button triggers the component's default action",
     }
   };
 
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -254,11 +270,11 @@ test("clicking the 'select-all' button triggers the component's default action",
     targetObject: targetObject
   });
 
-  component.$('lio-button[action="select-all"]').simulate('click');
+  this.$().find('lio-button[action="select-all"]').simulate('click');
 });
 
 test("clicking the 'unselect-all' button unselects all options", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -269,14 +285,14 @@ test("clicking the 'unselect-all' button unselects all options", function() {
     values: [ 1, 3 ]
   });
 
-  component.$('lio-button[action="unselect-all"]').simulate('click');
-  ok(!component.$('lio-option:nth-of-type(1)').hasClass('selected'), "first option does not have 'selected' class");
-  ok(!component.$('lio-option:nth-of-type(2)').hasClass('selected'), "second option does not have 'selected' class");
-  ok(!component.$('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
+  this.$().find('lio-button[action="unselect-all"]').simulate('click');
+  ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('selected'), "first option does not have 'selected' class");
+  ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('selected'), "second option does not have 'selected' class");
+  ok(!this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
 });
 
 test("the 'unselect-all' button is disabled when no options are selected", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -287,21 +303,21 @@ test("the 'unselect-all' button is disabled when no options are selected", funct
     values: []
   });
 
-  ok(component.$('lio-button[action="unselect-all"]').hasClass('disabled'), "'unselect all' button has 'disabled' class");
-  component.$('lio-option:nth-of-type(1)').simulate('click');
-  ok(!component.$('lio-button[action="unselect-all"]').hasClass('disabled'), "'unselect all' button does not have 'disabled' class");
-  component.$('lio-option:nth-of-type(1)').simulate('click');
-  ok(component.$('lio-button[action="unselect-all"]').hasClass('disabled'), "'unselect all' button has 'disabled' class");
+  ok(this.$().find('lio-button[action="unselect-all"]').hasClass('disabled'), "'unselect all' button has 'disabled' class");
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
+  ok(!this.$().find('lio-button[action="unselect-all"]').hasClass('disabled'), "'unselect all' button does not have 'disabled' class");
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
+  ok(this.$().find('lio-button[action="unselect-all"]').hasClass('disabled'), "'unselect all' button has 'disabled' class");
 });
 
 test("clicking the 'unselect-all' button has no effect when the component is disabled", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: [ 1, 3 ]
   });
 
-  component.$('lio-button[action="select-all"]').simulate('click');
+  this.$().find('lio-button[action="select-all"]').simulate('click');
   deepEqual(component.get('values'), [ 1, 3 ], "`values` attribute did not change");
 });
 
@@ -319,7 +335,7 @@ test("clicking the 'unselect-all' button triggers the component's default action
     }
   };
 
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -333,11 +349,11 @@ test("clicking the 'unselect-all' button triggers the component's default action
     targetObject: targetObject
   });
 
-  component.$('lio-button[action="unselect-all"]').simulate('click');
+  this.$().find('lio-button[action="unselect-all"]').simulate('click');
 });
 
 test("clicking an option with the 'unselect' attribute unselects the option with the corresponding value", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -348,9 +364,9 @@ test("clicking an option with the 'unselect' attribute unselects the option with
     values: [ 1 ]
   });
 
-  ok(component.$('lio-option:nth-of-type(4)').hasClass('unselect'), "unselect option has 'unselect' class");
-  component.$('lio-option.unselect').simulate('click');
-  ok(!component.$('lio-option:nth-of-type(1)').hasClass('selected'), "first option does not have 'selected' class");
+  ok(this.$().find('lio-option:nth-of-type(4)').hasClass('unselect'), "unselect option has 'unselect' class");
+  this.$().find('lio-option.unselect').simulate('click');
+  ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('selected'), "first option does not have 'selected' class");
 });
 
 test("the filter component must contain a text field", function() {
@@ -370,7 +386,7 @@ test("the filter component must contain a text field", function() {
 });
 
 test("entering a filter value filters the list of options", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{#lio-option value=1}}One{{/lio-option}}
       {{#lio-option value=2}}Two{{/lio-option}}
@@ -382,13 +398,13 @@ test("entering a filter value filters the list of options", function() {
     */}),
   });
 
-  ok(!component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
-  component.$('lio-filter input').val('t').change();
-  ok(component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option has 'filtered' class");
+  ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
+  this.$().find('lio-filter input').val('t').change();
+  ok(this.$().find('lio-option:nth-of-type(1)').hasClass('filtered'), "first option has 'filtered' class");
 });
 
 test("clicking the 'clear' button removes filtered state from options", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(function() {/*
       {{#lio-option value=1}}One{{/lio-option}}
       {{#lio-option value=2}}Two{{/lio-option}}
@@ -401,15 +417,15 @@ test("clicking the 'clear' button removes filtered state from options", function
     */}),
   });
 
-  component.$('lio-filter input').val('t').change();
-  ok(component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option has 'filtered' class");
-  component.$('lio-button[action="clear"]').simulate('click');
-  equal(component.$('lio-filter input').val(), '', "filter value is empty");
-  ok(!component.$('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
+  this.$().find('lio-filter input').val('t').change();
+  ok(this.$().find('lio-option:nth-of-type(1)').hasClass('filtered'), "first option has 'filtered' class");
+  this.$().find('lio-button[action="clear"]').simulate('click');
+  equal(this.$().find('lio-filter input').val(), '', "filter value is empty");
+  ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('filtered'), "first option does not have 'filtered' class");
 });
 
 test("an option's value is looked up using the option's 'valuePath' attribute", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     values: [],
     options: Ember.A([
       { value: 1 },
@@ -423,13 +439,13 @@ test("an option's value is looked up using the option's 'valuePath' attribute", 
     */}),
   });
 
-  component.$('lio-option:nth-of-type(1)').simulate('click');
-  component.$('lio-option:nth-of-type(2)').simulate('click');
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
+  this.$().find('lio-option:nth-of-type(2)').simulate('click');
   deepEqual(component.get('values'), [ 1, 2 ]);
 });
 
 test("an option's value is looked up using the 'optionValuePath' attribute", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     values: [],
     optionValuePath: 'value',
     options: Ember.A([
@@ -444,9 +460,7 @@ test("an option's value is looked up using the 'optionValuePath' attribute", fun
     */}),
   });
 
-  component.$('lio-option:nth-of-type(1)').simulate('click');
-  component.$('lio-option:nth-of-type(2)').simulate('click');
+  this.$().find('lio-option:nth-of-type(1)').simulate('click');
+  this.$().find('lio-option:nth-of-type(2)').simulate('click');
   deepEqual(component.get('values'), [ 1, 2 ]);
 });
-
-})();

@@ -1,17 +1,26 @@
-(function() {
+import Ember from "ember";
+import {
+  test,
+  moduleForComponent
+} from 'ember-qunit';
+import compileTemplate from '../../helpers/compile-template';
+import tagNameFor from '../../helpers/tag-name-for';
+import {
+  mockGlobalPath
+} from '../../helpers/mock-path';
 
 moduleForComponent('lio-popover', 'PopoverComponent');
 
 test("component has correct tag name", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
-  equal(tagNameFor(component), 'lio-popover', "component has 'lio-popover' tag");
+  equal(tagNameFor(this), 'lio-popover', "component has 'lio-popover' tag");
 });
 
 test("position must be one of a limited set of values", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -33,9 +42,11 @@ test("position must be one of a limited set of values", function() {
 });
 
 test("the rendered position is different than position when the tooltip needs to flip", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
+
+  this.$();
 
   $('<div id="anchor">').appendTo('#ember-testing');
   component.set('anchor', '#anchor');
@@ -50,31 +61,34 @@ test("the rendered position is different than position when the tooltip needs to
 });
 
 test("it has the 'active' class when active", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
 
   $('<div id="anchor">').appendTo('#ember-testing');
-  ok(component.$().hasClass('active'));
-  ok(!component.$().hasClass('inactive'));
+  ok(this.$().hasClass('active'));
+  ok(!this.$().hasClass('inactive'));
 });
 
 test("it has the 'inactive' class when inactive", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: false
   });
 
   $('<div id="anchor">').appendTo('#ember-testing');
-  ok(component.$().hasClass('inactive'));
-  ok(!component.$().hasClass('active'));
+  ok(this.$().hasClass('inactive'));
+  ok(!this.$().hasClass('active'));
 });
 
 test("className is based off the rendered position", function() {
-  var component = buildComponent(this, {
+  var context = this;
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
+
+  this.$();
 
   $('<div id="anchor">').appendTo('#ember-testing');
   component.set('anchor', '#anchor');
@@ -86,16 +100,19 @@ test("className is based off the rendered position", function() {
     component.adjustPosition();
     equal(component.get('renderedPosition'), 'right');
     Ember.run.next(function() {
-      ok(component.$().hasClass('right'));
-      ok(!component.$().hasClass('left'));
+      ok(context.$().hasClass('right'));
+      ok(!context.$().hasClass('left'));
     });
   });
 });
 
 test("corner positions result in two position class names (matching the edges)", function() {
-  var component = buildComponent(this, {
+  var context = this;
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
+
+  this.$();
 
   $('<div id="anchor">').appendTo('#ember-testing');
   component.set('anchor', '#anchor');
@@ -106,17 +123,19 @@ test("corner positions result in two position class names (matching the edges)",
     giveBounds(component);
     component.adjustPosition();
     equal(component.get('renderedPosition'), 'top-left');
-    Ember.run.next(function() {
-      ok(component.$().hasClass('left'));
-      ok(component.$().hasClass('top'));
+    Ember.run.next(this, function() {
+      ok(context.$().hasClass('left'));
+      ok(context.$().hasClass('top'));
     });
   });
 });
 
 test("the arrow position is centered on the popover", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
+
+  this.$();
 
   $('<div id="anchor">').appendTo('#ember-testing');
   component.set('anchor', '#anchor');
@@ -200,9 +219,11 @@ test("the arrow position is centered on the popover", function() {
 });
 
 test("the tooltip is repositioned when the window resizes", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
   });
+
+  this.$();
 
   $('<div id="anchor">').appendTo('#ember-testing');
   component.set('anchor', '#anchor');
@@ -223,10 +244,12 @@ test("the tooltip is repositioned when the window resizes", function() {
 });
 
 test("the tooltip does not flip when the offset to the parent is too small but the true offset is not too small", function() {
-  var component = buildComponent(this, {
+  var component = this.subject({
     layout: compileTemplate(defaultTemplate),
     position: 'top'
   });
+
+  this.$();
 
   $('<div id="anchor">').appendTo('#ember-testing');
   component.set('anchor', '#anchor');
@@ -275,26 +298,26 @@ function giveBounds(component, overrides) {
 
 test("transition classes are added when activating the popover", function() {
   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
-    var component = buildComponent(this, {
+    var component = this.subject({
       layout: compileTemplate(defaultTemplate)
     });
+
+    this.$();
 
     $('<div id="anchor">').appendTo('#ember-testing');
     component.set('anchor', '#anchor');
 
     Ember.run(component, 'set', 'active', true);
-    ok(component.$().hasClass('activating'), "it has the 'activating' class");
-    ok(!component.$().hasClass('active'), "it does not have the 'active' class");
+    ok(this.$().hasClass('activating'), "it has the 'activating' class");
+    ok(!this.$().hasClass('active'), "it does not have the 'active' class");
     Ember.run(component, 'trigger', 'transitionDidEnd');
-    ok(!component.$().hasClass('activating'), "it does not have the 'activating' class");
-    ok(component.$().hasClass('active'), "it has the 'active' class");
+    ok(!this.$().hasClass('activating'), "it does not have the 'activating' class");
+    ok(this.$().hasClass('active'), "it has the 'active' class");
     Ember.run(component, 'set', 'active', false);
-    ok(component.$().hasClass('deactivating'), "it has the 'deactivating' class");
-    ok(component.$().hasClass('active'), "it has the 'active' class");
+    ok(this.$().hasClass('deactivating'), "it has the 'deactivating' class");
+    ok(this.$().hasClass('active'), "it has the 'active' class");
     Ember.run(component, 'trigger', 'transitionDidEnd');
-    ok(!component.$().hasClass('deactivating'), "it does not have the 'deactivating' class");
-    ok(!component.$().hasClass('active'), "it does not have the 'active' class");
+    ok(!this.$().hasClass('deactivating'), "it does not have the 'deactivating' class");
+    ok(!this.$().hasClass('active'), "it does not have the 'active' class");
   });
 });
-
-})();
