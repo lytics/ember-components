@@ -4,33 +4,53 @@
 
 This is a collection of generic input components used by Lytics Inc.
 
-## Building
-
-Install [Broccoli](https://github.com/joliss/broccoli) globally if needed:
+## Include it in your project
 
 ```sh
-$ npm install -g broccoli-cli
+$ npm install --save-dev lytics-ember-components
 ```
 
-Build to the `dist/` directory:
+And that's it! Assuming you are using ember-cli.
+
+At this point you can use the components in templates like this
+
+```handlebars
+{{#lio-tip}}
+  {{#lio-label}}A tip{{/lio-label}}
+  {{#lio-popover}}
+    The rollover part
+  {{/lio-popover}}
+{{/lio-tip}}
+```
+
+Or you can extend the components like this
+
+```js
+import TipComponent from 'lytics-ember-components/components/lio-tip';
+
+export default TipComponent.extend({
+  // things!
+});
+```
+
+## What if I'm not using ember-cli?
+
+Version `0.2.x` uses a more welcoming build, and it is available on Bower.
 
 ```sh
-$ npm install
-$ rm -rf dist
-$ broccoli build dist
+$ bower install lytics-ember-components
 ```
 
-## Testing
 
-Install [Test'em](https://github.com/airportyh/testem) and [Broccoli Timepiece](https://github.com/rjackson/broccoli-timepiece) globally if needed:
+## Contributing
 
-```sh
-$ npm install -g testem broccoli-timepiece
-```
+This is an [Ember CLI](http://www.ember-cli.com/) project. As such, it is built and managed in the Ember CLI fashion.
 
-Build and watch, then test:
+Serve with `ember serve`
 
-```sh
-$ broccoli-timepiece dist
-$ testem
-```
+Test with `ember test`
+
+## View Examples
+
+1. Serve with `ember serve`
+2. Visit [http://localhost:4200](http://localhost:4200) for a directory
