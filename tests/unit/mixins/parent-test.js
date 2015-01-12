@@ -1,5 +1,5 @@
 import Ember from "ember";
-import ParentMixin from '../../../mixins/parent';
+import ParentMixin from 'lytics-ember-components/mixins/parent';
 import {
   test
 } from 'ember-qunit';

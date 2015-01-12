@@ -1,5 +1,5 @@
 import Ember from "ember";
-import ActiveStateMixin from '../../../mixins/active-state';
+import ActiveStateMixin from 'lytics-ember-components/mixins/active-state';
 import {
   test
 } from 'ember-qunit';

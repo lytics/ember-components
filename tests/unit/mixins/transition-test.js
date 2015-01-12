@@ -1,5 +1,5 @@
 import Ember from "ember";
-import TransitionMixin from '../../../mixins/transition';
+import TransitionMixin from 'lytics-ember-components/mixins/transition';
 import {
   test
 } from 'ember-qunit';
