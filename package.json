@@ -26,7 +26,7 @@
     "express": "^4.8.5",
     "glob": "^4.0.5"
   },
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "This is a collection of generic components used by Lytics Inc.",
   "keywords": [
     "ember-addon"
   ],
