@@ -1,0 +1,147 @@
+<style>
+  body {
+    width: 300px;
+    margin: auto;
+    margin-top: 100px;
+    color: #999;
+  }
+  lio-carousel {
+    display: block;
+    position: relative;
+  }
+  .slides img {
+    display: block;
+  }
+  .slides {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  .slides > lio-content {
+    display: none;
+    position: relative;
+    transition: 0.5s left ease-in-out;
+  }
+  .slides > .active,
+  .slides > .activating,
+  .slides > .deactivating {
+    display: block;
+  }
+  .slides > .active {
+    left: 0;
+  }
+  /*
+    Transitioning slides must be positioned absolute at the top so they don't
+    flow to underneath the active content
+  */
+  .slides > .activating {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  /*
+    These two classes position the activating content (to the right or left),
+    but they don't trigger a transition since this happens in the same frame as
+    they become display: block'd
+  */
+  .slides > .activating.forward {
+    left: 100%;
+  }
+  .slides > .activating.backward {
+    left: -100%;
+  }
+  /*
+    This class actually transitions the inactive content (either from the right
+    or left) to the center using the transition 'trigger' class
+  */
+  .slides > .trigger.activating {
+    left: 0;
+  }
+  /*
+    Since the active content starts at its present location, it does not need
+    to be pre-positioned, and these classes transition it out (to the right or
+    left)
+  */
+  .slides > .trigger.deactivating.forward {
+    left: -100%;
+  }
+  .slides > .trigger.deactivating.backward {
+    left: 100%;
+  }
+  .indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    width: 60%;
+    margin-left: -30%;
+    padding-left: 0;
+    list-style: none;
+    text-align: center;
+  }
+  .indicators lio-label {
+    display: inline-block;
+    width:  10px;
+    height: 10px;
+    margin: 0 2px;
+    background-color: white;
+    opacity: 0.5;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .indicators lio-label.active,
+  .indicators lio-label:hover {
+    background-color: black;
+    opacity: 0.3;
+  }
+  lio-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 30%;
+    color: white;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  lio-button:hover,
+  lio-button:focus {
+    color: black;
+    opacity: 0.3;
+  }
+  lio-button:before {
+    position: absolute;
+    display: inline-block;
+    top: 50%;
+    margin-top: -30px;
+    font-size: 60px;
+  }
+  lio-button[action="forward"] {
+    left: auto;
+    right: 0;
+  }
+  lio-button[action="forward"]:before {
+    left: 50%;
+    content: "›";
+  }
+  lio-button[action="backward"]:before {
+    right: 50%;
+    content: "‹";
+  }
+</style>
+
+{{#lio-carousel}}
+  <div class="slides">
+    {{#lio-content active=true}}<img src="http://placehold.it/300x300" />{{/lio-content}}
+    {{#lio-content}}<img src="http://placekitten.com/g/300/300" />{{/lio-content}}
+    {{#lio-content}}<img src="http://placedoge.net/300/300" />{{/lio-content}}
+  </div>
+
+  <div class="indicators">
+    {{lio-label}}
+    {{lio-label}}
+    {{lio-label}}
+  </div>
+
+  {{lio-button action="forward"}}
+  {{lio-button action="backward"}}
+{{/lio-carousel}}

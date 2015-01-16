@@ -2,10 +2,9 @@
 node_js:
 - "0.10"
 before_install:
-- npm install -g broccoli-cli testem
+- npm install -g ember-cli bower
 install:
 - npm install --quiet
+- bower install --quiet
 script:
-  - rm -rf dist/
-  - broccoli build dist
-  - testem ci
+  - ember test

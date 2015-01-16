@@ -1,17 +1,11 @@
 {
   "framework": "qunit",
-  "src_files": [
-    "test/shims.js",
-    "test/env.js",
-    "bower_components/jquery/dist/jquery.js",
-    "bower_components/handlebars/handlebars.js",
-    "bower_components/ember/ember.js",
-    "bower_components/ember-qunit/dist/globals/main.js",
-    "bower_components/jquery-simulate/jquery.simulate.js",
-    "dist/globals/main.js",
-    "test/support.js",
-    "packages/**/tests/*.js"
+  "test_page": "tests/index.html",
+  "launch_in_ci": [
+    "PhantomJS"
   ],
-  "launch_in_dev": [ "Chrome" ],
-  "launch_in_ci": [ "PhantomJS" ]
+  "launch_in_dev": [
+    "PhantomJS",
+    "Chrome"
+  ]
 }
