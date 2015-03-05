@@ -2,7 +2,6 @@
   "name": "lytics-ember-components",
   "version": "0.3.1",
   "directories": {
-    "doc": "doc",
     "test": "tests"
   },
   "scripts": {
@@ -17,7 +16,16 @@
   "engines": {
     "node": ">= 0.10.0"
   },
-  "author": "",
+  "maintainers": [
+    {
+      "name": "Michael Lange",
+      "email": "dingoeatingfuzz@gmail.com"
+    },
+    {
+      "name": "Steven Lindberg",
+      "email": "steven@lytics.io"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^1.0.0",
