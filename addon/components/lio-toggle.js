@@ -72,12 +72,7 @@ export default Component.extend(ParentComponentMixin, {
         run(this, function() {
           var current = get(this, 'value');
           var possible = get(this, 'possibleValues');
-          var nextIndex = possible.indexOf(current) + 1;
-
-          // Wrap around to the first value
-          if (nextIndex === get(possible, 'length')) {
-            nextIndex = 0;
-          }
+          var nextIndex = (possible.indexOf(current) + 1) % get(possible, 'length');
 
           set(this, 'value', possible[nextIndex]);
         });
