@@ -62,16 +62,23 @@ export default Component.extend(ParentComponentMixin, {
     return this.componentsForType('option').mapBy('value');
   }).property('components.[]'),
 
+  isTransitioning: function() {
+    return this.componentsForType('option').some(function(component) {
+      return get(component, 'isTransitioning');
+    });
+  }.property('components.@each.isTransitioning'),
+
   //
   // Internal Actions
   //
 
   actions: {
     toggle: function() {
-      if (!get(this, 'disabled')) {
+      if (!(get(this, 'disabled') || this.get('isTransitioning'))) {
         run(this, function() {
           var current = get(this, 'value');
           var possible = get(this, 'possibleValues');
+
           var nextIndex = (possible.indexOf(current) + 1) % get(possible, 'length');
 
           set(this, 'value', possible[nextIndex]);
