@@ -62,11 +62,11 @@ export default Component.extend(ParentComponentMixin, {
     return this.componentsForType('option').mapBy('value');
   }).property('components.[]'),
 
-  isTransitioning: function() {
+  isTransitioning: computed(function() {
     return this.componentsForType('option').some(function(component) {
       return get(component, 'isTransitioning');
     });
-  }.property('components.@each.isTransitioning'),
+  }).property('components.@each.isTransitioning'),
 
   //
   // Internal Actions
