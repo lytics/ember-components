@@ -1,6 +1,6 @@
 {
   "name": "lytics-ember-components",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "directories": {
     "test": "tests"
   },
@@ -24,6 +24,10 @@
     {
       "name": "Steven Lindberg",
       "email": "steven@lytics.io"
+    },
+    {
+      "name": "Christopher Thorn",
+      "email": "chris.thorn@lytics.io"
     }
   ],
   "license": "MIT",
