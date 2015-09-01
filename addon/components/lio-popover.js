@@ -69,7 +69,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
     get: function() {
       return positions[0];
     },
-    set: function() {
+    set: function(key, value) {
       assert(Ember.String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
       return value;
     }
