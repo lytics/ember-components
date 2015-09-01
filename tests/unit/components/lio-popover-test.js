@@ -307,17 +307,24 @@ test("transition classes are added when activating the popover", function() {
     $('<div id="anchor">').appendTo('#ember-testing');
     component.set('anchor', '#anchor');
 
-    Ember.run(component, 'set', 'active', true);
-    ok(this.$().hasClass('activating'), "it has the 'activating' class");
-    ok(!this.$().hasClass('active'), "it does not have the 'active' class");
+    Ember.run(function() {
+      component.set('active', true);
+      ok(component.$().hasClass('activating'), "it has the 'activating' class");
+      ok(!component.$().hasClass('active'), "it does not have the 'active' class");
+    });
+
     Ember.run(component, 'trigger', 'transitionDidEnd');
-    ok(!this.$().hasClass('activating'), "it does not have the 'activating' class");
-    ok(this.$().hasClass('active'), "it has the 'active' class");
-    Ember.run(component, 'set', 'active', false);
-    ok(this.$().hasClass('deactivating'), "it has the 'deactivating' class");
-    ok(this.$().hasClass('active'), "it has the 'active' class");
+    ok(!component.$().hasClass('activating'), "it does not have the 'activating' class");
+    ok(component.$().hasClass('active'), "it has the 'active' class");
+
+    Ember.run(function() {
+      component.set('active', false);
+      ok(component.$().hasClass('deactivating'), "it has the 'deactivating' class");
+      ok(component.$().hasClass('active'), "it has the 'active' class");
+    });
+
     Ember.run(component, 'trigger', 'transitionDidEnd');
-    ok(!this.$().hasClass('deactivating'), "it does not have the 'deactivating' class");
-    ok(!this.$().hasClass('active'), "it does not have the 'active' class");
+    ok(!component.$().hasClass('deactivating'), "it does not have the 'deactivating' class");
+    ok(!component.$().hasClass('active'), "it does not have the 'active' class");
   });
 });
