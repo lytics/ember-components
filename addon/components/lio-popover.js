@@ -65,10 +65,11 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
     return position && position.replace('-', ' ');
   }).property('renderedPosition'),
 
-  position: computed(function(key, value) {
-    if (arguments.length === 1) {
+  position: computed({
+    get: function() {
       return positions[0];
-    } else {
+    },
+    set: function() {
       assert(Ember.String.fmt("Position must be one of %@", [ JSON.stringify(positions) ]), positions.contains(value));
       return value;
     }
