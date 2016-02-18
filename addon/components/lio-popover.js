@@ -201,7 +201,6 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
 
       // In cases where positioning alters the element's height we need to run calculations twice.
       if (oldHeight !== $el.outerHeight || oldWidth !== $el.outerWidth()) {
-        console.log(oldHeight, oldWidth);
         this.calculateReposition($el);
       }
     }

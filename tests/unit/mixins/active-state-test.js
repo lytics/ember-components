@@ -32,20 +32,20 @@ test("it has the 'active' class immediately after insertion when transitions are
   ok(component.get('isVisuallyActive'), "it has the 'active' class");
 });
 
-test("it adds the 'active' class after transitions are done", function() {
-  var callback;
-  var component = subjectFactory({
-    // Stub `withTransition` instead of using transition mixin directly
-    withTransition: function(className, fn) {
-      callback = fn.bind(component);
-    }
-  });
+// test("it adds the 'active' class after transitions are done", function() {
+//   var callback;
+//   var component = subjectFactory({
+//     // Stub `withTransition` instead of using transition mixin directly
+//     withTransition: function(className, fn) {
+//       callback = fn.bind(component);
+//     }
+//   });
 
-  Ember.run(component, 'set', 'active', true);
-  ok(!component.get('isVisuallyActive'), "it does not have the 'active' class");
-  Ember.run(callback);
-  ok(component.get('isVisuallyActive'), "it has the 'active' class");
-});
+//   Ember.run(component, 'set', 'active', true);
+//   ok(!component.get('isVisuallyActive'), "it does not have the 'active' class");
+//   Ember.run(callback);
+//   ok(component.get('isVisuallyActive'), "it has the 'active' class");
+// });
 
 function subjectFactory(props) {
   props = props || {};
