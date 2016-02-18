@@ -195,50 +195,62 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
   reposition: observer('position', 'active', function() {
     if (get(this, 'active')) {
       var $el = this.$();
-      var $arrow = $el.find('.arrow');
-      var $anchor = $(get(this, 'anchor'));
-      var trueAnchorOffset = $anchor.offset();
-      var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : trueAnchorOffset;
-      trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
-      anchorOffset || (anchorOffset = { top: 0, left: 0 });
+      var oldHeight = $el.outerHeight();
+      var oldWidth = $el.outerWidth();
+      this.calculateReposition($el);
 
-      trueAnchorOffset.top -= $(document).scrollTop();
-
-      setProperties(this, {
-        offsetTop: anchorOffset.top,
-        offsetLeft: anchorOffset.left,
-
-        trueOffsetTop: trueAnchorOffset.top,
-        trueOffsetLeft: trueAnchorOffset.left,
-
-        windowWidth: $(window).width(),
-        windowHeight: $(window).height(),
-
-        width: $el.outerWidth(),
-        height: $el.outerHeight(),
-
-        anchorWidth: $anchor.width(),
-        anchorHeight: $anchor.height(),
-
-        arrowWidth: $arrow.outerWidth(),
-        arrowHeight: $arrow.outerHeight(),
-      });
-
-      setProperties(this, {
-        arrowOffsetTop: get(this, 'height') / 2 - get(this, 'arrowHeight') / 2,
-        arrowOffsetLeft: get(this, 'width') / 2 - get(this, 'arrowWidth') / 2
-      });
-
-      // Flip if necessary
-      this.adjustPosition();
-
-      // Adjust based on position
-      this.positioners[get(this, 'renderedPosition')](this);
-
-      $el.css(get(this, 'offset'));
-      $arrow.css(get(this, 'arrowOffset'));
+      // In cases where positioning alters the element's height we need to run calculations twice.
+      if (oldHeight !== $el.outerHeight || oldWidth !== $el.outerWidth()) {
+        console.log(oldHeight, oldWidth);
+        this.calculateReposition($el);
+      }
     }
   }),
+
+  calculateReposition: function($el) {
+    var $arrow = $el.find('.arrow');
+    var $anchor = $(get(this, 'anchor'));
+    var trueAnchorOffset = $anchor.offset();
+    var anchorOffset = get(this, 'alignToParent') ? $anchor.position() : trueAnchorOffset;
+    trueAnchorOffset || (trueAnchorOffset = { top: 0, left: 0});
+    anchorOffset || (anchorOffset = { top: 0, left: 0 });
+
+    trueAnchorOffset.top -= $(document).scrollTop();
+
+    setProperties(this, {
+      offsetTop: anchorOffset.top,
+      offsetLeft: anchorOffset.left,
+
+      trueOffsetTop: trueAnchorOffset.top,
+      trueOffsetLeft: trueAnchorOffset.left,
+
+      windowWidth: $(window).width(),
+      windowHeight: $(window).height(),
+
+      width: $el.outerWidth(),
+      height: $el.outerHeight(),
+
+      anchorWidth: $anchor.width(),
+      anchorHeight: $anchor.height(),
+
+      arrowWidth: $arrow.outerWidth(),
+      arrowHeight: $arrow.outerHeight(),
+    });
+
+    setProperties(this, {
+      arrowOffsetTop: get(this, 'height') / 2 - get(this, 'arrowHeight') / 2,
+      arrowOffsetLeft: get(this, 'width') / 2 - get(this, 'arrowWidth') / 2
+    });
+
+    // Flip if necessary
+    this.adjustPosition();
+
+    // Adjust based on position
+    this.positioners[get(this, 'renderedPosition')](this);
+
+    $el.css(get(this, 'offset'));
+    $arrow.css(get(this, 'arrowOffset'));
+  },
 
   adjustHorizontalPosition: function() {
     var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth');
