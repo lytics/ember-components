@@ -252,9 +252,9 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
   },
 
   adjustHorizontalPosition: function() {
-    var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth');
+    var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth', 'arrowWidth');
     set(this, 'offsetLeft', adjustForEdges(dimensions.offsetLeft, dimensions.width, dimensions.anchorWidth, dimensions.windowWidth));
-    set(this, 'arrowOffsetLeft', adjustArrowForEdges(dimensions.arrowOffsetLeft, dimensions.offsetLeft, dimensions.width, dimensions.anchorWidth, dimensions.windowWidth));
+    set(this, 'arrowOffsetLeft', adjustArrowForEdges(dimensions.arrowOffsetLeft, dimensions.offsetLeft, dimensions.width, dimensions.anchorWidth, dimensions.windowWidth, dimensions.arrowWidth));
   },
 
   adjustVerticalPosition: function() {
@@ -279,12 +279,12 @@ function adjustForEdges(start, box, anchor, frame) {
 }
 
 // Given the bounding dimensions, give the origin top/left component that keeps the arrow over the anchor regardless of the popover position
-function adjustArrowForEdges(arrowStart, start, box, anchor, frame) {
+function adjustArrowForEdges(arrowStart, start, box, anchor, frame, arrowWidth) {
   var end = start - (box / 2 - anchor / 2);
   var arrowEnd = arrowStart;
 
   if (end < 0) {
-    arrowEnd = start + anchor / 2;
+    arrowEnd = start + anchor / 2 - Math.ceil(arrowWidth / 2);
   }
   if (end + box > frame) {
     arrowEnd = box - (frame - start) + anchor / 2;
