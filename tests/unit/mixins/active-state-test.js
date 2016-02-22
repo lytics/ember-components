@@ -3,6 +3,9 @@ import ActiveStateMixin from 'lytics-ember-components/mixins/active-state';
 import {
   test
 } from 'ember-qunit';
+import {
+  skip,
+} from 'qunit';
 
 module('ActiveStateMixin');
 
@@ -32,20 +35,22 @@ test("it has the 'active' class immediately after insertion when transitions are
   ok(component.get('isVisuallyActive'), "it has the 'active' class");
 });
 
-// test("it adds the 'active' class after transitions are done", function() {
-//   var callback;
-//   var component = subjectFactory({
-//     // Stub `withTransition` instead of using transition mixin directly
-//     withTransition: function(className, fn) {
-//       callback = fn.bind(component);
-//     }
-//   });
+// TODO: Implement a way to test that classes are properly added and removed during transitions.
+// These tests were written when the transition was triggered in a call back and timing could be controlled.
+skip("it adds the 'active' class after transitions are done", function() {
+  var callback;
+  var component = subjectFactory({
+    // Stub `withTransition` instead of using transition mixin directly
+    withTransition: function(className, fn) {
+      callback = fn.bind(component);
+    }
+  });
 
-//   Ember.run(component, 'set', 'active', true);
-//   ok(!component.get('isVisuallyActive'), "it does not have the 'active' class");
-//   Ember.run(callback);
-//   ok(component.get('isVisuallyActive'), "it has the 'active' class");
-// });
+  Ember.run(component, 'set', 'active', true);
+  ok(!component.get('isVisuallyActive'), "it does not have the 'active' class");
+  Ember.run(callback);
+  ok(component.get('isVisuallyActive'), "it has the 'active' class");
+});
 
 function subjectFactory(props) {
   props = props || {};

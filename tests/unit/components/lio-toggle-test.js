@@ -3,6 +3,9 @@ import {
   test,
   moduleForComponent
 } from 'ember-qunit';
+import {
+  skip,
+} from 'qunit';
 import compileTemplate from '../../helpers/compile-template';
 import tagNameFor from '../../helpers/tag-name-for';
 import {
@@ -167,38 +170,40 @@ test("there must be exactly two option components", function() {
   }, /The 'lio-toggle' component must contain at exactly two 'lio-option' components./);
 });
 
-// test("transition classes are added when toggling", function() {
-//   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
-//     var component = this.subject({
-//       value: true,
-//       layout: template1
-//     });
+// TODO: Implement a way to test that classes are properly added and removed during transitions.
+// These tests were written when the transition was triggered in a call back and timing could be controlled.
+skip("transition classes are added when toggling", function() {
+  mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
+    var component = this.subject({
+      value: true,
+      layout: template1
+    });
 
-//     this.$();
+    this.$();
 
-//     var triggerTransitionEnd = function() {
-//       component.componentsForType('option').invoke('trigger', 'transitionDidEnd');
-//     };
+    var triggerTransitionEnd = function() {
+      component.componentsForType('option').invoke('trigger', 'transitionDidEnd');
+    };
 
-//     Ember.run(component, 'send', 'toggle');
-//     ok(this.$().find('lio-option:nth-of-type(1)').hasClass('deactivating'), "the first option has the 'deactivating' class");
-//     ok(this.$().find('lio-option:nth-of-type(2)').hasClass('activating'), "the second option has the 'activating' class");
-//     ok(this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option has the 'active' class");
-//     ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option does not have the 'active' class");
-//     Ember.run(triggerTransitionEnd);
-//     ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('deactivating'), "the first option does not have the 'deactivating' class");
-//     ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('activating'), "the second option does not have the 'activating' class");
-//     ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option does not have the 'active' class");
-//     ok(this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option has the 'active' class");
-//     Ember.run(component, 'send', 'toggle');
-//     ok(this.$().find('lio-option:nth-of-type(1)').hasClass('activating'), "the first option has the 'activating' class");
-//     ok(this.$().find('lio-option:nth-of-type(2)').hasClass('deactivating'), "the second option has the 'deactivating' class");
-//     ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option does not have the 'active' class");
-//     ok(this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option has the 'active' class");
-//     Ember.run(triggerTransitionEnd);
-//     ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('activating'), "the first option does not have the 'activating' class");
-//     ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('deactivating'), "the second option does not have the 'deactivating' class");
-//     ok(this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option has the 'active' class");
-//     ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option does not have the 'active' class");
-//   });
-// });
+    Ember.run(component, 'send', 'toggle');
+    ok(this.$().find('lio-option:nth-of-type(1)').hasClass('deactivating'), "the first option has the 'deactivating' class");
+    ok(this.$().find('lio-option:nth-of-type(2)').hasClass('activating'), "the second option has the 'activating' class");
+    ok(this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option has the 'active' class");
+    ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option does not have the 'active' class");
+    Ember.run(triggerTransitionEnd);
+    ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('deactivating'), "the first option does not have the 'deactivating' class");
+    ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('activating'), "the second option does not have the 'activating' class");
+    ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option does not have the 'active' class");
+    ok(this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option has the 'active' class");
+    Ember.run(component, 'send', 'toggle');
+    ok(this.$().find('lio-option:nth-of-type(1)').hasClass('activating'), "the first option has the 'activating' class");
+    ok(this.$().find('lio-option:nth-of-type(2)').hasClass('deactivating'), "the second option has the 'deactivating' class");
+    ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option does not have the 'active' class");
+    ok(this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option has the 'active' class");
+    Ember.run(triggerTransitionEnd);
+    ok(!this.$().find('lio-option:nth-of-type(1)').hasClass('activating'), "the first option does not have the 'activating' class");
+    ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('deactivating'), "the second option does not have the 'deactivating' class");
+    ok(this.$().find('lio-option:nth-of-type(1)').hasClass('active'), "the first option has the 'active' class");
+    ok(!this.$().find('lio-option:nth-of-type(2)').hasClass('active'), "the second option does not have the 'active' class");
+  });
+});
