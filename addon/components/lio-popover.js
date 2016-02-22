@@ -161,6 +161,10 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
     set(this, 'resizeHandler', $(window).on('resize', function() {
       this.reposition();
     }.bind(this)));
+
+    Ember.run.scheduleOnce('afterRender', this, function(){
+      this.reposition();
+    });
   },
 
   willDestroy: function() {
