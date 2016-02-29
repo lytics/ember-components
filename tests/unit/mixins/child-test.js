@@ -6,10 +6,10 @@ import {
 
 module('ChildMixin');
 
-var TestComponent = Ember.Component.extend(ChildMixin);
+const TestComponent = Ember.Component.extend(ChildMixin);
 
 test("it registers itself with its parent component before being inserted into the DOM", function() {
-  var component = subjectFactory({
+  const component = subjectFactory({
     parent: {
       registerComponent: function(object) {
         equal(component, object, '`registerComponent` called on parent component');
@@ -21,7 +21,7 @@ test("it registers itself with its parent component before being inserted into t
 });
 
 test("it notifies its parent component after being inserted into the DOM", function() {
-  var component = subjectFactory({
+  const component = subjectFactory({
     parent: {
       didInsertComponent: function(object) {
         equal(component, object, '`didInsertComponent` called on parent component');
@@ -33,8 +33,8 @@ test("it notifies its parent component after being inserted into the DOM", funct
 });
 
 test("it has a `parent` property that is a reference to its parent component", function() {
-  var parent = {};
-  var component = subjectFactory({
+  const parent = {};
+  const component = subjectFactory({
     parentView: parent
   });
 

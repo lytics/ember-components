@@ -8,7 +8,7 @@ Ember.MODEL_FACTORY_INJECTIONS = true;
 
 Ember.Handlebars.registerBoundHelper('capitalize', capitalizeHelper);
 
-var App = Ember.Application.extend({
+const App = Ember.Application.extend({
   modulePrefix: config.modulePrefix,
   podModulePrefix: config.podModulePrefix,
   Resolver: Resolver

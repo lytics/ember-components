@@ -3,10 +3,10 @@ import ChildComponentMixin from '../mixins/child';
 import ActiveStateMixin from '../mixins/active-state';
 import Ember from 'ember';
 
-var Component = Ember.Component;
-var get       = Ember.get;
+const Component = Ember.Component;
+const get       = Ember.get;
 
-var typeKey = 'label';
+const typeKey = 'label';
 
 /**
   Label Component

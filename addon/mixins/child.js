@@ -1,10 +1,10 @@
 import Ember from 'ember';
 
-var Mixin    = Ember.Mixin;
-var get      = Ember.get;
-var set      = Ember.set;
-var computed = Ember.computed;
-var assert   = Ember.assert;
+const Mixin    = Ember.Mixin;
+const get      = Ember.get;
+const set      = Ember.set;
+const computed = Ember.computed;
+const assert   = Ember.assert;
 
 export default Mixin.create({
   //
@@ -21,7 +21,7 @@ export default Mixin.create({
   willInsertElement: function(view) {
     this._super(view);
 
-    var parent = get(this, 'parent');
+    const parent = get(this, 'parent');
 
     if (!get(this, 'canBeTopLevel')) {
       assert("The '" + get(this, 'tagName') + "' component must be nested underneath another component'", parent && typeof parent.registerComponent === 'function');
@@ -34,7 +34,7 @@ export default Mixin.create({
   didInsertElement: function(view) {
     this._super(view);
 
-    var parent = get(this, 'parent');
+    const parent = get(this, 'parent');
     parent && parent.didInsertComponent && parent.didInsertComponent(this);
   }
 });

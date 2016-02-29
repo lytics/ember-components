@@ -1,4 +1,4 @@
-var namespace = 'lio';
+const namespace = 'lio';
 
 export function tagForType(type) {
   return namespace + '-' + type;

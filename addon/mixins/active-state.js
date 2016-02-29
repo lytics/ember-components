@@ -1,10 +1,10 @@
 import Ember from 'ember';
 
-var Mixin    = Ember.Mixin;
-var get      = Ember.get;
-var set      = Ember.set;
-var computed = Ember.computed;
-var observer = Ember.observer;
+const Mixin    = Ember.Mixin;
+const get      = Ember.get;
+const set      = Ember.set;
+const computed = Ember.computed;
+const observer = Ember.observer;
 
 export default Mixin.create({
   //
@@ -61,7 +61,7 @@ export default Mixin.create({
 
   // Begin a transition that ends with setting the visual state to the current state
   transitionVisualState: observer('isActive', function() {
-    var isActive = this.get('isActive');
+    const isActive = this.get('isActive');
 
     // The component may not use transitions
     if (this.withTransition) {

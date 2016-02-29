@@ -9,16 +9,16 @@ import {
 
 module('ActiveStateMixin');
 
-var TestComponent = Ember.Object.extend(ActiveStateMixin);
+const TestComponent = Ember.Object.extend(ActiveStateMixin);
 
 test("the active state defaults to false", function() {
-  var component = subjectFactory();
+  const component = subjectFactory();
 
   ok(!component.get('active'), "it is not active");
 });
 
 test("it has the 'active'/'inactive' classes based on active state", function() {
-  var component = subjectFactory();
+  const component = subjectFactory();
 
   ok(!component.get('isVisuallyActive'), "it does not have the 'active' class");
   Ember.run(component, 'set', 'active', true);
@@ -26,7 +26,7 @@ test("it has the 'active'/'inactive' classes based on active state", function() 
 });
 
 test("it has the 'active' class immediately after insertion when transitions are enabled", function() {
-  var component = subjectFactory({
+  const component = subjectFactory({
     // The existence of the `withTransition` method indicates transitions are available
     withTransition: function() {},
     active: true
@@ -38,8 +38,8 @@ test("it has the 'active' class immediately after insertion when transitions are
 // TODO: Implement a way to test that classes are properly added and removed during transitions.
 // These tests were written when the transition was triggered in a call back and timing could be controlled.
 skip("it adds the 'active' class after transitions are done", function() {
-  var callback;
-  var component = subjectFactory({
+  let callback;
+  const component = subjectFactory({
     // Stub `withTransition` instead of using transition mixin directly
     withTransition: function(className, fn) {
       callback = fn.bind(component);

@@ -2,16 +2,16 @@ import { tagForType } from '../util/namespace';
 import ParentComponentMixin from '../mixins/parent';
 import Ember from 'ember';
 
-var A         = Ember.A;
-var Component = Ember.Component;
-var get       = Ember.get;
-var set       = Ember.set;
-var computed  = Ember.computed;
-var observer  = Ember.observer;
-var run       = Ember.run;
-var assert    = Ember.assert;
+const A         = Ember.A;
+const Component = Ember.Component;
+const get       = Ember.get;
+const set       = Ember.set;
+const computed  = Ember.computed;
+const observer  = Ember.observer;
+const run       = Ember.run;
+const assert    = Ember.assert;
 
-var typeKey = 'multi-select';
+const typeKey = 'multi-select';
 
 /**
   Multi Select Component
@@ -102,7 +102,7 @@ export default Component.extend(ParentComponentMixin, {
 
     select: function(optionValue, selectedState) {
       this.runAction(function() {
-        var option = get(this, 'optionComponents').findBy('value', optionValue);
+        const option = get(this, 'optionComponents').findBy('value', optionValue);
 
         if (selectedState === undefined) {
           selectedState = true;
@@ -160,7 +160,7 @@ export default Component.extend(ParentComponentMixin, {
 
   // Update values to reflect the `selected` state of all options
   syncValues: function() {
-    var selectedOptions = A(get(this, 'optionComponents').filterBy('isSelected'));
+    const selectedOptions = A(get(this, 'optionComponents').filterBy('isSelected'));
 
     // The `values` attribute must be set to a new array reflecting the state
     // of selected options; manipulating the array is not compatible with
@@ -170,8 +170,8 @@ export default Component.extend(ParentComponentMixin, {
 
   // Update the `selected` state of all options to reflect current values
   syncOptions: function() {
-    var options = get(this, 'allOptionComponents');
-    var values = A(get(this, 'values') || []);
+    const options = get(this, 'allOptionComponents');
+    const values = A(get(this, 'values') || []);
 
     assert("The 'value' attribute of '" + get(this, 'tagName') + "' components must not contain duplicate values.", get(values, 'length') === get(values.uniq(), 'length'));
 
@@ -182,10 +182,10 @@ export default Component.extend(ParentComponentMixin, {
 
   // Disable/enable action buttons
   setButtonState: function() {
-    var total = get(this, 'optionCount');
-    var selected = get(this, 'selectedOptionCount');
-    var selectAllButton = get(this, 'selectAllButton');
-    var unselectAllButton = get(this, 'unselectAllButton');
+    const total = get(this, 'optionCount');
+    const selected = get(this, 'selectedOptionCount');
+    const selectAllButton = get(this, 'selectAllButton');
+    const unselectAllButton = get(this, 'unselectAllButton');
 
     selectAllButton && set(selectAllButton, 'disabled', selected === total);
     unselectAllButton && set(unselectAllButton, 'disabled', selected === 0);

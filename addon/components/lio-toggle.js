@@ -2,14 +2,14 @@ import { tagForType } from '../util/namespace';
 import ParentComponentMixin from '../mixins/parent';
 import Ember from 'ember';
 
-var Component = Ember.Component;
-var get       = Ember.get;
-var set       = Ember.set;
-var run       = Ember.run;
-var computed  = Ember.computed;
-var assert    = Ember.assert;
+const Component = Ember.Component;
+const get       = Ember.get;
+const set       = Ember.set;
+const run       = Ember.run;
+const computed  = Ember.computed;
+const assert    = Ember.assert;
 
-var typeKey = 'toggle';
+const typeKey = 'toggle';
 
 /**
   Toggle Component
@@ -76,10 +76,10 @@ export default Component.extend(ParentComponentMixin, {
     toggle: function() {
       if (!(get(this, 'disabled') || this.get('isTransitioning'))) {
         run(this, function() {
-          var current = get(this, 'value');
-          var possible = get(this, 'possibleValues');
+          const current = get(this, 'value');
+          const possible = get(this, 'possibleValues');
 
-          var nextIndex = (possible.indexOf(current) + 1) % get(possible, 'length');
+          const nextIndex = (possible.indexOf(current) + 1) % get(possible, 'length');
 
           set(this, 'value', possible[nextIndex]);
         });
@@ -117,8 +117,8 @@ export default Component.extend(ParentComponentMixin, {
 
     assert("The '" + get(this, 'tagName') + "' component must contain at exactly two 'lio-option' components.", get(this.componentsForType('option'), 'length') === 2);
 
-    var value = get(this, 'value');
-    var defaultValue = get(this, 'defaultValue');
+    const value = get(this, 'value');
+    const defaultValue = get(this, 'defaultValue');
 
     // Only set the default if there's currently no value
     if (value === undefined && defaultValue !== undefined) {
