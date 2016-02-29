@@ -118,7 +118,7 @@
 </style>
 
 {{#lio-multi-select values=values class="native-input"}}
-  {{#each option in model}}
+  {{#each model as |option|}}
     {{#lio-option value=option.value}}{{capitalize option.label}}{{/lio-option}}
   {{/each}}
 {{/lio-multi-select}}
@@ -132,13 +132,13 @@
   {{/lio-filter}}
 
   <div class="unselected-options">
-    {{#each option in model}}
+    {{#each model as |option|}}
       {{#lio-option option=option}}{{capitalize option.label}}{{/lio-option}}
     {{/each}}
   </div>
 
   <div class="selected-options">
-    {{#each option in model}}
+    {{#each model as |option|}}
       {{#lio-option option=option unselect=true}}{{capitalize option.label}}{{/lio-option}}
     {{/each}}
   </div>
@@ -152,7 +152,7 @@
 <h4>Selected Values:</h4>
 {{#if values}}
   <ul>
-    {{#each value in values}}
+    {{#each values as |value|}}
       <li>{{value}}</li>
     {{/each}}
   </ul>
