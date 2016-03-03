@@ -79,18 +79,35 @@
     left: 0;
   }
   lio-popover.left .arrow {
-    margin-left: -1px;
+    margin-left: -2px;
     border-left-color: #000;
   }
   lio-popover.right .arrow {
+    margin-left:-2px;
     border-right-color: #000;
   }
   lio-popover.top .arrow {
     margin-top: -1px;
     border-top-color: #000;
   }
+
+  lio-popover.left.top .arrow {
+    margin-left: -1px;
+    border-left-color: #000;
+  }
+
+  lio-popover.top.right .arrow {
+    margin-left: -2px;
+  }
   lio-popover.bottom .arrow {
+    margin-top:-1px;
     border-bottom-color: #000;
+  }
+  lio-popover.bottom.left .arrow {
+    margin-left: -1px;
+  }
+  lio-popover.bottom.right .arrow {
+    margin-left:-2px;
   }
 </style>
 

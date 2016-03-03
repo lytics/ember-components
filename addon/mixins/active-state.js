@@ -65,9 +65,8 @@ export default Mixin.create({
 
     // The component may not use transitions
     if (this.withTransition) {
-      this.withTransition(isActive ? 'activating' : 'deactivating', function() {
-        set(this, 'isVisuallyActive', isActive);
-      });
+      set(this, 'isVisuallyActive', isActive);
+      this.withTransition(isActive ? 'activating' : 'deactivating');
     } else {
       set(this, 'isVisuallyActive', isActive);
     }
