@@ -4,13 +4,13 @@ import ActiveStateMixin from '../mixins/active-state';
 import TransitionMixin from '../mixins/transition';
 import Ember from 'ember';
 
-var Component = Ember.Component;
-var get       = Ember.get;
-var set       = Ember.set;
-var computed  = Ember.computed;
-var uuid      = Ember.uuid;
+const Component = Ember.Component;
+const get       = Ember.get;
+const set       = Ember.set;
+const computed  = Ember.computed;
+const uuid      = Ember.uuid;
 
-var typeKey = 'option';
+const typeKey = 'option';
 
 /**
   Option Component
@@ -42,8 +42,8 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
 
   value: computed(function() {
     // The 'content' path is the current context
-    var path = this.get('valuePath');
-    var option = this.get('option');
+    const path = this.get('valuePath');
+    const option = this.get('option');
 
     return option && get(option, path);
   }).property('option', 'valuePath'),
@@ -73,8 +73,8 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
   isFiltered: computed.readOnly('filtered'),
 
   valueClass: computed(function() {
-    var value = get(this, 'value');
-    var type = Ember.typeOf(value);
+    let value = get(this, 'value');
+    const type = Ember.typeOf(value);
 
     // Avoid '[Object object]' classes and complex toString'd values
     if (type === 'object' || type === 'instance') {
@@ -102,10 +102,10 @@ export default Component.extend(ChildComponentMixin, ActiveStateMixin, Transitio
     // Do not perform the action if the component is disabled
     if (get(this, 'isDisabled')) { return; }
 
-    var parent = get(this, 'parent');
-    var isUnselect = get(this, 'isUnselect');
-    var isSelected = get(this, 'isSelected');
-    var value = get(this, 'value');
+    const parent = get(this, 'parent');
+    const isUnselect = get(this, 'isUnselect');
+    const isSelected = get(this, 'isSelected');
+    const value = get(this, 'value');
 
     // Don't set the select state directly; let the parent manage the state
     parent.send('select', value, isUnselect ? false : !isSelected);

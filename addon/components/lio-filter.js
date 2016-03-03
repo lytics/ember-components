@@ -3,16 +3,16 @@ import ParentComponentMixin from '../mixins/parent';
 import ChildComponentMixin from '../mixins/child';
 import Ember from 'ember';
 
-var A         = Ember.A;
-var Component = Ember.Component;
-var get       = Ember.get;
-var set       = Ember.set;
-var computed  = Ember.computed;
-var observer  = Ember.observer;
-var run       = Ember.run;
-var assert    = Ember.assert;
+const A         = Ember.A;
+const Component = Ember.Component;
+const get       = Ember.get;
+const set       = Ember.set;
+const computed  = Ember.computed;
+const observer  = Ember.observer;
+const run       = Ember.run;
+const assert    = Ember.assert;
 
-var typeKey = 'filter';
+const typeKey = 'filter';
 
 /**
   Filter Component
@@ -84,7 +84,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
   },
 
   debouncedFilterUpdate: Ember.observer('filterValue', function() {
-    var interval = get(this, 'debounce');
+    const interval = get(this, 'debounce');
 
     if (interval) {
       run.debounce(this, this.updateFilter, interval);
@@ -94,14 +94,14 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
   }),
 
   updateFilter: function() {
-    var filterValue = get(this, 'filterValue');
-    var components = get(this, 'parent.filteredComponents');
+    const filterValue = get(this, 'filterValue');
+    const components = get(this, 'parent.filteredComponents');
 
     if (!filterValue) {
       components.invoke('set', 'filtered', false);
     } else {
       components.forEach(function(component) {
-        var matches = fuzzyMatch(filterValue, component.$().text());
+        const matches = fuzzyMatch(filterValue, component.$().text());
 
         set(component, 'filtered', !matches);
       });
@@ -112,8 +112,8 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, {
 // Simple fuzzy pattern matching using regular expressions, adapted from:
 // http://codereview.stackexchange.com/questions/23899/faster-javascript-fuzzy-string-matching-function
 function fuzzyMatch(pattern, str) {
-  var cache = fuzzyMatch.cache || (fuzzyMatch.cache = {});
-  var regexp = cache[pattern];
+  const cache = fuzzyMatch.cache || (fuzzyMatch.cache = {});
+  let regexp = cache[pattern];
 
   if (!regexp) {
     regexp = cache[pattern] = new RegExp(pattern.split('').reduce(function(a, b) {

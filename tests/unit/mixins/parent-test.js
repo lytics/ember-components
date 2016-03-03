@@ -6,11 +6,11 @@ import {
 
 module('ParentMixin');
 
-var TestComponent = Ember.Component.extend(ParentMixin);
+const TestComponent = Ember.Component.extend(ParentMixin);
 
 test("it does not allow components without a type key to register themselves", function() {
-  var component = {};
-  var object = subjectFactory({
+  const component = {};
+  const object = subjectFactory({
     allowedComponents: [ 'foo' ]
   });
 
@@ -20,11 +20,11 @@ test("it does not allow components without a type key to register themselves", f
 });
 
 test("it does not allow non-whitelisted components to register themselves", function() {
-  var component = {
+  const component = {
     tagName: 'lio-bar',
     typeKey: 'bar'
   };
-  var object = subjectFactory({
+  const object = subjectFactory({
     tagName: 'lio-foo',
     allowedComponents: [ 'foo' ]
   });
@@ -35,8 +35,8 @@ test("it does not allow non-whitelisted components to register themselves", func
 });
 
 test("it allows whitelisted child components to register themselves", function() {
-  var component = { typeKey: 'foo' };
-  var object = subjectFactory({
+  const component = { typeKey: 'foo' };
+  const object = subjectFactory({
     allowedComponents: [ 'foo' ]
   });
 
@@ -47,9 +47,9 @@ test("it allows whitelisted child components to register themselves", function()
 });
 
 test("it maintains an array of all registered components", function() {
-  var component1 = { typeKey: 'foo' };
-  var component2 = { typeKey: 'foo' };
-  var object = subjectFactory({
+  const component1 = { typeKey: 'foo' };
+  const component2 = { typeKey: 'foo' };
+  const object = subjectFactory({
     allowedComponents: [ 'foo' ]
   });
 
@@ -60,10 +60,10 @@ test("it maintains an array of all registered components", function() {
 });
 
 test("it provides a method for finding all registered components by type key", function() {
-  var component1 = { typeKey: 'foo' };
-  var component2 = { typeKey: 'foo' };
-  var component3 = { typeKey: 'bar' };
-  var object = subjectFactory({
+  const component1 = { typeKey: 'foo' };
+  const component2 = { typeKey: 'foo' };
+  const component3 = { typeKey: 'bar' };
+  const object = subjectFactory({
     allowedComponents: [ 'foo', 'bar' ]
   });
 
@@ -75,7 +75,7 @@ test("it provides a method for finding all registered components by type key", f
 });
 
 test("it triggers the `didRegisterComponents` event when the first component is inserted into the DOM", function() {
-  var object = subjectFactory({
+  const object = subjectFactory({
     didRegisterComponents: function() {
       ok(true, "`didRegisterComponents` event was triggered");
     }
@@ -87,7 +87,7 @@ test("it triggers the `didRegisterComponents` event when the first component is 
 test("it maintains a property indicating whether the component has initialized or not", function() {
   expect(3);
 
-  var object = subjectFactory({
+  const object = subjectFactory({
     didRegisterComponents: function() {
       strictEqual(object.get('isInitializing'), true, "the component is initializing");
     }
@@ -99,13 +99,13 @@ test("it maintains a property indicating whether the component has initialized o
 });
 
 test("whitelisted component types are inherited", function() {
-  var class1 = TestComponent.extend({
+  const class1 = TestComponent.extend({
     allowedComponents: [ 'foo' ]
   });
-  var class2 = class1.extend({
+  const class2 = class1.extend({
     allowedComponents: [ 'bar' ]
   });
-  var object = class2.create();
+  const object = class2.create();
 
   deepEqual(object.get('allowedComponents'), [ 'foo',  'bar' ], "`allowedComponets` property is concatenated when inheriting");
 });

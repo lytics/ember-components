@@ -1,13 +1,13 @@
 import { testTrasitionSupport } from '../util/browser';
 import Ember from 'ember';
 
-var RSVP     = Ember.RSVP;
-var Mixin    = Ember.Mixin;
-var A        = Ember.A;
-var get      = Ember.get;
-var set      = Ember.set;
-var computed = Ember.computed;
-var run      = Ember.run;
+const RSVP     = Ember.RSVP;
+const Mixin    = Ember.Mixin;
+const A        = Ember.A;
+const get      = Ember.get;
+const set      = Ember.set;
+const computed = Ember.computed;
+const run      = Ember.run;
 
 // Test transition support once, then check the exported value in `$.support.transition`
 testTrasitionSupport();
@@ -45,7 +45,7 @@ export default Mixin.create({
   didInsertElement: function(view) {
     this._super(view);
 
-    var component = this;
+    const component = this;
 
     if ($.support.transition) {
       this.$().on($.support.transition.end, function(event) {
@@ -69,14 +69,14 @@ export default Mixin.create({
      // Don't perform transitions if they are not supported, they are explicitly disabled,
      // or the component's parent hasn't finished initializing
      if ($.support.transition && !get(this, 'disableTransitions') && !get(this, 'parent.isInitializing')) {
-      var currentTransition = get(this, 'currentTransition');
+      const currentTransition = get(this, 'currentTransition');
 
       // If a transition is currently running, abort it first
       if (currentTransition) {
         currentTransition.abort();
       }
 
-      var transition = new Transition(this, transitionClass);
+      const transition = new Transition(this, transitionClass);
 
       set(this, 'currentTransition', transition);
 
@@ -98,10 +98,10 @@ export default Mixin.create({
 
 // Class for encapsulating a transition
 function Transition(component, transitionClass) {
-  var deferred = RSVP.defer("Transition: '" + transitionClass + "' on component '" + component + "'");
-  var triggerClass = get(component, 'transitionTriggerClass');
-  var $el = component.$();
-  var handleTrasitionEnd = function() {
+  const deferred = RSVP.defer("Transition: '" + transitionClass + "' on component '" + component + "'");
+  const triggerClass = get(component, 'transitionTriggerClass');
+  const $el = component.$();
+  const handleTrasitionEnd = function() {
     set(component, 'isTransitioning', false);
 
     // Remove all transition classes

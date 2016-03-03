@@ -5,18 +5,18 @@ import ActiveStateMixin from '../mixins/active-state';
 import TransitionMixin from '../mixins/transition';
 import Ember from 'ember';
 
-var A             = Ember.A;
-var Component     = Ember.Component;
-var get           = Ember.get;
-var set           = Ember.set;
-var setProperties = Ember.setProperties;
-var getProperties = Ember.getProperties;
-var computed      = Ember.computed;
-var observer      = Ember.observer;
-var assert        = Ember.assert;
+const A             = Ember.A;
+const Component     = Ember.Component;
+const get           = Ember.get;
+const set           = Ember.set;
+const setProperties = Ember.setProperties;
+const getProperties = Ember.getProperties;
+const computed      = Ember.computed;
+const observer      = Ember.observer;
+const assert        = Ember.assert;
 
-var typeKey = 'popover';
-var positions = A([ 'top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);
+const typeKey = 'popover';
+const positions = A([ 'top', 'right', 'bottom', 'left', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ]);
 
 /**
   Popover Component
@@ -61,7 +61,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
   renderedPosition: null,
 
   positionClassName: computed(function() {
-    var position = get(this, 'renderedPosition');
+    const position = get(this, 'renderedPosition');
     return position && position.replace('-', ' ');
   }).property('renderedPosition'),
 
@@ -178,8 +178,8 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
   //
 
   adjustPosition: function() {
-    var position = get(this, 'position');
-    var dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
+    let position = get(this, 'position');
+    const dimensions = getProperties(this, 'trueOffsetLeft', 'width', 'anchorWidth', 'windowWidth', 'trueOffsetTop', 'height', 'anchorHeight', 'windowHeight');
 
     // The rendered position is the opposite of the preferred position when there is no room where preferred
     // NOTE: this does not affect corner positions
@@ -198,9 +198,9 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
 
   reposition: observer('position', 'active', function() {
     if (get(this, 'active')) {
-      var $el = this.$();
-      var oldHeight = $el.outerHeight();
-      var oldWidth = $el.outerWidth();
+      const $el = this.$();
+      const oldHeight = $el.outerHeight();
+      const oldWidth = $el.outerWidth();
       this.calculateReposition($el);
 
       // In cases where positioning alters the element's height we need to run calculations twice.
@@ -256,13 +256,13 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
   },
 
   adjustHorizontalPosition: function() {
-    var dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth', 'arrowWidth');
+    const dimensions = getProperties(this, 'arrowOffsetLeft', 'offsetLeft', 'width', 'anchorWidth', 'windowWidth', 'arrowWidth');
     set(this, 'offsetLeft', adjustForEdges(dimensions.offsetLeft, dimensions.width, dimensions.anchorWidth, dimensions.windowWidth));
     set(this, 'arrowOffsetLeft', adjustArrowForEdges(dimensions.arrowOffsetLeft, dimensions.offsetLeft, dimensions.width, dimensions.anchorWidth, dimensions.windowWidth, dimensions.arrowWidth));
   },
 
   adjustVerticalPosition: function() {
-    var dimensions = getProperties(this, 'arrowOffsetTop', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
+    const dimensions = getProperties(this, 'arrowOffsetTop', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
     set(this, 'offsetTop', adjustForEdges(dimensions.offsetTop, dimensions.height, dimensions.anchorHeight, dimensions.windowHeight));
     set(this, 'arrowOffsetTop', adjustArrowForEdges(dimensions.arrowOffsetTop, dimensions.offsetTop, dimensions.height, dimensions.anchorHeight, dimensions.windowHeight));
   }
@@ -270,7 +270,7 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
 
 // Given the bounding dimensions, return the origin top/left component that keeps the popover in the frame
 function adjustForEdges(start, box, anchor, frame) {
-  var end = start - (box / 2 - anchor / 2);
+  let end = start - (box / 2 - anchor / 2);
 
   if (end < 0) {
     end = 0;
@@ -284,8 +284,8 @@ function adjustForEdges(start, box, anchor, frame) {
 
 // Given the bounding dimensions, give the origin top/left component that keeps the arrow over the anchor regardless of the popover position
 function adjustArrowForEdges(arrowStart, start, box, anchor, frame, arrowWidth) {
-  var end = start - (box / 2 - anchor / 2);
-  var arrowEnd = arrowStart;
+  const end = start - (box / 2 - anchor / 2);
+  let arrowEnd = arrowStart;
 
   if (end < 0) {
     arrowEnd = start + anchor / 2 - Math.ceil(arrowWidth / 2);

@@ -6,11 +6,11 @@ function mockPath(obj, path, mock, target, callback) {
     target = null;
   }
 
-  var lastPath, subPath, value;
-  var parts = path.split('.');
+  let lastPath, subPath, value;
+  const parts = path.split('.');
 
   // Save all intermediate values while resetting values
-  var oldValues = parts.reduce(function(values, part, index) {
+  const oldValues = parts.reduce(function(values, part, index) {
     lastPath = values.get('lastObject.path');
     subPath = (lastPath ? lastPath + '.' : '') + part;
     value = Ember.get(obj, subPath);

@@ -4,9 +4,9 @@ import Router from '../../router';
 import config from '../../config/environment';
 
 export default function startApp(attrs) {
-  var App;
+  let App;
 
-  var attributes = Ember.merge({}, config.APP);
+  let attributes = Ember.merge({}, config.APP);
   attributes = Ember.merge(attributes, attrs); // use defaults, but you can override;
 
   Ember.run(function() {

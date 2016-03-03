@@ -3,15 +3,15 @@ import ParentComponentMixin from '../mixins/parent';
 import ActiveStateMixin from '../mixins/active-state';
 import Ember from 'ember';
 
-var A         = Ember.A;
-var Component = Ember.Component;
-var get       = Ember.get;
-var set       = Ember.set;
-var observer  = Ember.observer;
-var computed  = Ember.computed;
-var assert    = Ember.assert;
+const A         = Ember.A;
+const Component = Ember.Component;
+const get       = Ember.get;
+const set       = Ember.set;
+const observer  = Ember.observer;
+const computed  = Ember.computed;
+const assert    = Ember.assert;
 
-var typeKey = 'tip';
+const typeKey = 'tip';
 
 /**
   Tip Component
@@ -128,15 +128,15 @@ export default Component.extend(ParentComponentMixin, ActiveStateMixin, {
   didRegisterComponents: function() {
     this._super();
 
-    var labelsLength = get(this.componentsForType('label'), 'length');
-    var popoversLength = get(this.componentsForType('popover'), 'length');
+    const labelsLength = get(this.componentsForType('label'), 'length');
+    const popoversLength = get(this.componentsForType('popover'), 'length');
     assert(Ember.String.fmt("The '%@' component must have a single 'lio-label' and a single 'lio-popover'", [ get(this, 'tagName') ]), labelsLength === 1 && popoversLength === 1);
 
     set(get(this, 'popover'), 'anchor', get(this, 'label').$());
     set(get(this, 'popover'), 'alignToParent', true);
 
-    var component = this;
-    var handler = function(event) {
+    const component = this;
+    const handler = function(event) {
       if (component.get('active') && !withinComponent(event.target, component.$().add(component.get('anchor')))) {
         component.set('active', false);
       }

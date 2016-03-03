@@ -2,13 +2,13 @@ import { tagForType } from '../util/namespace';
 import ParentComponentMixin from '../mixins/parent';
 import Ember from 'ember';
 
-var Component = Ember.Component;
-var get       = Ember.get;
-var set       = Ember.set;
-var computed  = Ember.computed;
-var assert    = Ember.assert;
+const Component = Ember.Component;
+const get       = Ember.get;
+const set       = Ember.set;
+const computed  = Ember.computed;
+const assert    = Ember.assert;
 
-var typeKey = 'carousel';
+const typeKey = 'carousel';
 
 /**
   Carousel Component
@@ -52,8 +52,8 @@ export default Component.extend(ParentComponentMixin, {
 
   // The index of the content item currently active
   activeIndex: computed(function() {
-    var contents = this.componentsForType('content');
-    var active = contents.findBy('isActive');
+    const contents = this.componentsForType('content');
+    const active = contents.findBy('isActive');
 
     return contents.indexOf(active);
   }).property('components.@each.isActive').readOnly(),
@@ -76,25 +76,25 @@ export default Component.extend(ParentComponentMixin, {
   actions: {
     // Activate the content at the previous index
     backward: function() {
-      var activeIndex = get(this, 'activeIndex');
-      var contentLength = get(this, 'contentLength');
-      var nextIndex = activeIndex - 1;
+      const activeIndex = get(this, 'activeIndex');
+      const contentLength = get(this, 'contentLength');
+      const nextIndex = activeIndex - 1;
 
       this.send('activate', nextIndex < 0 ? contentLength - 1 : nextIndex, 'backward');
     },
 
     // Activate the content at the next index
     forward: function() {
-      var activeIndex = get(this, 'activeIndex');
-      var contentLength = get(this, 'contentLength');
-      var nextIndex = activeIndex + 1;
+      const activeIndex = get(this, 'activeIndex');
+      const contentLength = get(this, 'contentLength');
+      const nextIndex = activeIndex + 1;
 
       this.send('activate', nextIndex >= contentLength ? 0 : nextIndex, 'forward');
     },
 
     // Activate the content at the given index
     activate: function(nextIndex, direction) {
-      var activeIndex = get(this, 'activeIndex');
+      const activeIndex = get(this, 'activeIndex');
 
       // Nothing to do if the given index is already active
       if (activeIndex === nextIndex) { return; }
@@ -102,9 +102,9 @@ export default Component.extend(ParentComponentMixin, {
       // Don't attempt to transition to an invalid index
       if (nextIndex < 0 || nextIndex > get(this, 'contentLength')) { return; }
 
-      var contents = this.componentsForType('content');
-      var labels = this.componentsForType('label');
-      var activeContent = contents.objectAt(activeIndex);
+      const contents = this.componentsForType('content');
+      const labels = this.componentsForType('label');
+      const activeContent = contents.objectAt(activeIndex);
 
       // Abort if in the middle of a transition
       if (activeContent && get(activeContent, 'isTransitioning')) { return; }
@@ -131,8 +131,8 @@ export default Component.extend(ParentComponentMixin, {
 
     // Respond to a label gaining focus
     labelFocus: function(label) {
-      var labels = this.componentsForType('label');
-      var nextIndex = labels.indexOf(label);
+      const labels = this.componentsForType('label');
+      const nextIndex = labels.indexOf(label);
 
       if (nextIndex !== -1) {
         this.send('activate', nextIndex);
@@ -150,8 +150,8 @@ export default Component.extend(ParentComponentMixin, {
   didRegisterComponents: function() {
     this._super();
 
-    var contents = this.componentsForType('content');
-    var firstContent = contents.objectAt(0);
+    const contents = this.componentsForType('content');
+    const firstContent = contents.objectAt(0);
 
     assert("The '" + get(this, 'tagName') + "' component can only have one active 'lio-content' component.", contents.filterBy('isActive').length <= 1);
 
@@ -159,9 +159,9 @@ export default Component.extend(ParentComponentMixin, {
       firstContent.send('activate');
     }
 
-    var labels = this.componentsForType('label');
-    var labelLength = get(labels, 'length');
-    var activeIndex = get(this, 'activeIndex');
+    const labels = this.componentsForType('label');
+    const labelLength = get(labels, 'length');
+    const activeIndex = get(this, 'activeIndex');
 
     assert("The '" + get(this, 'tagName') + "' component must have the same number of 'lio-label' components as 'lio-content' components.", !labelLength || labelLength === get(this.componentsForType('content'), 'length'));
 

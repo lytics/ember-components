@@ -2,12 +2,12 @@ import { tagForType } from '../util/namespace';
 import ChildComponentMixin from '../mixins/child';
 import Ember from 'ember';
 
-var Component = Ember.Component;
-var get       = Ember.get;
-var computed  = Ember.computed;
-var assert    = Ember.assert;
+const Component = Ember.Component;
+const get       = Ember.get;
+const computed  = Ember.computed;
+const assert    = Ember.assert;
 
-var typeKey = 'button';
+const typeKey = 'button';
 
 /**
   Button Component
@@ -51,7 +51,7 @@ export default Component.extend(ChildComponentMixin, {
     // Do not perform the action if the component is disabled
     if (get(this, 'isDisabled')) { return; }
 
-    var action = get(this, 'action');
+    const action = get(this, 'action');
 
     assert("All '" + get(this, 'tagName') + "' components must define an `action` attribute.", action);
 

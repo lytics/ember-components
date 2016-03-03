@@ -22,7 +22,7 @@ moduleForComponent('lio-tip', 'TipComponent', {
 });
 
 test("component has correct tag name", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -30,7 +30,7 @@ test("component has correct tag name", function() {
 });
 
 test("component is active when the label is clicked", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -40,7 +40,7 @@ test("component is active when the label is clicked", function() {
 });
 
 test("component is active when the label is hovered and the activator is set to hover", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     activator: 'hover'
   });
@@ -53,7 +53,7 @@ test("component is active when the label is hovered and the activator is set to 
 });
 
 test("component has the active class when it is active", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
@@ -62,7 +62,7 @@ test("component has the active class when it is active", function() {
 });
 
 test("it is active when focused", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: false
   });
@@ -72,8 +72,8 @@ test("it is active when focused", function() {
 });
 
 test("it is not active when blurred", function() {
-  var context = this;
-  var component = this.subject({
+  const context = this;
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
@@ -85,7 +85,7 @@ test("it is not active when blurred", function() {
 });
 
 test("the popover is open when active", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
@@ -96,7 +96,7 @@ test("the popover is open when active", function() {
 });
 
 test("the component throws if there isn't a popover", function() {
-  var context = this;
+  const context = this;
 
   this.subject({
     layout: compileTemplate(function() {/*
@@ -110,7 +110,7 @@ test("the component throws if there isn't a popover", function() {
 });
 
 test("the component throws if there is more than one popover", function() {
-  var context = this;
+  const context = this;
 
   this.subject({
     layout: compileTemplate(function() {/*
@@ -126,7 +126,7 @@ test("the component throws if there is more than one popover", function() {
 });
 
 test("the component throws if there isn't a label", function() {
-  var context = this;
+  const context = this;
 
   this.subject({
     layout: compileTemplate(function() {/*
@@ -140,7 +140,7 @@ test("the component throws if there isn't a label", function() {
 });
 
 test("the component throws if there is more than one label", function() {
-  var context = this;
+  const context = this;
 
   this.subject({
     layout: compileTemplate(function() {/*

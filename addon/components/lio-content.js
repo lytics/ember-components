@@ -4,9 +4,9 @@ import ActiveStateMixin from '../mixins/active-state';
 import TransitionMixin from '../mixins/transition';
 import Ember from 'ember';
 
-var Component = Ember.Component;
+const Component = Ember.Component;
 
-var typeKey = 'content';
+const typeKey = 'content';
 
 /**
   Content Component

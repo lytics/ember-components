@@ -9,11 +9,11 @@ import {
 
 module('TransitionMixin');
 
-var TestComponent = Ember.Component.extend(TransitionMixin);
+const TestComponent = Ember.Component.extend(TransitionMixin);
 
 test("transitions are enabled by default when transitions are supported", function() {
   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
-    var component = subjectFactory();
+    const component = subjectFactory();
 
     ok(!component.get('disableTransitions'), "transitions are enabled");
   });
@@ -21,7 +21,7 @@ test("transitions are enabled by default when transitions are supported", functi
 
 test("transitions are disabled by default when the parent component disables transitions", function() {
   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
-    var component = subjectFactory({
+    const component = subjectFactory({
       parent: {
         disableTransitions: true
       }
@@ -34,7 +34,7 @@ test("transitions are disabled by default when the parent component disables tra
 test("the transition end event is not bubbled", function() {
   // Override transition support object to test correct event is used
   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
-    var component = subjectFactory();
+    const component = subjectFactory();
 
     component.$().on($.support.transition.end, function(event) {
       ok(event.isPropagationStopped(), "the transition end event bubbled");
@@ -48,10 +48,10 @@ test("it fires an Ember event on transition end", function() {
   expect(1);
 
   // Override transition support object to test correct event is used
-  var oldSupport = $.support.transition;
+  const oldSupport = $.support.transition;
   $.support.transition = { end: 'testEvent' };
 
-  var component = subjectFactory();
+  const component = subjectFactory();
 
   component.one('transitionDidEnd', function() {
     ok(true, "`transitionDidEnd` event was triggered");
@@ -64,7 +64,7 @@ test("it fires an Ember event on transition end", function() {
 });
 
 test("priming, transition, and trigger classes are added/removed when transitions are enabled", function() {
-  var component = subjectFactory({
+  const component = subjectFactory({
     transitionTriggerClass: 'trigger-class',
     transitionClass: 'transition-class'
   });
@@ -83,7 +83,7 @@ test("priming, transition, and trigger classes are added/removed when transition
 test("the after transition callback is invoked when transitions are enabled", function() {
   expect(1);
 
-  var component = subjectFactory();
+  const component = subjectFactory();
 
   component.withTransition('test', function() {
     ok(true, "the always callback was invoked");
@@ -94,7 +94,7 @@ test("the after transition callback is invoked when transitions are enabled", fu
 test("the after transition callback is invoked when transitions are disabled", function() {
   expect(1);
 
-  var component = subjectFactory({
+  const component = subjectFactory({
     disableTransitions: true,
   });
 
@@ -106,7 +106,7 @@ test("the after transition callback is invoked when transitions are disabled", f
 test("transition classes are not added when transitions are disabled", function() {
   expect(3);
 
-  var component = subjectFactory({
+  const component = subjectFactory({
     disableTransitions: true,
   });
 
@@ -120,7 +120,7 @@ test("transition classes are not added when transitions are disabled", function(
 test("transition classes are note added when the parent component has not finished initializing", function() {
   expect(3);
 
-  var component = subjectFactory({
+  const component = subjectFactory({
     parent: {
       isInitializing: false
     }
@@ -136,7 +136,7 @@ test("transition classes are note added when the parent component has not finish
 test("a property reports whether a transition is happening or not", function () {
   expect(2);
 
-  var component = subjectFactory();
+  const component = subjectFactory();
 
   component.withTransition('test', function() {
     equal(component.get('isTransitioning'), false, "the component reports it is not transitioning");
@@ -148,7 +148,7 @@ test("a property reports whether a transition is happening or not", function () 
 
 function subjectFactory(props) {
   props = props || {};
-  var component = TestComponent.create(props);
+  const component = TestComponent.create(props);
 
   Ember.run(function() {
     component.appendTo('#ember-testing');

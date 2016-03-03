@@ -15,14 +15,14 @@ moduleForComponent('lio-multi-select', 'MultiSelectComponent', {
   ]
 });
 
-var defaultTemplate = compileTemplate(function() {/*
+const defaultTemplate = compileTemplate(function() {/*
   {{lio-option value=1}}
   {{lio-option value=2}}
   {{lio-option value=3}}
 */});
 
 test("component has correct tag name", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate
   });
 
@@ -30,7 +30,7 @@ test("component has correct tag name", function() {
 });
 
 test("options cannot have duplicate values", function() {
-  var context = this;
+  const context = this;
 
   this.subject({
     layout: compileTemplate(function() {/*
@@ -45,7 +45,7 @@ test("options cannot have duplicate values", function() {
 });
 
 test("the 'values' attribute cannot contain duplicates", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate
   });
 
@@ -57,7 +57,7 @@ test("the 'values' attribute cannot contain duplicates", function() {
 });
 
 test("options with values contained in the 'values' attribute initially are set to selected", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     values: [ 1, 3 ]
   });
@@ -68,7 +68,7 @@ test("options with values contained in the 'values' attribute initially are set 
 });
 
 test("the 'values' attribute is initialized with options that are selected if it is falsy", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1 selected=true}}
       {{lio-option value=2}}
@@ -83,7 +83,7 @@ test("the 'values' attribute is initialized with options that are selected if it
 });
 
 test("adding an element to the 'value' attribute sets the corresponding option to selected", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     values: [ 1 ]
   });
@@ -96,14 +96,14 @@ test("adding an element to the 'value' attribute sets the corresponding option t
 });
 
 test("selecting an option adds its value to the 'values' attribute", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     values: [ 1 ]
   });
 
   this.$();
 
-  var lastOption = component.componentsForType('option').get('lastObject');
+  const lastOption = component.componentsForType('option').get('lastObject');
 
   ok(!this.$().find('lio-option:nth-of-type(3)').hasClass('selected'), "third option does not have 'selected' class");
   Ember.run(lastOption, 'set', 'selected', true);
@@ -111,11 +111,11 @@ test("selecting an option adds its value to the 'values' attribute", function() 
 });
 
 test("the property bound to the `value` attribute is replaced when the selection changes", function() {
-  var contextObject = Ember.Object.create({
+  const contextObject = Ember.Object.create({
     value: []
   });
 
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     contextObject: contextObject,
     valuesBinding: 'contextObject.values'
@@ -123,21 +123,21 @@ test("the property bound to the `value` attribute is replaced when the selection
 
   this.$();
 
-  var lastOption = component.componentsForType('option').get('lastObject');
-  var values = contextObject.get('values');
+  const lastOption = component.componentsForType('option').get('lastObject');
+  const values = contextObject.get('values');
 
   Ember.run(lastOption, 'set', 'selected', true);
   notStrictEqual(values, contextObject.get('values'), "property bound to 'values' was replaced");
 });
 
 test("clicking an option toggles its selected state", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate
   });
 
   this.$();
 
-  var lastOption = component.componentsForType('option').get('lastObject');
+  const lastOption = component.componentsForType('option').get('lastObject');
 
   ok(!lastOption.get('selected'));
   this.$().find('lio-option:nth-of-type(3)').simulate('click');
@@ -147,7 +147,7 @@ test("clicking an option toggles its selected state", function() {
 });
 
 test("clicking an option when the component is disabled has no effect", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: []
@@ -158,7 +158,7 @@ test("clicking an option when the component is disabled has no effect", function
 });
 
 test("all options are disabled when the component is disabled", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: []
@@ -172,18 +172,18 @@ test("all options are disabled when the component is disabled", function() {
 test("clicking an option triggers the component's default action", function() {
   expect(2);
 
-  var contextObject = Ember.Object.create({
+  const contextObject = Ember.Object.create({
     values: []
   });
 
-  var targetObject = {
+  const targetObject = {
     action: function(values) {
       deepEqual(values, [ 1 ], "default action was triggered with the new values");
       deepEqual(contextObject.get('values'), [ 1 ], "the values changed in their own run loop");
     }
   };
 
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     contextObject: contextObject,
     valuesBinding: 'contextObject.values',
@@ -195,7 +195,7 @@ test("clicking an option triggers the component's default action", function() {
 });
 
 test("clicking the 'select-all' button selects all options", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -213,7 +213,7 @@ test("clicking the 'select-all' button selects all options", function() {
 });
 
 test("the 'select-all' button is disabled when all options are selected", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -232,7 +232,7 @@ test("the 'select-all' button is disabled when all options are selected", functi
 });
 
 test("clicking the 'select-all' button has no effect when the component is disabled", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: []
@@ -245,18 +245,18 @@ test("clicking the 'select-all' button has no effect when the component is disab
 test("clicking the 'select-all' button triggers the component's default action", function() {
   expect(2);
 
-  var contextObject = Ember.Object.create({
+  const contextObject = Ember.Object.create({
     values: []
   });
 
-  var targetObject = {
+  const targetObject = {
     action: function(values) {
       deepEqual(values, [ 1, 2, 3 ], "default action was triggered with the new values");
       deepEqual(contextObject.get('values'), [ 1, 2, 3 ], "the values changed in their own run loop");
     }
   };
 
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -274,7 +274,7 @@ test("clicking the 'select-all' button triggers the component's default action",
 });
 
 test("clicking the 'unselect-all' button unselects all options", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -292,7 +292,7 @@ test("clicking the 'unselect-all' button unselects all options", function() {
 });
 
 test("the 'unselect-all' button is disabled when no options are selected", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -311,7 +311,7 @@ test("the 'unselect-all' button is disabled when no options are selected", funct
 });
 
 test("clicking the 'unselect-all' button has no effect when the component is disabled", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: defaultTemplate,
     disabled: true,
     values: [ 1, 3 ]
@@ -324,18 +324,18 @@ test("clicking the 'unselect-all' button has no effect when the component is dis
 test("clicking the 'unselect-all' button triggers the component's default action", function() {
   expect(2);
 
-  var contextObject = Ember.Object.create({
+  const contextObject = Ember.Object.create({
     values: [ 1, 3 ]
   });
 
-  var targetObject = {
+  const targetObject = {
     action: function(values) {
       deepEqual(values, [], "default action was triggered with the new values");
       deepEqual(contextObject.get('values'), [], "the values changed in their own run loop");
     }
   };
 
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -353,7 +353,7 @@ test("clicking the 'unselect-all' button triggers the component's default action
 });
 
 test("clicking an option with the 'unselect' attribute unselects the option with the corresponding value", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{lio-option value=1}}
       {{lio-option value=2}}
@@ -370,7 +370,7 @@ test("clicking an option with the 'unselect' attribute unselects the option with
 });
 
 test("the filter component must contain a text field", function() {
-  var context = this;
+  const context = this;
 
   this.subject({
     layout: compileTemplate(function() {/*
@@ -386,7 +386,7 @@ test("the filter component must contain a text field", function() {
 });
 
 test("entering a filter value filters the list of options", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{#lio-option value=1}}One{{/lio-option}}
       {{#lio-option value=2}}Two{{/lio-option}}
@@ -404,7 +404,7 @@ test("entering a filter value filters the list of options", function() {
 });
 
 test("clicking the 'clear' button removes filtered state from options", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(function() {/*
       {{#lio-option value=1}}One{{/lio-option}}
       {{#lio-option value=2}}Two{{/lio-option}}
@@ -425,7 +425,7 @@ test("clicking the 'clear' button removes filtered state from options", function
 });
 
 test("an option's value is looked up using the option's 'valuePath' attribute", function() {
-  var component = this.subject({
+  const component = this.subject({
     values: [],
     options: Ember.A([
       { value: 1 },
@@ -445,7 +445,7 @@ test("an option's value is looked up using the option's 'valuePath' attribute", 
 });
 
 test("an option's value is looked up using the 'optionValuePath' attribute", function() {
-  var component = this.subject({
+  const component = this.subject({
     values: [],
     optionValuePath: 'value',
     options: Ember.A([

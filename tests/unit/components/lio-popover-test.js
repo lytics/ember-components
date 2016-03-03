@@ -12,7 +12,7 @@ import {
 moduleForComponent('lio-popover', 'PopoverComponent');
 
 test("component has correct tag name", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -20,7 +20,7 @@ test("component has correct tag name", function() {
 });
 
 test("position must be one of a limited set of values", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -42,7 +42,7 @@ test("position must be one of a limited set of values", function() {
 });
 
 test("the rendered position is different than position when the tooltip needs to flip", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -61,7 +61,7 @@ test("the rendered position is different than position when the tooltip needs to
 });
 
 test("it has the 'active' class when active", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: true
   });
@@ -72,7 +72,7 @@ test("it has the 'active' class when active", function() {
 });
 
 test("it has the 'inactive' class when inactive", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     active: false
   });
@@ -83,8 +83,8 @@ test("it has the 'inactive' class when inactive", function() {
 });
 
 test("className is based off the rendered position", function() {
-  var context = this;
-  var component = this.subject({
+  const context = this;
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -107,8 +107,8 @@ test("className is based off the rendered position", function() {
 });
 
 test("corner positions result in two position class names (matching the edges)", function() {
-  var context = this;
-  var component = this.subject({
+  const context = this;
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -131,7 +131,7 @@ test("corner positions result in two position class names (matching the edges)",
 });
 
 test("the arrow position is centered on the popover", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate)
   });
 
@@ -219,7 +219,7 @@ test("the arrow position is centered on the popover", function() {
 });
 
 test("the tooltip is repositioned when the window resizes", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
   });
 
@@ -244,7 +244,7 @@ test("the tooltip is repositioned when the window resizes", function() {
 });
 
 test("the tooltip does not flip when the offset to the parent is too small but the true offset is not too small", function() {
-  var component = this.subject({
+  const component = this.subject({
     layout: compileTemplate(defaultTemplate),
     position: 'top'
   });
@@ -298,7 +298,7 @@ function giveBounds(component, overrides) {
 
 test("transition classes are added when activating the popover", function() {
   mockGlobalPath('$.support.transition', { end: 'testEvent' }, this, function() {
-    var component = this.subject({
+    const component = this.subject({
       layout: compileTemplate(defaultTemplate)
     });
 
