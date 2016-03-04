@@ -265,7 +265,23 @@ export default Component.extend(ParentComponentMixin, ChildComponentMixin, Activ
     const dimensions = getProperties(this, 'arrowOffsetTop', 'offsetTop', 'height', 'anchorHeight', 'windowHeight');
     set(this, 'offsetTop', adjustForEdges(dimensions.offsetTop, dimensions.height, dimensions.anchorHeight, dimensions.windowHeight));
     set(this, 'arrowOffsetTop', adjustArrowForEdges(dimensions.arrowOffsetTop, dimensions.offsetTop, dimensions.height, dimensions.anchorHeight, dimensions.windowHeight));
-  }
+  },
+
+  //
+  // Mixin Overrides
+  //
+
+  transitionVisualState: observer('isActive', function() {
+    const isActive = this.get('isActive');
+
+    // Immediately set flip the isVisuallyActive flag to avoid timing bugs
+    set(this, 'isVisuallyActive', isActive);
+
+    // The component may not use transitions
+    if (this.withTransition) {
+      this.withTransition(isActive ? 'activating' : 'deactivating');
+    }
+  })
 });
 
 // Given the bounding dimensions, return the origin top/left component that keeps the popover in the frame
