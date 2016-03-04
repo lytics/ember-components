@@ -1,6 +1,6 @@
 {
   "name": "lytics-ember-components",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "This is a collection of generic components used by Lytics Inc.",
   "directories": {
     "doc": "doc",
